@@ -9,14 +9,31 @@
       "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
       "type": "json-app-state",
       "frequency": "monthly",
-      "importedBasis": {
-        "_comment": "ENTSCHEIDUNG (Betreiber, 25.08.2026): Der Endpunkt liefert 13 Basisjahre derselben Kurve, unterschiedlich skaliert (z.B. heute ≈106.9 auf Basis 12.2020=100, ≈1300 auf Basis 06.1914=100). Nur EINE Basisreihe wird importiert und gespeichert — die übrigen 12 sind redundant, da das Chart ohnehin gemäss Requirements 2.0 rebasiert und der Kaufkraft-Rechner mit basisunabhängigen Verhältnissen rechnet.",
-        "basisName": "12.2020=100",
-        "sourceField": "monthlySeries[] mit basis == '12.2020=100'"
+      "importedSeries": {
+        "_comment": "KORRIGIERTE ENTSCHEIDUNG (Betreiber, 25.08.2026): Ursprüngliche Annahme 'alle 13 Basisreihen decken denselben Zeitraum ab, nur unterschiedlich skaliert' war falsch — jede Basisreihe startet bei ihrem eigenen Basisjahr (z.B. '12.2020=100' beginnt erst Dez 2020). Neue, präzisierte Entscheidung: ZWEI Reihen für ZWEI verschiedene Zwecke, nicht eine für alles und nicht 13 redundante Skalierungen. Der eigentliche Vorfall bei der Entdeckung: Basis '12.2025=100' existierte zum Prüfzeitpunkt bereits — Dez 2020 war zu diesem Zeitpunkt schon NICHT mehr die aktuelle amtliche Basis. Das im Code umgesetzte Rebasierungs-Warnsystem (siehe rebasingEvent) hat das korrekt erkannt, bevor darauf gebaut wurde.",
+        "totalIndex": {
+          "purpose": "Linie 1 (offizielle Inflation, Requirements 2.1) — braucht volle Historie ab Juni 1914 (US 1.12) und muss jede künftige Rebasierung überleben, ohne dass die Pipeline die Verkettung selbst nachbauen muss.",
+          "basisName": "Ewige Reihe",
+          "sourceField": "monthlySeries[] / yearlySeries[] mit basis == 'Ewige Reihe'",
+          "verifiedProperties": {
+            "coverage": "Juni 1914 (19140601) bis Juli 2026 (20260701), 1346 lückenlose Monatswerte — verifiziert 25.08.2026",
+            "maintainedByBfs": "Vom BFS selbst verkettete Gesamtreihe, wird fortgeschrieben (newestMonthlyDate == aktuellster Monat der Quelle), keine eigene Verkettungslogik nötig",
+            "nominalBasis": "Kein festes Basisjahr (basisDate-Platzhalter 99990101 in der Quelle) — Verkettung ist BFS-intern, für uns irrelevant, da Chart ohnehin rebasiert (2.0)"
+          },
+          "fallback": "Falls die Ewige Reihe die drei Kriterien (Abdeckung/Fortschreibung/Basis) bei künftiger Prüfung NICHT mehr erfüllt: Fallback auf '06.1914=100' und Betreiber informieren."
+        },
+        "majorGroups": {
+          "purpose": "Teilindizes für Trueflation-Berechnung (2.2a) — nur ab 2010 nötig, da Trueflation dort startet. Kein eigenes basis-Feld im majorGroupsMonthly/-Yearly-Array (anders als monthlySeries) — die Werte sind bereits fertig aufbereitet und folgen mathematisch nachweisbar der jeweils aktuellsten Basis (aktuell '12.2025=100', Verhältnis zur Ewigen Reihe exakt 0.09080 ± 0.00001 über alle geprüften Punkte).",
+          "sourceField": "majorGroupsMonthly[] / majorGroupsYearly[] (Top-Level-Arrays, kein basis-Filter nötig)",
+          "verifiedProperties": {
+            "coverage": "Mai 2000 (20000501) bis Juli 2026 (20260701), 315 Monatswerte — deckt 2010 lückenlos ab, keine Umstellung auf ältere Basis nötig",
+            "currentlyReflectsBasis": "12.2025=100 (dynamisch mitgeführt von der Quelle selbst, nicht von uns gepflegt)"
+          }
+        }
       },
       "rebasingEvent": {
-        "_comment": "PLANBARES EREIGNIS, KEIN STÖRFALL (siehe US 1.8-Ergänzung in requirements.md). Das BFS rebasiert den LIK periodisch (13 Basisjahre in der aktuellen Quelle = 13-mal geschehen, zuletzt vermutlich 12.2025=100 in Vorbereitung). Bei neuer Basis stellt die Pipeline um und verkettet die Historie neu — analog 2.2a. Die Plausi-Prüfung darf dabei NICHT eskalieren.",
-        "detectionStrategy": "Prüfen ob importedBasis.basisName noch unter bases[] im Response vorkommt; falls eine neuere Basis mit höherem basisDate existiert, Rebasing-Vorgang auslösen statt stumpf weiterzuschreiben."
+        "_comment": "PLANBARES EREIGNIS, KEIN STÖRFALL (siehe US 1.8-Ergänzung in requirements.md) — IST BEREITS EINGETRETEN: Basis '12.2025=100' existiert bereits in der Quelle (verifiziert 25.08.2026), die ursprünglich vorgesehene Basis '12.2020=100' war zum Prüfzeitpunkt schon veraltet. Grund, warum totalIndex jetzt auf 'Ewige Reihe' statt auf eine einzelne Basisreihe zeigt: die Ewige Reihe überlebt JEDE künftige Rebasierung, weil das BFS die Verkettung selbst pflegt — kein erneuter Umstellungsbedarf bei der nächsten Rebasierung.",
+        "detectionStrategy": "Weiterhin aktiv im Code (checkForNewerBasis): warnt, falls eine Basis mit höherem basisDate als die zuletzt bekannte neueste erscheint. Betrifft nur die Beobachtung, nicht mehr den Importpfad von totalIndex (Ewige Reihe ist rebasierungs-immun) — relevant bleibt es für majorGroups, falls die Quelle dort je auf ein eingefrorenes statt dynamisches Basis-Schema wechseln sollte."
       },
       "publicationWindow": {
         "_comment": "LIK wird i.d.R. Anfang des Folgemonats publiziert (siehe Medienmitteilungen-Historie).",
@@ -44,14 +61,24 @@
           ]
         },
         "incremental": {
-          "purpose": "Laufender Betrieb — neu eintreffende Werte nach Bulk-Import.",
-          "absoluteRange": {
-            "status": "pending-derivation",
-            "note": "NICHT geschätzt (50/500 verworfen — bei Basis 12.2020=100 ist der reale Bereich enger: 1914 liegt bei ≈7, heute bei ≈107). Nach Abschluss des Bulk-Imports aus den echten Daten der importierten Basisreihe ableiten: tatsächliches Min/Max, dann Puffer (Richtwert: halbes Min bis fünffaches Max). Wert und Herleitung hier nachtragen, sobald Bulk-Import durchgelaufen ist.",
-            "purpose": "Nur Grobschutz gegen offensichtlichen Unsinn (verrutschte Spalte, negativer Wert, Datum als Zahl gelesen) — NICHT die eigentliche Prüfung. Die leisten monthlyChangeRatePercentMax (laufender Betrieb) und referencePointMatch (Bulk-Import)."
+          "purpose": "Laufender Betrieb — neu eintreffende Werte nach Bulk-Import. Getrennte Range je importierter Reihe (totalIndex vs. majorGroups), da beide unterschiedliche Basen/Skalierungen haben (siehe importedSeries oben).",
+          "totalIndex": {
+            "absoluteRange": {
+              "min": 50,
+              "max": 5600,
+              "derivedFrom": "Ewige Reihe, real beobachtet 25.08.2026: min=100 (Juni 1914, Basisstart), max=1115.4 (Mai 2026). Puffer gemäss Betreiber-Richtwert 0.5×min bis 5×max → 50 bis 5577, aufgerundet auf 5600."
+            },
+            "monthlyChangeRatePercentMax": 2.0
           },
-          "monthlyChangeRatePercentMax": 2.0,
-          "_comment": "FREIGEGEBEN (Betreiber, 25.08.2026): 2.0% korrekt für laufenden Betrieb (US 1.7: 'LIK/Trueflation ~1-2%/Monat'). Gilt NICHT für den Bulk-Import (siehe validation.bulk oben) und NICHT für Rebasing-Ereignisse (siehe rebasingEvent oben, US 1.8-Ergänzung)."
+          "majorGroups": {
+            "absoluteRange": {
+              "min": 43,
+              "max": 510,
+              "derivedFrom": "majorGroupsMonthly (Hauptgruppen-Teilindizes), real beobachtet 25.08.2026: min=86.9 (Mai 2000), max=101.3 (Jul 2026) — Werte liegen nahe 100, da mehrfach rebasiert. Puffer 0.5×min bis 5×max → 43.4 bis 506.4, gerundet."
+            },
+            "monthlyChangeRatePercentMax": 2.0
+          },
+          "_comment": "FREIGEGEBEN (Betreiber, 25.08.2026): monthlyChangeRatePercentMax=2.0% korrekt für laufenden Betrieb (US 1.7: 'LIK/Trueflation ~1-2%/Monat'), gilt für beide Reihen gleichermassen. absoluteRange abgeleitet aus den tatsächlichen Bulk-Import-Daten (nicht geschätzt), siehe derivedFrom je Reihe. Gilt NICHT für den Bulk-Import (siehe validation.bulk oben) und NICHT für Rebasing-Ereignisse (siehe rebasingEvent oben, US 1.8-Ergänzung)."
         }
       },
       "fragility": {
