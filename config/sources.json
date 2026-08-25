@@ -42,6 +42,10 @@
       },
       "checkStrategy": "conditional-get",
       "conditionalHeader": "Last-Modified",
+      "conditionalGetVerified": {
+        "status": "NICHT unterstützt",
+        "finding": "Live geprüft (25.08.2026): Der Endpunkt liefert einen `Last-Modified`-Header, ignoriert aber `If-Modified-Since` komplett — antwortet immer mit vollem `200`-Body, nie mit `304`, unabhängig vom gesendeten Datum (getestet: sehr altes Datum, exaktes Last-Modified-Datum, Datum danach). `If-None-Match` wird ebenfalls ignoriert (kein ETag in der Antwort). Konsequenz: Bandbreiten-Ersparnis durch conditional GET ist bei dieser Quelle NICHT verfügbar — jede Prüfung ist ein Volldownload (aktuell ~190KB). Der `Last-Modified`-Header bleibt trotzdem nützlich: die Pipeline vergleicht ihn NACH dem Download selbst, um zu entscheiden, ob eine Verarbeitung nötig ist (Client-seitige Ersatzlösung für die fehlende Server-seitige 304-Unterstützung)."
+      },
       "checkBudget": {
         "maxSuccessfulChecksPerDay": 1,
         "maxRetriesPerFailedCheck": 3,
