@@ -1,0 +1,3 @@
+# Laufzeit-Status-Dateien (US 1.4 Resilienz-Tracking) — nicht versioniert,
+# da sie pro Umgebung/Lauf entstehen, kein Projektartefakt sind.
+*.status.json
