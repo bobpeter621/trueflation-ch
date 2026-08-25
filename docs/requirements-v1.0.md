@@ -87,6 +87,8 @@ Eigenkonstruktion, muss dokumentiert und reproduzierbar sein. Besteht aus zwei K
 
 **Zeitliche Einschränkung:** Linie 2 kann nicht ab 1914 dargestellt werden wie Linie 1. Limitierender Faktor ist die schwächste Zutat: KVPI existiert ab ca. 1999, die jährliche Strukturerhebung mit Mietdauer-Dimension erst ab **2010** — massgeblich ist das spätere der beiden. **Linie 2 startet daher ab 2010** (Entscheidung: durchgehend konsistente jährliche Kalibrierung statt längerer Reihe mit sechsjährigem Interpolationsloch 2004–2009). Muss im Chart und in der Methodik-Seite explizit kommuniziert werden — sonst wirkt eine fehlende Linie vor 2010 wie ein Bug.
 
+**Methodik-Notiz (Betreiber-Ergänzung 25.08.2026, für spätere Diskussionen festgehalten):** Die 2010-Grenze ist nicht mehr nur durch die Strukturerhebung bestimmt, sondern jetzt **doppelt verankert**. Bei der V1-Verifikation wurde festgestellt, dass die LIK-Teilindizes (`majorGroupsMonthly`/`-Yearly`, Grundlage von 2.2a) in der verifizierten Quelle erst **ab Mai 2000** verfügbar sind. Für v1 folgenlos, da 2010 ohnehin die restriktivere Grenze ist (2000 < 2010) — aber sollte der Trueflation-Start je nach vorne verschoben werden (z.B. bei künftiger Klärung von V2/V4), ist **Mai 2000 die harte Wand**, nicht verhandelbar durch bessere KVPI- oder HABE-Quellen. Vor jeder Diskussion einer Vordatierung ist das hier zu prüfen, damit es nicht neu ausgegraben werden muss.
+
 #### 2.2b Korrektur um ausgeblendete/gedämpfte Kosten
 
 | Korrekturkomponente | Ersetzt/ergänzt | Datenquelle |
