@@ -1,0 +1,8086 @@
+{
+  "_comment": "Automatisch generiert durch scripts/pipeline/bulk-import-lik.mjs — Linie 1 (Requirements 2.1), Basis \"Ewige Reihe\".",
+  "sourceUrl": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
+  "sourcePublishDate": 20260726,
+  "importedAt": "2026-08-25T09:31:52.719Z",
+  "importType": "bulk",
+  "basis": "Ewige Reihe",
+  "values": [
+    {
+      "indexDate": 19140601,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19140701,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19140801,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19140901,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19141001,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19141101,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19141201,
+      "indexValue": 100,
+      "changeRateVorjahresmonat": null,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150101,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150201,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150301,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150401,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150501,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150601,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150701,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150801,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19150901,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19151001,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19151101,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19151201,
+      "indexValue": 113,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160101,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160201,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160301,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160401,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160501,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160601,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160701,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160801,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19160901,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19161001,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19161101,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19161201,
+      "indexValue": 131,
+      "changeRateVorjahresmonat": 15.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170101,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170201,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170301,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170401,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170501,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170601,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170701,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170801,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19170901,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19171001,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19171101,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19171201,
+      "indexValue": 163,
+      "changeRateVorjahresmonat": 24.4,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180101,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180201,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180301,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180401,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180501,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180601,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180701,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180801,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19180901,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19181001,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19181101,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19181201,
+      "indexValue": 204,
+      "changeRateVorjahresmonat": 25.2,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190101,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190201,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190301,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190401,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190501,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190601,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190701,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190801,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19190901,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19191001,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19191101,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19191201,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": 8.8,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200101,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200201,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200301,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200401,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200501,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200601,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200701,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200801,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19200901,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19201001,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19201101,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19201201,
+      "indexValue": 224,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": null
+    },
+    {
+      "indexDate": 19210101,
+      "indexValue": 215.7,
+      "changeRateVorjahresmonat": -3.7,
+      "changeRateVormonat": -3.7
+    },
+    {
+      "indexDate": 19210201,
+      "indexValue": 213.2,
+      "changeRateVorjahresmonat": -4.8,
+      "changeRateVormonat": -1.2
+    },
+    {
+      "indexDate": 19210301,
+      "indexValue": 210.3,
+      "changeRateVorjahresmonat": -6.1,
+      "changeRateVormonat": -1.4
+    },
+    {
+      "indexDate": 19210401,
+      "indexValue": 208.2,
+      "changeRateVorjahresmonat": -7.1,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 19210501,
+      "indexValue": 203.3,
+      "changeRateVorjahresmonat": -9.2,
+      "changeRateVormonat": -2.4
+    },
+    {
+      "indexDate": 19210601,
+      "indexValue": 199.5,
+      "changeRateVorjahresmonat": -10.9,
+      "changeRateVormonat": -1.9
+    },
+    {
+      "indexDate": 19210701,
+      "indexValue": 197.5,
+      "changeRateVorjahresmonat": -11.8,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 19210801,
+      "indexValue": 196.6,
+      "changeRateVorjahresmonat": -12.2,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19210901,
+      "indexValue": 194.3,
+      "changeRateVorjahresmonat": -13.3,
+      "changeRateVormonat": -1.2
+    },
+    {
+      "indexDate": 19211001,
+      "indexValue": 192.2,
+      "changeRateVorjahresmonat": -14.2,
+      "changeRateVormonat": -1.1
+    },
+    {
+      "indexDate": 19211101,
+      "indexValue": 188.4,
+      "changeRateVorjahresmonat": -15.9,
+      "changeRateVormonat": -2
+    },
+    {
+      "indexDate": 19211201,
+      "indexValue": 183.8,
+      "changeRateVorjahresmonat": -17.9,
+      "changeRateVormonat": -2.4
+    },
+    {
+      "indexDate": 19220101,
+      "indexValue": 183.2,
+      "changeRateVorjahresmonat": -15.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19220201,
+      "indexValue": 175.8,
+      "changeRateVorjahresmonat": -17.5,
+      "changeRateVormonat": -4
+    },
+    {
+      "indexDate": 19220301,
+      "indexValue": 168.7,
+      "changeRateVorjahresmonat": -19.8,
+      "changeRateVormonat": -4
+    },
+    {
+      "indexDate": 19220401,
+      "indexValue": 163.6,
+      "changeRateVorjahresmonat": -21.4,
+      "changeRateVormonat": -3
+    },
+    {
+      "indexDate": 19220501,
+      "indexValue": 159.5,
+      "changeRateVorjahresmonat": -21.5,
+      "changeRateVormonat": -2.5
+    },
+    {
+      "indexDate": 19220601,
+      "indexValue": 159.2,
+      "changeRateVorjahresmonat": -20.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19220701,
+      "indexValue": 159.6,
+      "changeRateVorjahresmonat": -19.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19220801,
+      "indexValue": 158.3,
+      "changeRateVorjahresmonat": -19.5,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19220901,
+      "indexValue": 158.4,
+      "changeRateVorjahresmonat": -18.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19221001,
+      "indexValue": 159.6,
+      "changeRateVorjahresmonat": -17,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19221101,
+      "indexValue": 160.7,
+      "changeRateVorjahresmonat": -14.7,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19221201,
+      "indexValue": 160.6,
+      "changeRateVorjahresmonat": -12.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19230101,
+      "indexValue": 160.9,
+      "changeRateVorjahresmonat": -12.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19230201,
+      "indexValue": 159.6,
+      "changeRateVorjahresmonat": -9.2,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19230301,
+      "indexValue": 160.4,
+      "changeRateVorjahresmonat": -4.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19230401,
+      "indexValue": 161.7,
+      "changeRateVorjahresmonat": -1.2,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19230501,
+      "indexValue": 163.2,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19230601,
+      "indexValue": 164.7,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19230701,
+      "indexValue": 164.7,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19230801,
+      "indexValue": 164.7,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19230901,
+      "indexValue": 164.8,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19231001,
+      "indexValue": 165.3,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19231101,
+      "indexValue": 167.5,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19231201,
+      "indexValue": 168.3,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19240101,
+      "indexValue": 169,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19240201,
+      "indexValue": 168.2,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19240301,
+      "indexValue": 168.2,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19240401,
+      "indexValue": 167.4,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19240501,
+      "indexValue": 167.1,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19240601,
+      "indexValue": 167.6,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19240701,
+      "indexValue": 168.1,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19240801,
+      "indexValue": 168,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19240901,
+      "indexValue": 168.2,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19241001,
+      "indexValue": 170.8,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19241101,
+      "indexValue": 171.5,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19241201,
+      "indexValue": 171.1,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19250101,
+      "indexValue": 169.7,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19250201,
+      "indexValue": 169.6,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19250301,
+      "indexValue": 169.3,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19250401,
+      "indexValue": 168.3,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19250501,
+      "indexValue": 168,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19250601,
+      "indexValue": 168.1,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19250701,
+      "indexValue": 167.9,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19250801,
+      "indexValue": 168,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19250901,
+      "indexValue": 168.4,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19251001,
+      "indexValue": 167.3,
+      "changeRateVorjahresmonat": -2,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19251101,
+      "indexValue": 167.2,
+      "changeRateVorjahresmonat": -2.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19251201,
+      "indexValue": 166.8,
+      "changeRateVorjahresmonat": -2.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19260101,
+      "indexValue": 165.8,
+      "changeRateVorjahresmonat": -2.3,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19260201,
+      "indexValue": 164.3,
+      "changeRateVorjahresmonat": -3.1,
+      "changeRateVormonat": -0.9
+    },
+    {
+      "indexDate": 19260301,
+      "indexValue": 163.4,
+      "changeRateVorjahresmonat": -3.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19260401,
+      "indexValue": 162,
+      "changeRateVorjahresmonat": -3.7,
+      "changeRateVormonat": -0.9
+    },
+    {
+      "indexDate": 19260501,
+      "indexValue": 161.8,
+      "changeRateVorjahresmonat": -3.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19260601,
+      "indexValue": 161.7,
+      "changeRateVorjahresmonat": -3.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19260701,
+      "indexValue": 161.6,
+      "changeRateVorjahresmonat": -3.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19260801,
+      "indexValue": 160.8,
+      "changeRateVorjahresmonat": -4.3,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19260901,
+      "indexValue": 161.1,
+      "changeRateVorjahresmonat": -4.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19261001,
+      "indexValue": 161.4,
+      "changeRateVorjahresmonat": -3.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19261101,
+      "indexValue": 161,
+      "changeRateVorjahresmonat": -3.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19261201,
+      "indexValue": 160.9,
+      "changeRateVorjahresmonat": -3.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19270101,
+      "indexValue": 160.2,
+      "changeRateVorjahresmonat": -3.4,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19270201,
+      "indexValue": 159.7,
+      "changeRateVorjahresmonat": -2.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19270301,
+      "indexValue": 158.8,
+      "changeRateVorjahresmonat": -2.8,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19270401,
+      "indexValue": 158,
+      "changeRateVorjahresmonat": -2.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19270501,
+      "indexValue": 159.6,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19270601,
+      "indexValue": 160.4,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19270701,
+      "indexValue": 160,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19270801,
+      "indexValue": 159.8,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19270901,
+      "indexValue": 161.2,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19271001,
+      "indexValue": 161.5,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19271101,
+      "indexValue": 162.3,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19271201,
+      "indexValue": 162,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19280101,
+      "indexValue": 161.3,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19280201,
+      "indexValue": 160.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19280301,
+      "indexValue": 159.8,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19280401,
+      "indexValue": 160.1,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19280501,
+      "indexValue": 160.4,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19280601,
+      "indexValue": 160.8,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19280701,
+      "indexValue": 161.1,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19280801,
+      "indexValue": 160.6,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19280901,
+      "indexValue": 161,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19281001,
+      "indexValue": 162,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19281101,
+      "indexValue": 162.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19281201,
+      "indexValue": 162.2,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19290101,
+      "indexValue": 161.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19290201,
+      "indexValue": 161.3,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19290301,
+      "indexValue": 160.6,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19290401,
+      "indexValue": 159.3,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19290501,
+      "indexValue": 160,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19290601,
+      "indexValue": 161,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19290701,
+      "indexValue": 160.8,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19290801,
+      "indexValue": 161.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19290901,
+      "indexValue": 162.5,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19291001,
+      "indexValue": 162.5,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19291101,
+      "indexValue": 162,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19291201,
+      "indexValue": 161.5,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19300101,
+      "indexValue": 160.6,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19300201,
+      "indexValue": 159.8,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19300301,
+      "indexValue": 159.4,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19300401,
+      "indexValue": 157.9,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": -0.9
+    },
+    {
+      "indexDate": 19300501,
+      "indexValue": 157.8,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19300601,
+      "indexValue": 158.3,
+      "changeRateVorjahresmonat": -1.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19300701,
+      "indexValue": 158.6,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19300801,
+      "indexValue": 158.8,
+      "changeRateVorjahresmonat": -1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19300901,
+      "indexValue": 158.7,
+      "changeRateVorjahresmonat": -2.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19301001,
+      "indexValue": 157.7,
+      "changeRateVorjahresmonat": -3,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19301101,
+      "indexValue": 157.3,
+      "changeRateVorjahresmonat": -2.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19301201,
+      "indexValue": 156.2,
+      "changeRateVorjahresmonat": -3.3,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19310101,
+      "indexValue": 155.6,
+      "changeRateVorjahresmonat": -3.1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19310201,
+      "indexValue": 154.7,
+      "changeRateVorjahresmonat": -3.2,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19310301,
+      "indexValue": 153.1,
+      "changeRateVorjahresmonat": -4,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 19310401,
+      "indexValue": 150.6,
+      "changeRateVorjahresmonat": -4.6,
+      "changeRateVormonat": -1.6
+    },
+    {
+      "indexDate": 19310501,
+      "indexValue": 150.3,
+      "changeRateVorjahresmonat": -4.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19310601,
+      "indexValue": 150.2,
+      "changeRateVorjahresmonat": -5.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19310701,
+      "indexValue": 149.9,
+      "changeRateVorjahresmonat": -5.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19310801,
+      "indexValue": 149.2,
+      "changeRateVorjahresmonat": -6,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19310901,
+      "indexValue": 149.2,
+      "changeRateVorjahresmonat": -6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19311001,
+      "indexValue": 147.6,
+      "changeRateVorjahresmonat": -6.4,
+      "changeRateVormonat": -1.1
+    },
+    {
+      "indexDate": 19311101,
+      "indexValue": 146.7,
+      "changeRateVorjahresmonat": -6.7,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19311201,
+      "indexValue": 144.8,
+      "changeRateVorjahresmonat": -7.3,
+      "changeRateVormonat": -1.3
+    },
+    {
+      "indexDate": 19320101,
+      "indexValue": 143.7,
+      "changeRateVorjahresmonat": -7.6,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19320201,
+      "indexValue": 142.3,
+      "changeRateVorjahresmonat": -8,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 19320301,
+      "indexValue": 141.7,
+      "changeRateVorjahresmonat": -7.4,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19320401,
+      "indexValue": 139.7,
+      "changeRateVorjahresmonat": -7.2,
+      "changeRateVormonat": -1.4
+    },
+    {
+      "indexDate": 19320501,
+      "indexValue": 138.7,
+      "changeRateVorjahresmonat": -7.7,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19320601,
+      "indexValue": 138.3,
+      "changeRateVorjahresmonat": -7.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19320701,
+      "indexValue": 137.6,
+      "changeRateVorjahresmonat": -8.2,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19320801,
+      "indexValue": 137,
+      "changeRateVorjahresmonat": -8.2,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19320901,
+      "indexValue": 136.4,
+      "changeRateVorjahresmonat": -8.6,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19321001,
+      "indexValue": 136.2,
+      "changeRateVorjahresmonat": -7.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19321101,
+      "indexValue": 135.5,
+      "changeRateVorjahresmonat": -7.6,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19321201,
+      "indexValue": 134.4,
+      "changeRateVorjahresmonat": -7.2,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19330101,
+      "indexValue": 133.4,
+      "changeRateVorjahresmonat": -7.2,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19330201,
+      "indexValue": 132.8,
+      "changeRateVorjahresmonat": -6.7,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19330301,
+      "indexValue": 132.1,
+      "changeRateVorjahresmonat": -6.8,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19330401,
+      "indexValue": 131.2,
+      "changeRateVorjahresmonat": -6.1,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19330501,
+      "indexValue": 130.5,
+      "changeRateVorjahresmonat": -5.9,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19330601,
+      "indexValue": 130.8,
+      "changeRateVorjahresmonat": -5.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19330701,
+      "indexValue": 130.7,
+      "changeRateVorjahresmonat": -5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19330801,
+      "indexValue": 130.7,
+      "changeRateVorjahresmonat": -4.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19330901,
+      "indexValue": 131.2,
+      "changeRateVorjahresmonat": -3.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19331001,
+      "indexValue": 131.2,
+      "changeRateVorjahresmonat": -3.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19331101,
+      "indexValue": 131.4,
+      "changeRateVorjahresmonat": -3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19331201,
+      "indexValue": 131.3,
+      "changeRateVorjahresmonat": -2.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19340101,
+      "indexValue": 131.1,
+      "changeRateVorjahresmonat": -1.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19340201,
+      "indexValue": 130.8,
+      "changeRateVorjahresmonat": -1.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19340301,
+      "indexValue": 130.1,
+      "changeRateVorjahresmonat": -1.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19340401,
+      "indexValue": 129.9,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19340501,
+      "indexValue": 129.2,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19340601,
+      "indexValue": 129.5,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19340701,
+      "indexValue": 129,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19340801,
+      "indexValue": 128.7,
+      "changeRateVorjahresmonat": -1.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19340901,
+      "indexValue": 128.8,
+      "changeRateVorjahresmonat": -1.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19341001,
+      "indexValue": 128.8,
+      "changeRateVorjahresmonat": -1.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19341101,
+      "indexValue": 129,
+      "changeRateVorjahresmonat": -1.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19341201,
+      "indexValue": 128.8,
+      "changeRateVorjahresmonat": -1.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19350101,
+      "indexValue": 128,
+      "changeRateVorjahresmonat": -2.4,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19350201,
+      "indexValue": 127.5,
+      "changeRateVorjahresmonat": -2.5,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19350301,
+      "indexValue": 127.2,
+      "changeRateVorjahresmonat": -2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19350401,
+      "indexValue": 126.6,
+      "changeRateVorjahresmonat": -2.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19350501,
+      "indexValue": 126.3,
+      "changeRateVorjahresmonat": -2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19350601,
+      "indexValue": 127.3,
+      "changeRateVorjahresmonat": -1.7,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19350701,
+      "indexValue": 128.2,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19350801,
+      "indexValue": 128.7,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19350901,
+      "indexValue": 128.8,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19351001,
+      "indexValue": 129.3,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19351101,
+      "indexValue": 129.9,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19351201,
+      "indexValue": 130,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19360101,
+      "indexValue": 129.7,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19360201,
+      "indexValue": 129.5,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19360301,
+      "indexValue": 129.7,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19360401,
+      "indexValue": 129.9,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19360501,
+      "indexValue": 129.5,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19360601,
+      "indexValue": 130.1,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19360701,
+      "indexValue": 130.2,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19360801,
+      "indexValue": 130.2,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19360901,
+      "indexValue": 130.5,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19361001,
+      "indexValue": 131.6,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19361101,
+      "indexValue": 132,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19361201,
+      "indexValue": 132,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19370101,
+      "indexValue": 133.5,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19370201,
+      "indexValue": 136.4,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 2.2
+    },
+    {
+      "indexDate": 19370301,
+      "indexValue": 136.3,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19370401,
+      "indexValue": 136.7,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19370501,
+      "indexValue": 136.3,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19370601,
+      "indexValue": 137.2,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19370701,
+      "indexValue": 137.1,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19370801,
+      "indexValue": 137,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19370901,
+      "indexValue": 137,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19371001,
+      "indexValue": 137.6,
+      "changeRateVorjahresmonat": 4.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19371101,
+      "indexValue": 137.8,
+      "changeRateVorjahresmonat": 4.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19371201,
+      "indexValue": 137.8,
+      "changeRateVorjahresmonat": 4.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19380101,
+      "indexValue": 137.8,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19380201,
+      "indexValue": 137.4,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19380301,
+      "indexValue": 137,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19380401,
+      "indexValue": 136.5,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19380501,
+      "indexValue": 136.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19380601,
+      "indexValue": 136.9,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19380701,
+      "indexValue": 136.8,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19380801,
+      "indexValue": 136.4,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19380901,
+      "indexValue": 137.3,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19381001,
+      "indexValue": 137.1,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19381101,
+      "indexValue": 137.1,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19381201,
+      "indexValue": 136.9,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19390101,
+      "indexValue": 136.6,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19390201,
+      "indexValue": 136,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19390301,
+      "indexValue": 135.9,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19390401,
+      "indexValue": 136.4,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19390501,
+      "indexValue": 136.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19390601,
+      "indexValue": 137.4,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19390701,
+      "indexValue": 137.5,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19390801,
+      "indexValue": 137.2,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19390901,
+      "indexValue": 138.2,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19391001,
+      "indexValue": 140.5,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 1.7
+    },
+    {
+      "indexDate": 19391101,
+      "indexValue": 141.7,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19391201,
+      "indexValue": 142,
+      "changeRateVorjahresmonat": 3.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19400101,
+      "indexValue": 144.2,
+      "changeRateVorjahresmonat": 5.6,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19400201,
+      "indexValue": 144.6,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19400301,
+      "indexValue": 144.8,
+      "changeRateVorjahresmonat": 6.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19400401,
+      "indexValue": 147.3,
+      "changeRateVorjahresmonat": 8,
+      "changeRateVormonat": 1.7
+    },
+    {
+      "indexDate": 19400501,
+      "indexValue": 148.2,
+      "changeRateVorjahresmonat": 8.4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19400601,
+      "indexValue": 149.6,
+      "changeRateVorjahresmonat": 8.9,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19400701,
+      "indexValue": 150.6,
+      "changeRateVorjahresmonat": 9.5,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19400801,
+      "indexValue": 151,
+      "changeRateVorjahresmonat": 10.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19400901,
+      "indexValue": 153.2,
+      "changeRateVorjahresmonat": 10.9,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19401001,
+      "indexValue": 156.7,
+      "changeRateVorjahresmonat": 11.5,
+      "changeRateVormonat": 2.3
+    },
+    {
+      "indexDate": 19401101,
+      "indexValue": 159.2,
+      "changeRateVorjahresmonat": 12.4,
+      "changeRateVormonat": 1.6
+    },
+    {
+      "indexDate": 19401201,
+      "indexValue": 159.9,
+      "changeRateVorjahresmonat": 12.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19410101,
+      "indexValue": 162.9,
+      "changeRateVorjahresmonat": 13,
+      "changeRateVormonat": 1.9
+    },
+    {
+      "indexDate": 19410201,
+      "indexValue": 162.9,
+      "changeRateVorjahresmonat": 12.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19410301,
+      "indexValue": 163.7,
+      "changeRateVorjahresmonat": 13.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19410401,
+      "indexValue": 168.7,
+      "changeRateVorjahresmonat": 14.5,
+      "changeRateVormonat": 3.1
+    },
+    {
+      "indexDate": 19410501,
+      "indexValue": 171.2,
+      "changeRateVorjahresmonat": 15.5,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19410601,
+      "indexValue": 174.8,
+      "changeRateVorjahresmonat": 16.8,
+      "changeRateVormonat": 2.1
+    },
+    {
+      "indexDate": 19410701,
+      "indexValue": 177.1,
+      "changeRateVorjahresmonat": 17.6,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19410801,
+      "indexValue": 177.7,
+      "changeRateVorjahresmonat": 17.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19410901,
+      "indexValue": 178.2,
+      "changeRateVorjahresmonat": 16.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19411001,
+      "indexValue": 181.7,
+      "changeRateVorjahresmonat": 16,
+      "changeRateVormonat": 2
+    },
+    {
+      "indexDate": 19411101,
+      "indexValue": 183.8,
+      "changeRateVorjahresmonat": 15.5,
+      "changeRateVormonat": 1.2
+    },
+    {
+      "indexDate": 19411201,
+      "indexValue": 184.3,
+      "changeRateVorjahresmonat": 15.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19420101,
+      "indexValue": 186.3,
+      "changeRateVorjahresmonat": 14.4,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19420201,
+      "indexValue": 187.9,
+      "changeRateVorjahresmonat": 15.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19420301,
+      "indexValue": 188.7,
+      "changeRateVorjahresmonat": 15.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19420401,
+      "indexValue": 191.1,
+      "changeRateVorjahresmonat": 13.3,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19420501,
+      "indexValue": 192.3,
+      "changeRateVorjahresmonat": 12.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19420601,
+      "indexValue": 192.7,
+      "changeRateVorjahresmonat": 10.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19420701,
+      "indexValue": 195.6,
+      "changeRateVorjahresmonat": 10.4,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19420801,
+      "indexValue": 195.2,
+      "changeRateVorjahresmonat": 9.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19420901,
+      "indexValue": 195.4,
+      "changeRateVorjahresmonat": 9.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19421001,
+      "indexValue": 197.4,
+      "changeRateVorjahresmonat": 8.6,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19421101,
+      "indexValue": 198.6,
+      "changeRateVorjahresmonat": 8.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19421201,
+      "indexValue": 199.6,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19430101,
+      "indexValue": 200.8,
+      "changeRateVorjahresmonat": 7.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19430201,
+      "indexValue": 201.2,
+      "changeRateVorjahresmonat": 7.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19430301,
+      "indexValue": 201.4,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19430401,
+      "indexValue": 202.6,
+      "changeRateVorjahresmonat": 6,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19430501,
+      "indexValue": 202.7,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19430601,
+      "indexValue": 203.3,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19430701,
+      "indexValue": 203.9,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19430801,
+      "indexValue": 203.5,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19430901,
+      "indexValue": 204.2,
+      "changeRateVorjahresmonat": 4.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19431001,
+      "indexValue": 204.9,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19431101,
+      "indexValue": 205.1,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19431201,
+      "indexValue": 205.3,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19440101,
+      "indexValue": 205.6,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19440201,
+      "indexValue": 205.9,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19440301,
+      "indexValue": 206.4,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19440401,
+      "indexValue": 207.1,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19440501,
+      "indexValue": 207.5,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19440601,
+      "indexValue": 208.2,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19440701,
+      "indexValue": 208.8,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19440801,
+      "indexValue": 208,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19440901,
+      "indexValue": 208,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19441001,
+      "indexValue": 208.2,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19441101,
+      "indexValue": 208.2,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19441201,
+      "indexValue": 208.2,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19450101,
+      "indexValue": 208.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19450201,
+      "indexValue": 208.7,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19450301,
+      "indexValue": 208.8,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19450401,
+      "indexValue": 209.3,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19450501,
+      "indexValue": 209.6,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19450601,
+      "indexValue": 210.3,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19450701,
+      "indexValue": 210.5,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19450801,
+      "indexValue": 210,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19450901,
+      "indexValue": 209.7,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19451001,
+      "indexValue": 208.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19451101,
+      "indexValue": 206.7,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19451201,
+      "indexValue": 206.7,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19460101,
+      "indexValue": 206.8,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19460201,
+      "indexValue": 205.9,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19460301,
+      "indexValue": 204.9,
+      "changeRateVorjahresmonat": -1.9,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19460401,
+      "indexValue": 205.1,
+      "changeRateVorjahresmonat": -2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19460501,
+      "indexValue": 206.4,
+      "changeRateVorjahresmonat": -1.5,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19460601,
+      "indexValue": 207.3,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19460701,
+      "indexValue": 207.1,
+      "changeRateVorjahresmonat": -1.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19460801,
+      "indexValue": 207.2,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19460901,
+      "indexValue": 207.3,
+      "changeRateVorjahresmonat": -1.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19461001,
+      "indexValue": 211.5,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 2
+    },
+    {
+      "indexDate": 19461101,
+      "indexValue": 211.8,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19461201,
+      "indexValue": 212,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19470101,
+      "indexValue": 212.3,
+      "changeRateVorjahresmonat": 2.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19470201,
+      "indexValue": 212.2,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19470301,
+      "indexValue": 212.3,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19470401,
+      "indexValue": 213.2,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19470501,
+      "indexValue": 216.2,
+      "changeRateVorjahresmonat": 4.7,
+      "changeRateVormonat": 1.4
+    },
+    {
+      "indexDate": 19470601,
+      "indexValue": 217.4,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19470701,
+      "indexValue": 217.4,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19470801,
+      "indexValue": 217.5,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19470901,
+      "indexValue": 217.8,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19471001,
+      "indexValue": 222.7,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 2.2
+    },
+    {
+      "indexDate": 19471101,
+      "indexValue": 223,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19471201,
+      "indexValue": 223.3,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19480101,
+      "indexValue": 223.6,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19480201,
+      "indexValue": 223.5,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19480301,
+      "indexValue": 222.9,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19480401,
+      "indexValue": 222.9,
+      "changeRateVorjahresmonat": 4.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19480501,
+      "indexValue": 223.1,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19480601,
+      "indexValue": 223.7,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19480701,
+      "indexValue": 223,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19480801,
+      "indexValue": 222.7,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19480901,
+      "indexValue": 223.1,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19481001,
+      "indexValue": 223.2,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19481101,
+      "indexValue": 226.3,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 1.4
+    },
+    {
+      "indexDate": 19481201,
+      "indexValue": 224.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 19490101,
+      "indexValue": 223.8,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19490201,
+      "indexValue": 223,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19490301,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19490401,
+      "indexValue": 221.2,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19490501,
+      "indexValue": 221.5,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19490601,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19490701,
+      "indexValue": 221.3,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19490801,
+      "indexValue": 221.4,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19490901,
+      "indexValue": 222,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19491001,
+      "indexValue": 221.3,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19491101,
+      "indexValue": 220.9,
+      "changeRateVorjahresmonat": -2.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19491201,
+      "indexValue": 220.3,
+      "changeRateVorjahresmonat": -1.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19500101,
+      "indexValue": 218,
+      "changeRateVorjahresmonat": -2.6,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 19500201,
+      "indexValue": 217.2,
+      "changeRateVorjahresmonat": -2.6,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19500301,
+      "indexValue": 216.8,
+      "changeRateVorjahresmonat": -2.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19500401,
+      "indexValue": 216.1,
+      "changeRateVorjahresmonat": -2.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19500501,
+      "indexValue": 217,
+      "changeRateVorjahresmonat": -2.1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19500601,
+      "indexValue": 217.3,
+      "changeRateVorjahresmonat": -2.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19500701,
+      "indexValue": 217.3,
+      "changeRateVorjahresmonat": -1.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19500801,
+      "indexValue": 218.7,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19500901,
+      "indexValue": 219.5,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19501001,
+      "indexValue": 220.6,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19501101,
+      "indexValue": 220.7,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19501201,
+      "indexValue": 220.6,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19510101,
+      "indexValue": 222.7,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19510201,
+      "indexValue": 223.3,
+      "changeRateVorjahresmonat": 2.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19510301,
+      "indexValue": 223.2,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19510401,
+      "indexValue": 225.7,
+      "changeRateVorjahresmonat": 4.4,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19510501,
+      "indexValue": 227.9,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19510601,
+      "indexValue": 228.3,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19510701,
+      "indexValue": 229.5,
+      "changeRateVorjahresmonat": 5.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19510801,
+      "indexValue": 230.9,
+      "changeRateVorjahresmonat": 5.6,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19510901,
+      "indexValue": 231.6,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19511001,
+      "indexValue": 233.1,
+      "changeRateVorjahresmonat": 5.7,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19511101,
+      "indexValue": 234.3,
+      "changeRateVorjahresmonat": 6.2,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19511201,
+      "indexValue": 234.6,
+      "changeRateVorjahresmonat": 6.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19520101,
+      "indexValue": 233.9,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19520201,
+      "indexValue": 234.3,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19520301,
+      "indexValue": 234.3,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19520401,
+      "indexValue": 233.4,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19520501,
+      "indexValue": 234.3,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19520601,
+      "indexValue": 235,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19520701,
+      "indexValue": 234.5,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19520801,
+      "indexValue": 235,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19520901,
+      "indexValue": 235.4,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19521001,
+      "indexValue": 234.7,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19521101,
+      "indexValue": 234.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19521201,
+      "indexValue": 234.6,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19530101,
+      "indexValue": 233.1,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19530201,
+      "indexValue": 232.5,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19530301,
+      "indexValue": 232.3,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19530401,
+      "indexValue": 231.6,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19530501,
+      "indexValue": 232.5,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19530601,
+      "indexValue": 232.8,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19530701,
+      "indexValue": 232.5,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19530801,
+      "indexValue": 232.8,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19530901,
+      "indexValue": 233.5,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19531001,
+      "indexValue": 233.8,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19531101,
+      "indexValue": 233.8,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19531201,
+      "indexValue": 233.4,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19540101,
+      "indexValue": 232.9,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19540201,
+      "indexValue": 232.5,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19540301,
+      "indexValue": 232.4,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19540401,
+      "indexValue": 232.7,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19540501,
+      "indexValue": 233.4,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19540601,
+      "indexValue": 233.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19540701,
+      "indexValue": 234.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19540801,
+      "indexValue": 235.5,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19540901,
+      "indexValue": 236,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19541001,
+      "indexValue": 236.6,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19541101,
+      "indexValue": 237.3,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19541201,
+      "indexValue": 237.2,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19550101,
+      "indexValue": 236.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19550201,
+      "indexValue": 235.7,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19550301,
+      "indexValue": 235.4,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19550401,
+      "indexValue": 235.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19550501,
+      "indexValue": 236.4,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19550601,
+      "indexValue": 236.4,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19550701,
+      "indexValue": 236.5,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19550801,
+      "indexValue": 237.1,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19550901,
+      "indexValue": 237.5,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19551001,
+      "indexValue": 237.9,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19551101,
+      "indexValue": 238.2,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19551201,
+      "indexValue": 238.2,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19560101,
+      "indexValue": 236.8,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19560201,
+      "indexValue": 237.3,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19560301,
+      "indexValue": 238,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19560401,
+      "indexValue": 237.6,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19560501,
+      "indexValue": 240.1,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19560601,
+      "indexValue": 240.6,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19560701,
+      "indexValue": 240.9,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19560801,
+      "indexValue": 241.7,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19560901,
+      "indexValue": 242.1,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19561001,
+      "indexValue": 242.4,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19561101,
+      "indexValue": 243.1,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19561201,
+      "indexValue": 243.4,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19570101,
+      "indexValue": 243,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19570201,
+      "indexValue": 242.5,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19570301,
+      "indexValue": 241.9,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19570401,
+      "indexValue": 242.7,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19570501,
+      "indexValue": 244.2,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19570601,
+      "indexValue": 244.3,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19570701,
+      "indexValue": 244.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19570801,
+      "indexValue": 246.3,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19570901,
+      "indexValue": 246.8,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19571001,
+      "indexValue": 247.6,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19571101,
+      "indexValue": 248.3,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19571201,
+      "indexValue": 248.3,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19580101,
+      "indexValue": 247.6,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19580201,
+      "indexValue": 247.6,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19580301,
+      "indexValue": 247.6,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19580401,
+      "indexValue": 247.9,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19580501,
+      "indexValue": 250,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19580601,
+      "indexValue": 250.2,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19580701,
+      "indexValue": 250.2,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19580801,
+      "indexValue": 250.5,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19580901,
+      "indexValue": 250.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19581001,
+      "indexValue": 250.8,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19581101,
+      "indexValue": 250.9,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19581201,
+      "indexValue": 250.5,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19590101,
+      "indexValue": 249,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19590201,
+      "indexValue": 248.2,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19590301,
+      "indexValue": 247.8,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19590401,
+      "indexValue": 246.8,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19590501,
+      "indexValue": 247.1,
+      "changeRateVorjahresmonat": -1.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19590601,
+      "indexValue": 246.8,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19590701,
+      "indexValue": 246.8,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19590801,
+      "indexValue": 247.6,
+      "changeRateVorjahresmonat": -1.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19590901,
+      "indexValue": 248.4,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19591001,
+      "indexValue": 248.9,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19591101,
+      "indexValue": 249.1,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19591201,
+      "indexValue": 249,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19600101,
+      "indexValue": 248.3,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19600201,
+      "indexValue": 249.5,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19600301,
+      "indexValue": 249.5,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19600401,
+      "indexValue": 250,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19600501,
+      "indexValue": 251.1,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19600601,
+      "indexValue": 251.3,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19600701,
+      "indexValue": 252,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19600801,
+      "indexValue": 252.6,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19600901,
+      "indexValue": 253.2,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19601001,
+      "indexValue": 253.7,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19601101,
+      "indexValue": 253.7,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19601201,
+      "indexValue": 253.4,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19610101,
+      "indexValue": 252.7,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19610201,
+      "indexValue": 252.8,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19610301,
+      "indexValue": 252.8,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19610401,
+      "indexValue": 252.8,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19610501,
+      "indexValue": 254.8,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19610601,
+      "indexValue": 255.2,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19610701,
+      "indexValue": 255.7,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19610801,
+      "indexValue": 257,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19610901,
+      "indexValue": 257.4,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19611001,
+      "indexValue": 258.5,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19611101,
+      "indexValue": 262,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 1.4
+    },
+    {
+      "indexDate": 19611201,
+      "indexValue": 262.3,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19620101,
+      "indexValue": 262.6,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19620201,
+      "indexValue": 263.3,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19620301,
+      "indexValue": 263.7,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19620401,
+      "indexValue": 264.9,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19620501,
+      "indexValue": 267,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19620601,
+      "indexValue": 267.7,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19620701,
+      "indexValue": 268.5,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19620801,
+      "indexValue": 269.6,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19620901,
+      "indexValue": 269.4,
+      "changeRateVorjahresmonat": 4.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19621001,
+      "indexValue": 269,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19621101,
+      "indexValue": 270.3,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19621201,
+      "indexValue": 270.8,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19630101,
+      "indexValue": 271.6,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19630201,
+      "indexValue": 273.3,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19630301,
+      "indexValue": 273.3,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19630401,
+      "indexValue": 273.7,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19630501,
+      "indexValue": 275.3,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19630601,
+      "indexValue": 276,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19630701,
+      "indexValue": 276.6,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19630801,
+      "indexValue": 277.4,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19630901,
+      "indexValue": 278.2,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19631001,
+      "indexValue": 279.3,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19631101,
+      "indexValue": 281,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19631201,
+      "indexValue": 281.2,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19640101,
+      "indexValue": 281.5,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19640201,
+      "indexValue": 281.9,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19640301,
+      "indexValue": 282.1,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19640401,
+      "indexValue": 283.8,
+      "changeRateVorjahresmonat": 3.7,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19640501,
+      "indexValue": 285.3,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19640601,
+      "indexValue": 284.9,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19640701,
+      "indexValue": 285.1,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19640801,
+      "indexValue": 285.8,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19640901,
+      "indexValue": 286.3,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19641001,
+      "indexValue": 287.1,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19641101,
+      "indexValue": 287.4,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19641201,
+      "indexValue": 287.8,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19650101,
+      "indexValue": 288.1,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19650201,
+      "indexValue": 289.1,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19650301,
+      "indexValue": 289.2,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19650401,
+      "indexValue": 290.2,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19650501,
+      "indexValue": 293.3,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19650601,
+      "indexValue": 294.4,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19650701,
+      "indexValue": 295.2,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19650801,
+      "indexValue": 296.9,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19650901,
+      "indexValue": 297.7,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19651001,
+      "indexValue": 298.7,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19651101,
+      "indexValue": 301.3,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19651201,
+      "indexValue": 301.9,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19660101,
+      "indexValue": 303.6,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19660201,
+      "indexValue": 304.4,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19660301,
+      "indexValue": 304.8,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19660401,
+      "indexValue": 305.2,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19660501,
+      "indexValue": 309.1,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19660601,
+      "indexValue": 308.7,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19660701,
+      "indexValue": 308.7,
+      "changeRateVorjahresmonat": 4.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19660801,
+      "indexValue": 309.6,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19660901,
+      "indexValue": 309.9,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19661001,
+      "indexValue": 310.6,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19661101,
+      "indexValue": 314.3,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 1.2
+    },
+    {
+      "indexDate": 19661201,
+      "indexValue": 315.8,
+      "changeRateVorjahresmonat": 4.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19670101,
+      "indexValue": 316.8,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19670201,
+      "indexValue": 316.1,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19670301,
+      "indexValue": 316.1,
+      "changeRateVorjahresmonat": 3.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19670401,
+      "indexValue": 316.5,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19670501,
+      "indexValue": 319.9,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19670601,
+      "indexValue": 322,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19670701,
+      "indexValue": 323.3,
+      "changeRateVorjahresmonat": 4.7,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19670801,
+      "indexValue": 324.5,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19670901,
+      "indexValue": 323.3,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19671001,
+      "indexValue": 323,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19671101,
+      "indexValue": 326.1,
+      "changeRateVorjahresmonat": 3.7,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19671201,
+      "indexValue": 327,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19680101,
+      "indexValue": 327.6,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19680201,
+      "indexValue": 328.2,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19680301,
+      "indexValue": 327,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19680401,
+      "indexValue": 326.7,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19680501,
+      "indexValue": 327.6,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19680601,
+      "indexValue": 327.9,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19680701,
+      "indexValue": 327.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19680801,
+      "indexValue": 328.5,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19680901,
+      "indexValue": 328.8,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19681001,
+      "indexValue": 330.1,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19681101,
+      "indexValue": 333.2,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19681201,
+      "indexValue": 334.1,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19690101,
+      "indexValue": 335,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19690201,
+      "indexValue": 335.7,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19690301,
+      "indexValue": 335,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19690401,
+      "indexValue": 334.4,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19690501,
+      "indexValue": 336,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19690601,
+      "indexValue": 337.5,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19690701,
+      "indexValue": 337.5,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19690801,
+      "indexValue": 336.9,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19690901,
+      "indexValue": 337.2,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19691001,
+      "indexValue": 337.8,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19691101,
+      "indexValue": 340.6,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19691201,
+      "indexValue": 341.9,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19700101,
+      "indexValue": 342.8,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19700201,
+      "indexValue": 342.8,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19700301,
+      "indexValue": 343.4,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19700401,
+      "indexValue": 343.1,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19700501,
+      "indexValue": 346.5,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19700601,
+      "indexValue": 348.1,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19700701,
+      "indexValue": 349,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19700801,
+      "indexValue": 350.2,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19700901,
+      "indexValue": 352.4,
+      "changeRateVorjahresmonat": 4.5,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19701001,
+      "indexValue": 354.3,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19701101,
+      "indexValue": 358.9,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19701201,
+      "indexValue": 360.5,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19710101,
+      "indexValue": 362.6,
+      "changeRateVorjahresmonat": 5.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19710201,
+      "indexValue": 364.2,
+      "changeRateVorjahresmonat": 6.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19710301,
+      "indexValue": 366.4,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19710401,
+      "indexValue": 366.7,
+      "changeRateVorjahresmonat": 6.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19710501,
+      "indexValue": 370.7,
+      "changeRateVorjahresmonat": 7,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19710601,
+      "indexValue": 371,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19710701,
+      "indexValue": 372.6,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19710801,
+      "indexValue": 373.2,
+      "changeRateVorjahresmonat": 6.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19710901,
+      "indexValue": 376,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19711001,
+      "indexValue": 377.5,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19711101,
+      "indexValue": 382.5,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19711201,
+      "indexValue": 384.3,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19720101,
+      "indexValue": 386.8,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19720201,
+      "indexValue": 388.7,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19720301,
+      "indexValue": 389.6,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19720401,
+      "indexValue": 389.9,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19720501,
+      "indexValue": 393.9,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19720601,
+      "indexValue": 396.1,
+      "changeRateVorjahresmonat": 6.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19720701,
+      "indexValue": 396.4,
+      "changeRateVorjahresmonat": 6.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19720801,
+      "indexValue": 398,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19720901,
+      "indexValue": 401.4,
+      "changeRateVorjahresmonat": 6.8,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19721001,
+      "indexValue": 405.1,
+      "changeRateVorjahresmonat": 7.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19721101,
+      "indexValue": 408.5,
+      "changeRateVorjahresmonat": 6.8,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19721201,
+      "indexValue": 410.7,
+      "changeRateVorjahresmonat": 6.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19730101,
+      "indexValue": 415.3,
+      "changeRateVorjahresmonat": 7.4,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19730201,
+      "indexValue": 418.1,
+      "changeRateVorjahresmonat": 7.6,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19730301,
+      "indexValue": 421.5,
+      "changeRateVorjahresmonat": 8.2,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19730401,
+      "indexValue": 422.5,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19730501,
+      "indexValue": 425.6,
+      "changeRateVorjahresmonat": 8,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19730601,
+      "indexValue": 428.7,
+      "changeRateVorjahresmonat": 8.2,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19730701,
+      "indexValue": 429.3,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19730801,
+      "indexValue": 430.8,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19730901,
+      "indexValue": 434.5,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19731001,
+      "indexValue": 443.5,
+      "changeRateVorjahresmonat": 9.5,
+      "changeRateVormonat": 2.1
+    },
+    {
+      "indexDate": 19731101,
+      "indexValue": 452.8,
+      "changeRateVorjahresmonat": 10.8,
+      "changeRateVormonat": 2.1
+    },
+    {
+      "indexDate": 19731201,
+      "indexValue": 459.6,
+      "changeRateVorjahresmonat": 11.9,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19740101,
+      "indexValue": 463.4,
+      "changeRateVorjahresmonat": 11.6,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19740201,
+      "indexValue": 460,
+      "changeRateVorjahresmonat": 10,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 19740301,
+      "indexValue": 462.1,
+      "changeRateVorjahresmonat": 9.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19740401,
+      "indexValue": 459.3,
+      "changeRateVorjahresmonat": 8.7,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19740501,
+      "indexValue": 467.4,
+      "changeRateVorjahresmonat": 9.8,
+      "changeRateVormonat": 1.8
+    },
+    {
+      "indexDate": 19740601,
+      "indexValue": 469.9,
+      "changeRateVorjahresmonat": 9.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19740701,
+      "indexValue": 471.4,
+      "changeRateVorjahresmonat": 9.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19740801,
+      "indexValue": 476.1,
+      "changeRateVorjahresmonat": 10.5,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19740901,
+      "indexValue": 483.8,
+      "changeRateVorjahresmonat": 11.3,
+      "changeRateVormonat": 1.6
+    },
+    {
+      "indexDate": 19741001,
+      "indexValue": 486.9,
+      "changeRateVorjahresmonat": 9.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19741101,
+      "indexValue": 493.7,
+      "changeRateVorjahresmonat": 9,
+      "changeRateVormonat": 1.4
+    },
+    {
+      "indexDate": 19741201,
+      "indexValue": 494.4,
+      "changeRateVorjahresmonat": 7.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19750101,
+      "indexValue": 497.1,
+      "changeRateVorjahresmonat": 7.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19750201,
+      "indexValue": 498.7,
+      "changeRateVorjahresmonat": 8.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19750301,
+      "indexValue": 500.6,
+      "changeRateVorjahresmonat": 8.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19750401,
+      "indexValue": 501.8,
+      "changeRateVorjahresmonat": 9.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19750501,
+      "indexValue": 505.5,
+      "changeRateVorjahresmonat": 8.2,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19750601,
+      "indexValue": 507.4,
+      "changeRateVorjahresmonat": 8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19750701,
+      "indexValue": 506.4,
+      "changeRateVorjahresmonat": 7.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19750801,
+      "indexValue": 508,
+      "changeRateVorjahresmonat": 6.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19750901,
+      "indexValue": 509.9,
+      "changeRateVorjahresmonat": 5.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19751001,
+      "indexValue": 510.5,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19751101,
+      "indexValue": 512,
+      "changeRateVorjahresmonat": 3.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19751201,
+      "indexValue": 511.4,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19760101,
+      "indexValue": 514.2,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19760201,
+      "indexValue": 513.9,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19760301,
+      "indexValue": 513,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19760401,
+      "indexValue": 513,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19760501,
+      "indexValue": 512,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19760601,
+      "indexValue": 513,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19760701,
+      "indexValue": 513.9,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19760801,
+      "indexValue": 515.7,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19760901,
+      "indexValue": 514.5,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19761001,
+      "indexValue": 515.7,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19761101,
+      "indexValue": 516.7,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19761201,
+      "indexValue": 517.9,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19770101,
+      "indexValue": 518.8,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19770201,
+      "indexValue": 519.2,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19770301,
+      "indexValue": 518.2,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19770401,
+      "indexValue": 518.8,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19770501,
+      "indexValue": 518.5,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19770601,
+      "indexValue": 521.9,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19770701,
+      "indexValue": 522.3,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19770801,
+      "indexValue": 522.3,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19770901,
+      "indexValue": 522.5,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19771001,
+      "indexValue": 523.7,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19771101,
+      "indexValue": 523.2,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19771201,
+      "indexValue": 523.8,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19780101,
+      "indexValue": 524.1,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19780201,
+      "indexValue": 524.7,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19780301,
+      "indexValue": 525.3,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19780401,
+      "indexValue": 526.2,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19780501,
+      "indexValue": 526.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19780601,
+      "indexValue": 527.8,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19780701,
+      "indexValue": 528,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19780801,
+      "indexValue": 528.2,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19780901,
+      "indexValue": 526.9,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19781001,
+      "indexValue": 525.8,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19781101,
+      "indexValue": 526.5,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19781201,
+      "indexValue": 527.7,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19790101,
+      "indexValue": 529.6,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19790201,
+      "indexValue": 535.4,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19790301,
+      "indexValue": 538.3,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19790401,
+      "indexValue": 539.7,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19790501,
+      "indexValue": 541.6,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19790601,
+      "indexValue": 549.2,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": 1.4
+    },
+    {
+      "indexDate": 19790701,
+      "indexValue": 550.5,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19790801,
+      "indexValue": 549.5,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19790901,
+      "indexValue": 552.2,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19791001,
+      "indexValue": 551.9,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19791101,
+      "indexValue": 554,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19791201,
+      "indexValue": 555,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19800101,
+      "indexValue": 556.7,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19800201,
+      "indexValue": 557.5,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19800301,
+      "indexValue": 559.2,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19800401,
+      "indexValue": 561.8,
+      "changeRateVorjahresmonat": 4.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19800501,
+      "indexValue": 565.1,
+      "changeRateVorjahresmonat": 4.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19800601,
+      "indexValue": 567.1,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19800701,
+      "indexValue": 568.9,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19800801,
+      "indexValue": 572.8,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19800901,
+      "indexValue": 573,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19801001,
+      "indexValue": 572,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19801101,
+      "indexValue": 577.5,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19801201,
+      "indexValue": 579.4,
+      "changeRateVorjahresmonat": 4.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19810101,
+      "indexValue": 585.1,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19810201,
+      "indexValue": 590.8,
+      "changeRateVorjahresmonat": 6,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19810301,
+      "indexValue": 594.8,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19810401,
+      "indexValue": 593.4,
+      "changeRateVorjahresmonat": 5.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19810501,
+      "indexValue": 598.9,
+      "changeRateVorjahresmonat": 6,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19810601,
+      "indexValue": 602.7,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19810701,
+      "indexValue": 606.4,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19810801,
+      "indexValue": 615.4,
+      "changeRateVorjahresmonat": 7.4,
+      "changeRateVormonat": 1.5
+    },
+    {
+      "indexDate": 19810901,
+      "indexValue": 615.9,
+      "changeRateVorjahresmonat": 7.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19811001,
+      "indexValue": 613.8,
+      "changeRateVorjahresmonat": 7.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19811101,
+      "indexValue": 617.9,
+      "changeRateVorjahresmonat": 7,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19811201,
+      "indexValue": 617.8,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19820101,
+      "indexValue": 620.8,
+      "changeRateVorjahresmonat": 6.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19820201,
+      "indexValue": 621.8,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19820301,
+      "indexValue": 622.9,
+      "changeRateVorjahresmonat": 4.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19820401,
+      "indexValue": 626.4,
+      "changeRateVorjahresmonat": 5.6,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19820501,
+      "indexValue": 634.5,
+      "changeRateVorjahresmonat": 5.9,
+      "changeRateVormonat": 1.3
+    },
+    {
+      "indexDate": 19820601,
+      "indexValue": 640.1,
+      "changeRateVorjahresmonat": 6.2,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19820701,
+      "indexValue": 642.5,
+      "changeRateVorjahresmonat": 6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19820801,
+      "indexValue": 647.5,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19820901,
+      "indexValue": 650,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19821001,
+      "indexValue": 651.6,
+      "changeRateVorjahresmonat": 6.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19821101,
+      "indexValue": 653.4,
+      "changeRateVorjahresmonat": 5.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19821201,
+      "indexValue": 651.5,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19830101,
+      "indexValue": 650.5,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19830201,
+      "indexValue": 651.4,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19830301,
+      "indexValue": 652.7,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19830401,
+      "indexValue": 654.7,
+      "changeRateVorjahresmonat": 4.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19830501,
+      "indexValue": 655.3,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19830601,
+      "indexValue": 658,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19830701,
+      "indexValue": 656.7,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19830801,
+      "indexValue": 658.5,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19830901,
+      "indexValue": 659.3,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19831001,
+      "indexValue": 660.9,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19831101,
+      "indexValue": 665,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19831201,
+      "indexValue": 665.4,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19840101,
+      "indexValue": 667.8,
+      "changeRateVorjahresmonat": 2.7,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19840201,
+      "indexValue": 670.2,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19840301,
+      "indexValue": 674.6,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19840401,
+      "indexValue": 675.6,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19840501,
+      "indexValue": 674.2,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19840601,
+      "indexValue": 676.3,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19840701,
+      "indexValue": 675.1,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19840801,
+      "indexValue": 677.5,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19840901,
+      "indexValue": 677.1,
+      "changeRateVorjahresmonat": 2.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19841001,
+      "indexValue": 681.4,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19841101,
+      "indexValue": 685,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19841201,
+      "indexValue": 684.7,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19850101,
+      "indexValue": 691.4,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19850201,
+      "indexValue": 697.1,
+      "changeRateVorjahresmonat": 4,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19850301,
+      "indexValue": 701,
+      "changeRateVorjahresmonat": 3.9,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19850401,
+      "indexValue": 700.1,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19850501,
+      "indexValue": 699.6,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19850601,
+      "indexValue": 699.3,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19850701,
+      "indexValue": 697.8,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19850801,
+      "indexValue": 697.6,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19850901,
+      "indexValue": 699.8,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19851001,
+      "indexValue": 701.5,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19851101,
+      "indexValue": 706.5,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19851201,
+      "indexValue": 706.9,
+      "changeRateVorjahresmonat": 3.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19860101,
+      "indexValue": 706.6,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19860201,
+      "indexValue": 706.4,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19860301,
+      "indexValue": 707.3,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19860401,
+      "indexValue": 706.9,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19860501,
+      "indexValue": 704.8,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19860601,
+      "indexValue": 704.6,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19860701,
+      "indexValue": 701.3,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 19860801,
+      "indexValue": 702.7,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19860901,
+      "indexValue": 703.9,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19861001,
+      "indexValue": 704,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19861101,
+      "indexValue": 705.8,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19861201,
+      "indexValue": 707.2,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19870101,
+      "indexValue": 711.3,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19870201,
+      "indexValue": 713.4,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19870301,
+      "indexValue": 714.4,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19870401,
+      "indexValue": 715.3,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19870501,
+      "indexValue": 711.3,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19870601,
+      "indexValue": 713.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19870701,
+      "indexValue": 713.8,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19870801,
+      "indexValue": 716.5,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19870901,
+      "indexValue": 714.8,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19871001,
+      "indexValue": 718,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19871101,
+      "indexValue": 720.6,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19871201,
+      "indexValue": 720.5,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19880101,
+      "indexValue": 722.4,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19880201,
+      "indexValue": 725.9,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19880301,
+      "indexValue": 727.6,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19880401,
+      "indexValue": 729,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19880501,
+      "indexValue": 727.2,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19880601,
+      "indexValue": 728.3,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19880701,
+      "indexValue": 726.7,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19880801,
+      "indexValue": 729.2,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19880901,
+      "indexValue": 729.4,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19881001,
+      "indexValue": 730.6,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19881101,
+      "indexValue": 733.3,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19881201,
+      "indexValue": 734.6,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19890101,
+      "indexValue": 738.6,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19890201,
+      "indexValue": 742.3,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19890301,
+      "indexValue": 744.3,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19890401,
+      "indexValue": 748.2,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19890501,
+      "indexValue": 748.8,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19890601,
+      "indexValue": 750,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19890701,
+      "indexValue": 748.4,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19890801,
+      "indexValue": 750.9,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19890901,
+      "indexValue": 754.1,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19891001,
+      "indexValue": 757.1,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19891101,
+      "indexValue": 765.8,
+      "changeRateVorjahresmonat": 4.4,
+      "changeRateVormonat": 1.2
+    },
+    {
+      "indexDate": 19891201,
+      "indexValue": 771.5,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19900101,
+      "indexValue": 776,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19900201,
+      "indexValue": 778.5,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19900301,
+      "indexValue": 781.2,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19900401,
+      "indexValue": 782.8,
+      "changeRateVorjahresmonat": 4.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19900501,
+      "indexValue": 786.6,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19900601,
+      "indexValue": 787.7,
+      "changeRateVorjahresmonat": 5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19900701,
+      "indexValue": 788.1,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19900801,
+      "indexValue": 796.5,
+      "changeRateVorjahresmonat": 6.1,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 19900901,
+      "indexValue": 800.3,
+      "changeRateVorjahresmonat": 6.1,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19901001,
+      "indexValue": 805.2,
+      "changeRateVorjahresmonat": 6.4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19901101,
+      "indexValue": 812.2,
+      "changeRateVorjahresmonat": 6.1,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19901201,
+      "indexValue": 812.2,
+      "changeRateVorjahresmonat": 5.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19910101,
+      "indexValue": 818.8,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19910201,
+      "indexValue": 826.9,
+      "changeRateVorjahresmonat": 6.2,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19910301,
+      "indexValue": 827,
+      "changeRateVorjahresmonat": 5.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19910401,
+      "indexValue": 829,
+      "changeRateVorjahresmonat": 5.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19910501,
+      "indexValue": 836,
+      "changeRateVorjahresmonat": 6.3,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 19910601,
+      "indexValue": 839.5,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19910701,
+      "indexValue": 839.7,
+      "changeRateVorjahresmonat": 6.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19910801,
+      "indexValue": 844.1,
+      "changeRateVorjahresmonat": 6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19910901,
+      "indexValue": 845.7,
+      "changeRateVorjahresmonat": 5.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19911001,
+      "indexValue": 846.5,
+      "changeRateVorjahresmonat": 5.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19911101,
+      "indexValue": 856.7,
+      "changeRateVorjahresmonat": 5.5,
+      "changeRateVormonat": 1.2
+    },
+    {
+      "indexDate": 19911201,
+      "indexValue": 854.6,
+      "changeRateVorjahresmonat": 5.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19920101,
+      "indexValue": 858.6,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19920201,
+      "indexValue": 864.8,
+      "changeRateVorjahresmonat": 4.6,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19920301,
+      "indexValue": 867.3,
+      "changeRateVorjahresmonat": 4.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19920401,
+      "indexValue": 868.7,
+      "changeRateVorjahresmonat": 4.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19920501,
+      "indexValue": 871,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19920601,
+      "indexValue": 874.4,
+      "changeRateVorjahresmonat": 4.2,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19920701,
+      "indexValue": 871.8,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19920801,
+      "indexValue": 874.1,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19920901,
+      "indexValue": 875.1,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19921001,
+      "indexValue": 876.4,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19921101,
+      "indexValue": 884.8,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 1
+    },
+    {
+      "indexDate": 19921201,
+      "indexValue": 883.9,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19930101,
+      "indexValue": 888.4,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19930201,
+      "indexValue": 894.1,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 19930301,
+      "indexValue": 898.9,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19930401,
+      "indexValue": 901.6,
+      "changeRateVorjahresmonat": 3.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19930501,
+      "indexValue": 902.1,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19930601,
+      "indexValue": 901.9,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19930701,
+      "indexValue": 901.3,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19930801,
+      "indexValue": 905.8,
+      "changeRateVorjahresmonat": 3.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19930901,
+      "indexValue": 905.2,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19931001,
+      "indexValue": 905.9,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19931101,
+      "indexValue": 904.7,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19931201,
+      "indexValue": 905.8,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19940101,
+      "indexValue": 906.9,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19940201,
+      "indexValue": 910.5,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19940301,
+      "indexValue": 910.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19940401,
+      "indexValue": 911,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19940501,
+      "indexValue": 905.4,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 19940601,
+      "indexValue": 906.8,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19940701,
+      "indexValue": 906.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19940801,
+      "indexValue": 910.2,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 19940901,
+      "indexValue": 910.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19941001,
+      "indexValue": 909.8,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19941101,
+      "indexValue": 909.8,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19941201,
+      "indexValue": 909.6,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19950101,
+      "indexValue": 916.1,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 19950201,
+      "indexValue": 924.2,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 19950301,
+      "indexValue": 924.8,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19950401,
+      "indexValue": 925.6,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19950501,
+      "indexValue": 923.8,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19950601,
+      "indexValue": 925.7,
+      "changeRateVorjahresmonat": 2.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19950701,
+      "indexValue": 925,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19950801,
+      "indexValue": 928,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19950901,
+      "indexValue": 928.8,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19951001,
+      "indexValue": 927.8,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19951101,
+      "indexValue": 927.1,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19951201,
+      "indexValue": 927.3,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19960101,
+      "indexValue": 930,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19960201,
+      "indexValue": 931.5,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19960301,
+      "indexValue": 933.1,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19960401,
+      "indexValue": 934,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19960501,
+      "indexValue": 930.6,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 19960601,
+      "indexValue": 932.4,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19960701,
+      "indexValue": 931.1,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19960801,
+      "indexValue": 933.5,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19960901,
+      "indexValue": 934.1,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19961001,
+      "indexValue": 935.6,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19961101,
+      "indexValue": 933.8,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19961201,
+      "indexValue": 934.6,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19970101,
+      "indexValue": 937.7,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19970201,
+      "indexValue": 939.3,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19970301,
+      "indexValue": 938,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19970401,
+      "indexValue": 938.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19970501,
+      "indexValue": 936,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 19970601,
+      "indexValue": 936.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19970701,
+      "indexValue": 935.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19970801,
+      "indexValue": 938,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19970901,
+      "indexValue": 937.9,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19971001,
+      "indexValue": 938,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19971101,
+      "indexValue": 937.7,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19971201,
+      "indexValue": 938.2,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19980101,
+      "indexValue": 937.8,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19980201,
+      "indexValue": 939,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19980301,
+      "indexValue": 938.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19980401,
+      "indexValue": 938.7,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19980501,
+      "indexValue": 936.7,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19980601,
+      "indexValue": 937.9,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19980701,
+      "indexValue": 936.6,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19980801,
+      "indexValue": 939.3,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19980901,
+      "indexValue": 938.5,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19981001,
+      "indexValue": 938.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19981101,
+      "indexValue": 936.8,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19981201,
+      "indexValue": 936.6,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19990101,
+      "indexValue": 938.5,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19990201,
+      "indexValue": 941.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 19990301,
+      "indexValue": 942.7,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19990401,
+      "indexValue": 944.3,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19990501,
+      "indexValue": 942.1,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 19990601,
+      "indexValue": 943.2,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 19990701,
+      "indexValue": 943.5,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19990801,
+      "indexValue": 948.1,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 19990901,
+      "indexValue": 949.9,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 19991001,
+      "indexValue": 949.9,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 19991101,
+      "indexValue": 949,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 19991201,
+      "indexValue": 952.2,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20000101,
+      "indexValue": 953.4,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20000201,
+      "indexValue": 957,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20000301,
+      "indexValue": 956.7,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20000401,
+      "indexValue": 957.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20000501,
+      "indexValue": 957,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20000601,
+      "indexValue": 960.6,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20000701,
+      "indexValue": 961.3,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20000801,
+      "indexValue": 958.8,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20000901,
+      "indexValue": 963.6,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20001001,
+      "indexValue": 962.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20001101,
+      "indexValue": 967.2,
+      "changeRateVorjahresmonat": 1.9,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20001201,
+      "indexValue": 966.4,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20010101,
+      "indexValue": 965.8,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20010201,
+      "indexValue": 964.4,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20010301,
+      "indexValue": 966,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20010401,
+      "indexValue": 968.7,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20010501,
+      "indexValue": 973.9,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20010601,
+      "indexValue": 975.8,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20010701,
+      "indexValue": 974.3,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20010801,
+      "indexValue": 968.9,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 20010901,
+      "indexValue": 970.1,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20011001,
+      "indexValue": 968.7,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20011101,
+      "indexValue": 969.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20011201,
+      "indexValue": 969.6,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20020101,
+      "indexValue": 970.8,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20020201,
+      "indexValue": 970.8,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20020301,
+      "indexValue": 970.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20020401,
+      "indexValue": 979.3,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20020501,
+      "indexValue": 980.2,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20020601,
+      "indexValue": 978.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20020701,
+      "indexValue": 973.8,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20020801,
+      "indexValue": 973.5,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20020901,
+      "indexValue": 974.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20021001,
+      "indexValue": 980.6,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20021101,
+      "indexValue": 978.8,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20021201,
+      "indexValue": 978.2,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20030101,
+      "indexValue": 979,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20030201,
+      "indexValue": 980,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20030301,
+      "indexValue": 983.9,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20030401,
+      "indexValue": 985.9,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20030501,
+      "indexValue": 984.3,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20030601,
+      "indexValue": 984.3,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20030701,
+      "indexValue": 976.4,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 20030801,
+      "indexValue": 978.7,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20030901,
+      "indexValue": 980.1,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20031001,
+      "indexValue": 985.1,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20031101,
+      "indexValue": 983.8,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20031201,
+      "indexValue": 984,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20040101,
+      "indexValue": 980.7,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20040201,
+      "indexValue": 980.9,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20040301,
+      "indexValue": 983,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20040401,
+      "indexValue": 991.3,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 20040501,
+      "indexValue": 993.5,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20040601,
+      "indexValue": 995.3,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20040701,
+      "indexValue": 984.8,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -1
+    },
+    {
+      "indexDate": 20040801,
+      "indexValue": 988.5,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20040901,
+      "indexValue": 988.6,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20041001,
+      "indexValue": 997.8,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20041101,
+      "indexValue": 998.8,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20041201,
+      "indexValue": 997.1,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20050101,
+      "indexValue": 992.5,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20050201,
+      "indexValue": 994.7,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20050301,
+      "indexValue": 997.1,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20050401,
+      "indexValue": 1005.3,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 20050501,
+      "indexValue": 1004.3,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20050601,
+      "indexValue": 1002,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20050701,
+      "indexValue": 996.6,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20050801,
+      "indexValue": 998,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20050901,
+      "indexValue": 1002.4,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20051001,
+      "indexValue": 1011.1,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20051101,
+      "indexValue": 1008.3,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20051201,
+      "indexValue": 1007.2,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20060101,
+      "indexValue": 1005.3,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20060201,
+      "indexValue": 1008.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20060301,
+      "indexValue": 1007.4,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20060401,
+      "indexValue": 1015.9,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 20060501,
+      "indexValue": 1018,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20060601,
+      "indexValue": 1017.7,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20060701,
+      "indexValue": 1010.8,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 20060801,
+      "indexValue": 1012.5,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20060901,
+      "indexValue": 1010.3,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20061001,
+      "indexValue": 1013.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20061101,
+      "indexValue": 1013.3,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20061201,
+      "indexValue": 1013.4,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20070101,
+      "indexValue": 1006.4,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 20070201,
+      "indexValue": 1008.3,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20070301,
+      "indexValue": 1009.1,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20070401,
+      "indexValue": 1020.6,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 1.1
+    },
+    {
+      "indexDate": 20070501,
+      "indexValue": 1022.9,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20070601,
+      "indexValue": 1024.1,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20070701,
+      "indexValue": 1018,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 20070801,
+      "indexValue": 1016.9,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20070901,
+      "indexValue": 1017.9,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20071001,
+      "indexValue": 1026.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20071101,
+      "indexValue": 1031.2,
+      "changeRateVorjahresmonat": 1.8,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20071201,
+      "indexValue": 1033.7,
+      "changeRateVorjahresmonat": 2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20080101,
+      "indexValue": 1030.8,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20080201,
+      "indexValue": 1032.2,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20080301,
+      "indexValue": 1035.7,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20080401,
+      "indexValue": 1043.9,
+      "changeRateVorjahresmonat": 2.3,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 20080501,
+      "indexValue": 1052.1,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.8
+    },
+    {
+      "indexDate": 20080601,
+      "indexValue": 1053.9,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20080701,
+      "indexValue": 1049.3,
+      "changeRateVorjahresmonat": 3.1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20080801,
+      "indexValue": 1046.6,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20080901,
+      "indexValue": 1047.7,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20081001,
+      "indexValue": 1053.2,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20081101,
+      "indexValue": 1046.2,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 20081201,
+      "indexValue": 1041,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20090101,
+      "indexValue": 1032.2,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 20090201,
+      "indexValue": 1034.6,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20090301,
+      "indexValue": 1031.3,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20090401,
+      "indexValue": 1040.4,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20090501,
+      "indexValue": 1042,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20090601,
+      "indexValue": 1043.9,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20090701,
+      "indexValue": 1037,
+      "changeRateVorjahresmonat": -1.2,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 20090801,
+      "indexValue": 1038.1,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20090901,
+      "indexValue": 1038,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20091001,
+      "indexValue": 1044.4,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20091101,
+      "indexValue": 1046.5,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20091201,
+      "indexValue": 1043.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20100101,
+      "indexValue": 1042.8,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20100201,
+      "indexValue": 1044.3,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20100301,
+      "indexValue": 1045.7,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20100401,
+      "indexValue": 1054.7,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.9
+    },
+    {
+      "indexDate": 20100501,
+      "indexValue": 1053.6,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20100601,
+      "indexValue": 1049,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20100701,
+      "indexValue": 1041.3,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.7
+    },
+    {
+      "indexDate": 20100801,
+      "indexValue": 1041.2,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20100901,
+      "indexValue": 1040.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20101001,
+      "indexValue": 1046.5,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20101101,
+      "indexValue": 1049,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20101201,
+      "indexValue": 1049.4,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20110101,
+      "indexValue": 1045.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20110201,
+      "indexValue": 1049.6,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20110301,
+      "indexValue": 1056.2,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20110401,
+      "indexValue": 1057.4,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20110501,
+      "indexValue": 1057.5,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20110601,
+      "indexValue": 1054.9,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20110701,
+      "indexValue": 1046.2,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": -0.8
+    },
+    {
+      "indexDate": 20110801,
+      "indexValue": 1043.2,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20110901,
+      "indexValue": 1046,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20111001,
+      "indexValue": 1045.3,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20111101,
+      "indexValue": 1043.5,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20111201,
+      "indexValue": 1041.9,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20120101,
+      "indexValue": 1037.4,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20120201,
+      "indexValue": 1040.3,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20120301,
+      "indexValue": 1046.1,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20120401,
+      "indexValue": 1046.9,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20120501,
+      "indexValue": 1046.7,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20120601,
+      "indexValue": 1043.8,
+      "changeRateVorjahresmonat": -1.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20120701,
+      "indexValue": 1038.8,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20120801,
+      "indexValue": 1038.4,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20120901,
+      "indexValue": 1041.7,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20121001,
+      "indexValue": 1043,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20121101,
+      "indexValue": 1039.6,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20121201,
+      "indexValue": 1037.3,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20130101,
+      "indexValue": 1034.6,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20130201,
+      "indexValue": 1037.7,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20130301,
+      "indexValue": 1039.9,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20130401,
+      "indexValue": 1040.3,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20130501,
+      "indexValue": 1041.4,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20130601,
+      "indexValue": 1042.5,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20130701,
+      "indexValue": 1038.7,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20130801,
+      "indexValue": 1038,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20130901,
+      "indexValue": 1041.1,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20131001,
+      "indexValue": 1040.3,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20131101,
+      "indexValue": 1040.4,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20131201,
+      "indexValue": 1038,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20140101,
+      "indexValue": 1035.2,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20140201,
+      "indexValue": 1036.2,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20140301,
+      "indexValue": 1040,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20140401,
+      "indexValue": 1040.7,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20140501,
+      "indexValue": 1043.7,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20140601,
+      "indexValue": 1043,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20140701,
+      "indexValue": 1039.1,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20140801,
+      "indexValue": 1038.7,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20140901,
+      "indexValue": 1040.2,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20141001,
+      "indexValue": 1040.2,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20141101,
+      "indexValue": 1039.8,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20141201,
+      "indexValue": 1034.6,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20150101,
+      "indexValue": 1030.2,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20150201,
+      "indexValue": 1027.5,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20150301,
+      "indexValue": 1030.9,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20150401,
+      "indexValue": 1029,
+      "changeRateVorjahresmonat": -1.1,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20150501,
+      "indexValue": 1031.4,
+      "changeRateVorjahresmonat": -1.2,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20150601,
+      "indexValue": 1032.1,
+      "changeRateVorjahresmonat": -1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20150701,
+      "indexValue": 1025.8,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": -0.6
+    },
+    {
+      "indexDate": 20150801,
+      "indexValue": 1024.2,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20150901,
+      "indexValue": 1025.2,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20151001,
+      "indexValue": 1026,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20151101,
+      "indexValue": 1025.3,
+      "changeRateVorjahresmonat": -1.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20151201,
+      "indexValue": 1021.1,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20160101,
+      "indexValue": 1017.1,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20160201,
+      "indexValue": 1019,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20160301,
+      "indexValue": 1022,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20160401,
+      "indexValue": 1025.4,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20160501,
+      "indexValue": 1026.9,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20160601,
+      "indexValue": 1028.3,
+      "changeRateVorjahresmonat": -0.4,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20160701,
+      "indexValue": 1023.7,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20160801,
+      "indexValue": 1022.7,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20160901,
+      "indexValue": 1023.3,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20161001,
+      "indexValue": 1023.8,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20161101,
+      "indexValue": 1021.8,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20161201,
+      "indexValue": 1021,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20170101,
+      "indexValue": 1020.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20170201,
+      "indexValue": 1025.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20170301,
+      "indexValue": 1027.8,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20170401,
+      "indexValue": 1029.9,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20170501,
+      "indexValue": 1031.8,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20170601,
+      "indexValue": 1030.3,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20170701,
+      "indexValue": 1027.1,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20170801,
+      "indexValue": 1027.4,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20170901,
+      "indexValue": 1030,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20171001,
+      "indexValue": 1030.6,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20171101,
+      "indexValue": 1029.9,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20171201,
+      "indexValue": 1029.6,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20180101,
+      "indexValue": 1028.2,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20180201,
+      "indexValue": 1032,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20180301,
+      "indexValue": 1036,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20180401,
+      "indexValue": 1038.1,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20180501,
+      "indexValue": 1042.1,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20180601,
+      "indexValue": 1042.1,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20180701,
+      "indexValue": 1039.7,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20180801,
+      "indexValue": 1039.6,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20180901,
+      "indexValue": 1040.2,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20181001,
+      "indexValue": 1042,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20181101,
+      "indexValue": 1039.4,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20181201,
+      "indexValue": 1036.7,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20190101,
+      "indexValue": 1034,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20190201,
+      "indexValue": 1038,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20190301,
+      "indexValue": 1043.5,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20190401,
+      "indexValue": 1045.5,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20190501,
+      "indexValue": 1048.7,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20190601,
+      "indexValue": 1048.4,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20190701,
+      "indexValue": 1043,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": -0.5
+    },
+    {
+      "indexDate": 20190801,
+      "indexValue": 1042.9,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20190901,
+      "indexValue": 1041.7,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20191001,
+      "indexValue": 1039.4,
+      "changeRateVorjahresmonat": -0.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20191101,
+      "indexValue": 1038,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20191201,
+      "indexValue": 1038.3,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20200101,
+      "indexValue": 1036.1,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20200201,
+      "indexValue": 1037.4,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20200301,
+      "indexValue": 1038.1,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20200401,
+      "indexValue": 1034.4,
+      "changeRateVorjahresmonat": -1.1,
+      "changeRateVormonat": -0.4
+    },
+    {
+      "indexDate": 20200501,
+      "indexValue": 1034.8,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20200601,
+      "indexValue": 1035,
+      "changeRateVorjahresmonat": -1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20200701,
+      "indexValue": 1033.4,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20200801,
+      "indexValue": 1033.8,
+      "changeRateVorjahresmonat": -0.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20200901,
+      "indexValue": 1033.4,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20201001,
+      "indexValue": 1033.5,
+      "changeRateVorjahresmonat": -0.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20201101,
+      "indexValue": 1030.9,
+      "changeRateVorjahresmonat": -0.7,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20201201,
+      "indexValue": 1029.9,
+      "changeRateVorjahresmonat": -0.8,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20210101,
+      "indexValue": 1030.4,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20210201,
+      "indexValue": 1032.1,
+      "changeRateVorjahresmonat": -0.5,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20210301,
+      "indexValue": 1035.6,
+      "changeRateVorjahresmonat": -0.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20210401,
+      "indexValue": 1037.8,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20210501,
+      "indexValue": 1040.5,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20210601,
+      "indexValue": 1041.3,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20210701,
+      "indexValue": 1040.4,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20210801,
+      "indexValue": 1042.9,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20210901,
+      "indexValue": 1043.1,
+      "changeRateVorjahresmonat": 0.9,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20211001,
+      "indexValue": 1046.3,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20211101,
+      "indexValue": 1046.7,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20211201,
+      "indexValue": 1045.6,
+      "changeRateVorjahresmonat": 1.5,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20220101,
+      "indexValue": 1047.4,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20220201,
+      "indexValue": 1054.3,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 20220301,
+      "indexValue": 1060.3,
+      "changeRateVorjahresmonat": 2.4,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20220401,
+      "indexValue": 1064.2,
+      "changeRateVorjahresmonat": 2.5,
+      "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20220501,
+      "indexValue": 1071.1,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 20220601,
+      "indexValue": 1076.5,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.5
+    },
+    {
+      "indexDate": 20220701,
+      "indexValue": 1076.1,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20220801,
+      "indexValue": 1079,
+      "changeRateVorjahresmonat": 3.5,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20220901,
+      "indexValue": 1077.1,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20221001,
+      "indexValue": 1077.6,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20221101,
+      "indexValue": 1077.7,
+      "changeRateVorjahresmonat": 3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20221201,
+      "indexValue": 1075.3,
+      "changeRateVorjahresmonat": 2.8,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20230101,
+      "indexValue": 1081.8,
+      "changeRateVorjahresmonat": 3.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20230201,
+      "indexValue": 1089.9,
+      "changeRateVorjahresmonat": 3.4,
+      "changeRateVormonat": 0.7
+    },
+    {
+      "indexDate": 20230301,
+      "indexValue": 1091.5,
+      "changeRateVorjahresmonat": 2.9,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20230401,
+      "indexValue": 1091.5,
+      "changeRateVorjahresmonat": 2.6,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20230501,
+      "indexValue": 1094.2,
+      "changeRateVorjahresmonat": 2.2,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20230601,
+      "indexValue": 1094.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20230701,
+      "indexValue": 1093.4,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20230801,
+      "indexValue": 1095.7,
+      "changeRateVorjahresmonat": 1.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20230901,
+      "indexValue": 1094.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20231001,
+      "indexValue": 1095.9,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20231101,
+      "indexValue": 1093.2,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20231201,
+      "indexValue": 1093.8,
+      "changeRateVorjahresmonat": 1.7,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20240101,
+      "indexValue": 1095.6,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20240201,
+      "indexValue": 1102.6,
+      "changeRateVorjahresmonat": 1.2,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20240301,
+      "indexValue": 1102.9,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20240401,
+      "indexValue": 1106.4,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20240501,
+      "indexValue": 1109.5,
+      "changeRateVorjahresmonat": 1.4,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20240601,
+      "indexValue": 1109.5,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20240701,
+      "indexValue": 1107.5,
+      "changeRateVorjahresmonat": 1.3,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20240801,
+      "indexValue": 1107.3,
+      "changeRateVorjahresmonat": 1.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20240901,
+      "indexValue": 1104.1,
+      "changeRateVorjahresmonat": 0.8,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20241001,
+      "indexValue": 1102.7,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20241101,
+      "indexValue": 1101.2,
+      "changeRateVorjahresmonat": 0.7,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20241201,
+      "indexValue": 1100.6,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20250101,
+      "indexValue": 1100,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20250201,
+      "indexValue": 1106.2,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20250301,
+      "indexValue": 1106.7,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20250401,
+      "indexValue": 1106.8,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20250501,
+      "indexValue": 1108.3,
+      "changeRateVorjahresmonat": -0.1,
+      "changeRateVormonat": 0.1
+    },
+    {
+      "indexDate": 20250601,
+      "indexValue": 1110.3,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20250701,
+      "indexValue": 1109.9,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20250801,
+      "indexValue": 1109,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20250901,
+      "indexValue": 1106.6,
+      "changeRateVorjahresmonat": 0.2,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20251001,
+      "indexValue": 1103.8,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.3
+    },
+    {
+      "indexDate": 20251101,
+      "indexValue": 1101.5,
+      "changeRateVorjahresmonat": 0,
+      "changeRateVormonat": -0.2
+    },
+    {
+      "indexDate": 20251201,
+      "indexValue": 1101.3,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20260101,
+      "indexValue": 1100.7,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": -0.1
+    },
+    {
+      "indexDate": 20260201,
+      "indexValue": 1107.6,
+      "changeRateVorjahresmonat": 0.1,
+      "changeRateVormonat": 0.6
+    },
+    {
+      "indexDate": 20260301,
+      "indexValue": 1110.2,
+      "changeRateVorjahresmonat": 0.3,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20260401,
+      "indexValue": 1113.5,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.3
+    },
+    {
+      "indexDate": 20260501,
+      "indexValue": 1115.2,
+      "changeRateVorjahresmonat": 0.6,
+      "changeRateVormonat": 0.2
+    },
+    {
+      "indexDate": 20260601,
+      "indexValue": 1115.4,
+      "changeRateVorjahresmonat": 0.5,
+      "changeRateVormonat": 0
+    },
+    {
+      "indexDate": 20260701,
+      "indexValue": 1113.8,
+      "changeRateVorjahresmonat": 0.4,
+      "changeRateVormonat": -0.1
+    }
+  ]
+}
