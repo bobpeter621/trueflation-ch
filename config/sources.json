@@ -119,6 +119,21 @@
       },
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
     },
+    "lik-medienmitteilungen": {
+      "label": "BFS LIK Medienmitteilungen-Feed (Drift-Referenz, US 1.14)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/landesindex-konsumentenpreise/detailresultate/jcr:content/root/main/section/container/tabs_1838835756/item_3/ws_parametrized_list.model.json",
+      "type": "json",
+      "frequency": "monthly",
+      "purpose": "Unabhängige zweite Quelle für Drift-Erkennung (US 1.14) — Titel jeder Medienmitteilung nennt die publizierte Monatsveränderung, abgeglichen gegen die selbst berechnete Änderungsrate aus dem LIK-App-State-Endpunkt. Absicherung gegen dessen Fragilität (kein API-Vertrag).",
+      "checkStrategy": "best-effort",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Interner CMS-Endpunkt der BFS-Webseite (JSON-Backend für eine Webkomponente), keine dokumentierte API. Bei Nichtverfügbarkeit: Drift-Check wird übersprungen, kein Fehlschlag der Haupt-Pipeline (siehe drift-check.mjs)."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/landesindex-konsumentenpreise/detailresultate.html"
+    },
     "snb-m2": {
       "label": "SNB Geldmenge M2",
       "status": "verified",
