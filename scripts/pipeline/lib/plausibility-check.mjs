@@ -64,11 +64,12 @@ export function checkPlausibility({
   // Prüfart 1 — Bereichsprüfung
   if (newValue < absoluteRange.min || newValue > absoluteRange.max) {
     const message =
-      `⚠️ Plausi-Check FEHLGESCHLAGEN: ${sourceKey}\n` +
+      `⚠️ Plausi-Check FEHLGESCHLAGEN: ${sourceKey}\n\n` +
       `Bereichsprüfung: Wert ${newValue} liegt ausserhalb [${absoluteRange.min}, ${absoluteRange.max}]\n` +
-      `Alter Wert: ${oldValue}\n` +
-      `Quelle: ${sourceUrl}\n` +
-      `Freigabe erforderlich, bevor der Wert publiziert wird.`;
+      `Alter Wert: ${oldValue}\n\n` +
+      `Quelle:\n${sourceUrl}\n\n` +
+      `Wert wurde zurückgehalten, NICHT publiziert.\n` +
+      `Antworte mit "JA ${sourceKey}" zum Freigeben oder "NEIN ${sourceKey}" zum Verwerfen.`;
     notifyFn(message);
     console.error(`[plausi/${sourceKey}] Bereichsprüfung fehlgeschlagen — Eskalation gesendet.`);
     return { status: 'range-violation', changePercent };
@@ -84,12 +85,14 @@ export function checkPlausibility({
       return { status: 'expected-jump', changePercent };
     }
     const message =
-      `⚠️ Plausi-Check: ${sourceKey}\n` +
+      `⚠️ Plausi-Check: ${sourceKey}\n\n` +
       `Alter Wert: ${oldValue}\n` +
       `Neuer Wert: ${newValue}\n` +
-      `Abweichung: ${changePercent.toFixed(2)}% (Schwellwert: ${maxChangeRatePercent}%)\n` +
-      `Quelle: ${sourceUrl}\n` +
-      `Freigabe erforderlich — ist das ein echtes Ereignis oder ein Datenfehler?`;
+      `Abweichung: ${changePercent.toFixed(2)}% (Schwellwert: ${maxChangeRatePercent}%)\n\n` +
+      `Quelle:\n${sourceUrl}\n\n` +
+      `Wert wurde zurückgehalten, NICHT publiziert.\n` +
+      `Ist das ein echtes Ereignis oder ein Datenfehler?\n` +
+      `Antworte mit "JA ${sourceKey}" zum Freigeben oder "NEIN ${sourceKey}" zum Verwerfen.`;
     notifyFn(message);
     console.error(`[plausi/${sourceKey}] Sprungprüfung fehlgeschlagen (${changePercent.toFixed(2)}% > ${maxChangeRatePercent}%) — Eskalation gesendet.`);
     return { status: 'jump-violation', changePercent };
