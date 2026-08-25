@@ -1,11 +1,13 @@
 {
   "_comment": "Prüfsummen über publizierte Datenstände (US 5.5). SHA-256 über Dateiinhalt, exkl. volatiler Metafelder (importedAt etc.). Bei jedem Pipeline-Lauf neu geschrieben, versioniert im Git-Verlauf.",
-  "generatedAt": "2026-08-25T18:24:14.546Z",
+  "generatedAt": "2026-08-25T18:54:00.631Z",
   "checksums": {
     "data/lik/major-groups-monthly.json": "820ba93b355ba5ad9f1f4b567bf1e6b7c998c24f092bb986ab720845bd3fd4c8",
     "data/lik/major-groups-yearly.json": "083a2e40650dd5d830fdd58aa73f4c81b1adf8b61a47cbd881087422814806b7",
     "data/lik/total-index-monthly.json": "675c0f169b60121a55b0c75dc0ac3d231ecbd0da72ab7b90079711527de28d7a",
     "data/lik/total-index-yearly.json": "cf1bfaa567157e159c703f2e19b7ce080f88b5b30ce2544d38fc7f761dc252ce",
-    "data/snb-m2/m2-monthly.json": "2bfe07e47a263054b8b60d27edf78771a16a387c0be85a1ee5ebc44a9e6348ec"
+    "data/snb-leitzins/leitzins-current.json": "025f8a0d51cc8d0d2c018e5b8d720ec23f25561b291fd47aabff8ba66190dc7b",
+    "data/snb-leitzins/leitzins-historical.json": "3ccbb673d002ec2003c05408f433b80588980c2206e4d799ca7973d3471bc78b",
+    "data/snb-m2/m2-monthly.json": "e686a0bed0fbfc59618f9f2de7aa771125e321f6dbf2596dff6d0178ca8f3662"
   }
 }

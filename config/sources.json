@@ -189,19 +189,76 @@
       },
       "sourceDocPage": "https://data.snb.ch/"
     },
-    "snb-leitzins": {
-      "label": "SNB Leitzins-Historie",
-      "status": "unverified",
-      "verifiedDate": null,
-      "url": null,
+    "snb-leitzins-current": {
+      "label": "SNB Leitzins ab 13.06.2019",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snbgwdzid/data/csv/de?dimSel=D0(LZ)",
       "type": "csv",
       "frequency": "event-based",
-      "fragility": {
-        "isDocumentedApi": null,
-        "note": "OFFEN (25.08.2026, timeboxed abgebrochen wie V2/KVPI): Der Cube-Name für die Leitzins-/Zinssatz-Historie auf data.snb.ch konnte NICHT ermittelt werden. Geprüft: /api/cube/snbmonagg (funktioniert, ist aber Geldmenge, nicht Zins) diente als Muster für über 20 Cube-Namen-Vermutungen (snbpolzin, snbchpolzin, snbzinssaetze, snbleitzinsen, zire, etc.) — alle 404. Kompilierter Angular-Bundle des Datenportals (main-*.js) enthält keine als Klartext auffindbaren Cube-IDs (wahrscheinlich dynamisch nachgeladen/obfuskiert). SNB-Webseiten zu Leitzins/Interest Rates lieferten wiederholt 404 (evtl. geänderte URL-Struktur seit letzter Verifikation). KEIN Rateweitermachen — V6 (zweiter Teil) bleibt offen. Nutzt NICHT snbmonagg mit falscher Dimension als Ersatz.",
-        "nextSteps": "(1) SNB-Support direkt anfragen (analog BFS-Fachapp-Heuristik: gibt es eine dedizierte Publikation/PDF mit dem exakten Cube-Namen?). (2) datenportal-Suchfunktion im Browser mit echtem JS-Rendering prüfen (in dieser Umgebung nicht möglich, nur curl verfügbar). (3) Offizielle SNB-Statistik-Publikation 'Zinssätze, Renditen und Devisenkurse' nach eingebetteten Tabellenverweisen durchsuchen."
+      "dimensionSelection": {
+        "d0": "LZ (SNB-Leitzins)",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snbgwdzid/dimensions/de",
+        "otherAvailableD0Values": "SARON, ENG (Engpassfinanzierungsfazilität), ZIGBL/ZIG (Sichtguthaben-Zinssätze), ZIABP, FREI"
       },
-      "sourceDocPage": "https://data.snb.ch/"
+      "discoveryMethod": "SNB-Discovery-Heuristik (siehe requirements.md Abschnitt 3) — gefunden über Betreiber-Hinweis auf Publikationsset 'Zinssätze und Devisenkurse', nicht durch Cube-Namen-Raten. Frühere Rateversuche (snbpolzin, snbchpolzin, etc.) waren alle 404.",
+      "coverage": {
+        "start": "2019-06-13",
+        "note": "Live verifiziert: erster Wert -0.75 am 2019-06-13, davor NULL-Werte (Instrument existierte noch nicht). Verlauf bis heute nachvollzogen: -0.75 (2019-06-13) -> -0.25 (2022-06-17) -> 0.5 (2022-09-23) -> 1.0 (2022-12-16) -> 1.5 (2023-03-24) -> 1.75 (2023-06-23) -> 1.5 (2024-03-22) -> 1.25 (2024-06-21) -> 1.0 (2024-09-27) -> 0.5 (2024-12-13) -> 0.25 (2025-03-21) -> 0 (2025-06-20)."
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "chartRendering": {
+        "_comment": "VERBINDLICH (Betreiber 25.08.2026): NICHT mit snb-leitzins-historical zu einer nahtlosen Reihe verketten — unterschiedliche Instrumente. Als Stufenlinie mit sichtbarer Bruchstellen-Kennzeichnung darstellen (Requirements 2.4).",
+        "displayAs": "step-line",
+        "interpolate": false
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API, dokumentierte Struktur (dimensions-Endpoint bestätigt Werte, nicht geraten)."
+      },
+      "sourceDocPage": "https://data.snb.ch/de/publishingSet/A"
+    },
+    "snb-leitzins-historical": {
+      "label": "SNB Libor-Zielband (Übergangsperiode 2000-2019)",
+      "status": "partial",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snboffzisa/data/csv/de?dimSel=D0(UG0)",
+      "type": "csv",
+      "frequency": "event-based",
+      "dimensionSelection": {
+        "d0": "UG0 (untere Grenze SNB-Zielband für Dreimonats-Libor in CHF) — NICHT LZ",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snboffzisa/dimensions/de",
+        "note": "KORRIGIERT nach Live-Prüfung (25.08.2026): 'D0(LZ)' bei diesem Cube liefert NICHT die historische Diskont-/Lombardsatz-Reihe, sondern denselben aktuellen SNB-Leitzins wie snbgwdzid (getestet: 13 Monatswerte 2025-07 bis 2026-07, durchgehend 0 — passt exakt zum aktuellen Leitzinsstand, nicht zu einer historischen Reihe). Die tatsächlich relevante Dimension ist 'UG0' (untere Grenze Libor-Zielband) bzw. 'OG0' (obere Grenze) — das deckt die Requirements-Periode '2000-2019' ab. Cube enthält auch Zinssätze anderer Zentralbanken (Fed, EZB, Bank of England, Bank of Japan) unter separaten D0-Gruppen — nicht relevant für dieses Projekt."
+      },
+      "discoveryMethod": "SNB-Discovery-Heuristik, gefunden zusammen mit snbgwdzid (siehe oben) — Betreiber-Hinweis, kein Raten.",
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG VERIFIZIERT",
+        "note": "Live verifiziert (25.08.2026) mit Dimension UG0: Reihe beginnt 2000-01 (erster Wert 1.25), endet 2019-05 (letzter Wert vorhanden), ab 2019-06 leer — passt lückenlos zum SNB-Leitzins-Start (13.06.2019, snb-leitzins-current). Damit ist die Libor-Zielband-Periode (2000-2019) VOLLSTÄNDIG abgedeckt. OFFEN BLEIBT: die Diskont-/Lombardsatz-Periode VOR 2000 (Requirements 2.4 nennt 'bis ~2000') — dieser Cube (snboffzisa) enthält laut Dimensionsstruktur KEIN separates Diskont-/Lombardsatz-Item (nur LZ und UG0/OG0-Libor-Zielband, keine dritte Kategorie). Vermutung, nicht bestätigt: entweder existiert die Vor-2000-Reihe in einem dritten, noch nicht gefundenen Cube, oder die Requirements-Annahme 'bis ~2000' bezieht sich auf einen kürzeren Zeitraum als angenommen. NICHT weiter geraten — an Betreiber gemeldet (siehe Chat 25.08.2026)."
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "chartRendering": {
+        "displayAs": "step-line",
+        "interpolate": false
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API. ABER: Deckung für die Vor-2019-Periode noch nicht abschliessend verifiziert (siehe coverage.note) — nicht produktiv nutzen, bevor das geklärt ist."
+      },
+      "sourceDocPage": "https://data.snb.ch/de/publishingSet/A"
     }
   },
   "notes": [

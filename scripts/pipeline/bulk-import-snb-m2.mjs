@@ -95,8 +95,14 @@ async function fetchSnbM2(sourceCfg) {
     console.log(`[fixture] Lade lokale Fixture: ${fixturePath} (kein Live-Abruf, US 1.16)`);
     return readFileSync(path.resolve(REPO_ROOT, fixturePath), 'utf-8');
   }
-  console.log(`[live] GET gegen: ${sourceCfg.url}`);
-  const res = await fetchWhitelisted(sourceCfg.url, {
+  // BUGFIX (25.08.2026): ohne fromDate/toDate liefert die SNB-API nur ein
+  // kurzes Default-Fenster (13 Monate) statt der vollen Historie. Live
+  // verifiziert: früheste verfügbare Daten ~1980. fetchWhitelisted erlaubt
+  // seit diesem Fix zusätzliche fromDate/toDate-Parameter mit validem
+  // Datumsformat (siehe lib/fetch-whitelisted.mjs).
+  const url = `${sourceCfg.url}&fromDate=1980-01-01&toDate=${new Date().toISOString().slice(0, 10)}`;
+  console.log(`[live] GET gegen: ${url}`);
+  const res = await fetchWhitelisted(url, {
     headers: {
       'User-Agent': 'trueflation.ch-bulk-import/1.0 (+https://github.com/bobpeter621/trueflation-ch)',
       'Accept-Encoding': 'gzip, deflate, br',
