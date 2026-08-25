@@ -9,6 +9,15 @@
       "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
       "type": "json-app-state",
       "frequency": "monthly",
+      "importedBasis": {
+        "_comment": "ENTSCHEIDUNG (Betreiber, 25.08.2026): Der Endpunkt liefert 13 Basisjahre derselben Kurve, unterschiedlich skaliert (z.B. heute ≈106.9 auf Basis 12.2020=100, ≈1300 auf Basis 06.1914=100). Nur EINE Basisreihe wird importiert und gespeichert — die übrigen 12 sind redundant, da das Chart ohnehin gemäss Requirements 2.0 rebasiert und der Kaufkraft-Rechner mit basisunabhängigen Verhältnissen rechnet.",
+        "basisName": "12.2020=100",
+        "sourceField": "monthlySeries[] mit basis == '12.2020=100'"
+      },
+      "rebasingEvent": {
+        "_comment": "PLANBARES EREIGNIS, KEIN STÖRFALL (siehe US 1.8-Ergänzung in requirements.md). Das BFS rebasiert den LIK periodisch (13 Basisjahre in der aktuellen Quelle = 13-mal geschehen, zuletzt vermutlich 12.2025=100 in Vorbereitung). Bei neuer Basis stellt die Pipeline um und verkettet die Historie neu — analog 2.2a. Die Plausi-Prüfung darf dabei NICHT eskalieren.",
+        "detectionStrategy": "Prüfen ob importedBasis.basisName noch unter bases[] im Response vorkommt; falls eine neuere Basis mit höherem basisDate existiert, Rebasing-Vorgang auslösen statt stumpf weiterzuschreiben."
+      },
       "publicationWindow": {
         "_comment": "LIK wird i.d.R. Anfang des Folgemonats publiziert (siehe Medienmitteilungen-Historie).",
         "dayOfMonthStart": 1,
@@ -16,13 +25,34 @@
       },
       "checkStrategy": "conditional-get",
       "conditionalHeader": "Last-Modified",
-      "maxChecksPerDay": 1,
-      "maxChecksPerHour": 5,
-      "plausibility": {
-        "absoluteRangeMin": 50,
-        "absoluteRangeMax": 500,
-        "monthlyChangeRatePercentMax": 2.0,
-        "_comment": "Basis: LIK/Trueflation ~1-2%/Monat (US 1.7). Bekannte Ausnahme: keine für LIK direkt (Ausnahmen betreffen Trueflation-Korrekturfaktoren, nicht LIK selbst)."
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5,
+        "_comment": "KORREKTUR (Betreiber, 25.08.2026): maxSuccessfulChecksPerDay zählt NUR erfolgreich abgeschlossene Prüfzyklen (egal ob 200 oder 304). Fehlgeschlagene Verbindungsversuche (Netzwerkfehler, Timeout, 5xx) zählen NICHT gegen dieses Tagesbudget — sonst würde ein einzelner Verbindungsabbruch die Pipeline 24h blockieren (Widerspruch zu US 1.4, das 3 Retries mit Backoff vorsieht). maxRetryBurstPerHour ist reiner Burst-Schutz für den Retry-Pfad, nicht für reguläre Prüfzyklen — bei maxSuccessfulChecksPerDay=1 wäre ein Stunden-Limit auf den Normalpfad ohnehin wirkungslos."
+      },
+      "validation": {
+        "_comment": "GETRENNTE VALIDIERUNGSPROFILE (Betreiber-Korrektur 25.08.2026): Die laufende Sprungprüfung (incremental) ist für den Bulk-Import (US 1.12) ungeeignet — historische Monatswerte (Weltkriegsinflation, Ölkrisen) überschreiten 2%/Monat routinemässig; bei ~1350 Monaten würde das dutzendfach eskalieren und den Schutzmechanismus durch Gewöhnung entwerten (US 1.7).",
+        "bulk": {
+          "purpose": "Einmaliger Bulk-Import (US 1.12) der kompletten Historie ab 1914 — KEINE Sprungrate-Prüfung.",
+          "checks": [
+            "completeness: keine Lücken in der Monatsfolge (jeder Monat zwischen oldestMonthlyDate und newestMonthlyDate der Basisreihe vorhanden)",
+            "monotonicDates: aufsteigende, eindeutige Datumsfolge, keine Duplikate",
+            "referencePointMatch: bekannter Ankerwert muss exakt oder mit vernachlässigbarer Rundungstoleranz stimmen, z.B. Dezember 2025 = 106.9 auf Basis 12.2020=100",
+            "roughMonotonicTrend: Index über den Gesamtzeitraum überwiegend steigend (grobe Plausibilität, kein harter Schwellwert)"
+          ]
+        },
+        "incremental": {
+          "purpose": "Laufender Betrieb — neu eintreffende Werte nach Bulk-Import.",
+          "absoluteRange": {
+            "status": "pending-derivation",
+            "note": "NICHT geschätzt (50/500 verworfen — bei Basis 12.2020=100 ist der reale Bereich enger: 1914 liegt bei ≈7, heute bei ≈107). Nach Abschluss des Bulk-Imports aus den echten Daten der importierten Basisreihe ableiten: tatsächliches Min/Max, dann Puffer (Richtwert: halbes Min bis fünffaches Max). Wert und Herleitung hier nachtragen, sobald Bulk-Import durchgelaufen ist.",
+            "purpose": "Nur Grobschutz gegen offensichtlichen Unsinn (verrutschte Spalte, negativer Wert, Datum als Zahl gelesen) — NICHT die eigentliche Prüfung. Die leisten monthlyChangeRatePercentMax (laufender Betrieb) und referencePointMatch (Bulk-Import)."
+          },
+          "monthlyChangeRatePercentMax": 2.0,
+          "_comment": "FREIGEGEBEN (Betreiber, 25.08.2026): 2.0% korrekt für laufenden Betrieb (US 1.7: 'LIK/Trueflation ~1-2%/Monat'). Gilt NICHT für den Bulk-Import (siehe validation.bulk oben) und NICHT für Rebasing-Ereignisse (siehe rebasingEvent oben, US 1.8-Ergänzung)."
+        }
       },
       "fragility": {
         "isDocumentedApi": false,
@@ -31,25 +61,30 @@
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
     },
     "kvpi": {
-      "label": "BFS/BAG Krankenversicherungsprämien-Index (KVPI) — Korrekturfaktor",
-      "status": "partial",
-      "verifiedDate": "2026-08-25",
+      "label": "BFS/BAG Krankenversicherungsprämien — Feld unklarer Bedeutung aus LIK-App-Kontext",
+      "status": "unverified",
+      "verifiedDate": null,
       "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-kvpi-app-state/master",
       "type": "json-app-state",
       "frequency": "yearly",
       "checkStrategy": "conditional-get",
       "conditionalHeader": "Last-Modified",
-      "maxChecksPerDay": 1,
-      "maxChecksPerHour": 5,
-      "plausibility": {
-        "absoluteRangeMin": 0,
-        "absoluteRangeMax": 100,
-        "yearlyChangeRatePercentMax": 10.0,
-        "_comment": "Basis: KVPI ~10%/Jahr (US 1.7)."
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "validation": {
+        "incremental": {
+          "absoluteRange": null,
+          "yearlyChangeRatePercentMax": null,
+          "_comment": "KEINE SCHWELLWERTE GESETZT (Betreiber-Korrektur 25.08.2026): Der beobachtete Wert (korrekturFaktor=27.38) ist mit hoher Wahrscheinlichkeit NICHT der KVPI-Teilindex Grundversicherung — dieser steht real auf Basis 1999=100 heute bei über 250. 27.38 sieht eher wie ein Gewichtungs- oder Beitragsfaktor aus, den die LIK-App intern für ihren Indexierungsrechner nutzt. V2 gilt damit als NICHT verifiziert. Keine Schwellwerte auf eine Grösse setzen, deren Bedeutung ungeklärt ist."
+        }
       },
       "fragility": {
         "isDocumentedApi": false,
-        "note": "V2 noch NICHT abgeschlossen (siehe Requirements Abschnitt 12). Dieser Endpunkt liefert nur einen fertigen Jahres-Korrekturfaktor (korrekturFaktor, durchschnittlicherEinfluss, vorjahr), KEINE historische Teilindex-Zeitreihe Grundversicherung. Nicht für 2.2b-Formel produktiv nutzen, bevor V2 final geklärt ist."
+        "note": "V2 NICHT abgeschlossen (siehe Requirements Abschnitt 12). Endpunkt liefert nur drei Felder (korrekturFaktor, durchschnittlicherEinfluss, vorjahr) — Bedeutung ungeklärt, mit grosser Wahrscheinlichkeit kein KVPI-Index-Wert. Nicht für 2.2b-Formel produktiv nutzen. V2 blockiert P3, NICHT P1 (siehe Zuordnungstabelle Requirements Abschnitt 12)."
       },
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
     }
@@ -57,6 +92,7 @@
   "notes": [
     "Weitere Quellen (SNB M2, SNB Leitzins, Mietpreisindex, Strukturerhebung, HABE, Twelve Data) werden erst nach jeweiliger Verifikation (V3-V8) hier ergänzt — kein Eintrag ohne verifizierten Endpunkt.",
     "SSRF-Schutz (US 1.6): Pipeline-Code darf ausschliesslich URLs aus diesem File abrufen. Kein dynamisches Zusammensetzen von Quellen-URLs aus Nutzereingaben oder Konfigurationswerten, die nicht aus dieser Datei stammen.",
-    "Admin-Zugriff (US 1.9): Diese Datei ist NICHT über einen Runtime-Endpoint änderbar. Jede Änderung läuft über Git-Commit + Agent-Council-Review (siehe AGENTS.md) — das erfüllt die Anforderung 'authentifiziert' für v1, da kein öffentlich erreichbarer Schreibzugriff existiert."
+    "Admin-Zugriff (US 1.9): Diese Datei ist NICHT über einen Runtime-Endpoint änderbar. Jede Änderung läuft über Git-Commit + Agent-Council-Review (siehe AGENTS.md) — das erfüllt die Anforderung 'authentifiziert' für v1, da kein öffentlich erreichbarer Schreibzugriff existiert.",
+    "Negativtest-Pflicht (P1-DoD): Die Pipeline-Implementierung muss nachweisen, dass ein Abruf gegen eine NICHT in diesem File gelistete URL abgelehnt wird — Negativtest, nicht nur Positivtest gegen erlaubte URLs."
   ]
 }
