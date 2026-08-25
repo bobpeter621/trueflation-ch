@@ -92,12 +92,13 @@
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
     },
     "kvpi": {
-      "label": "BFS/BAG Krankenversicherungsprämien — Feld unklarer Bedeutung aus LIK-App-Kontext",
+      "label": "BFS/BAG Krankenversicherungsprämien — Feld unklarer Bedeutung aus LIK-App-Kontext (NICHT verwenden, siehe kvpi-premium-index)",
       "status": "unverified",
       "verifiedDate": null,
       "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-kvpi-app-state/master",
       "type": "json-app-state",
       "frequency": "yearly",
+      "v2FinalFinding": "V2 GELÖST (Betreiber, 25.08.2026): Der KVPI-Teilindex Grundversicherung ist KEINE eigenständige Messung — BFS führt für die Grundversicherung keine eigene KVPI-Erhebung durch, sondern übernimmt die BAG-Schätzung der Durchschnittsprämien-Entwicklung 1:1. O-Ton BFS-Methodik: 'Eine spezifische KVPI-Erhebung wird für den Grundversicherungsbereich nicht durchgeführt.' Konsequenz: die Suche nach einem isolierten KVPI-Teilindex ist eingestellt — der Weg über BAG-Durchschnittsprämien (siehe Quelle 'kvpi-premium-index' unten) ist NICHT der Fallback, sondern die PRIMÄRQUELLE, eine Verarbeitungsstufe weiter oben. Diese kvpiDataUrl-Quelle bleibt registriert, aber explizit NICHT als Prämienindex nutzen — der Wert 27.38 deutet auf einen internen Gewichtungsfaktor der LIK-App hin, nicht auf einen Index.",
       "checkStrategy": "conditional-get",
       "conditionalHeader": "Last-Modified",
       "checkBudget": {
@@ -118,6 +119,47 @@
         "note": "V2 NICHT abgeschlossen (siehe Requirements Abschnitt 12). Endpunkt liefert nur drei Felder (korrekturFaktor, durchschnittlicherEinfluss, vorjahr) — Bedeutung ungeklärt, mit grosser Wahrscheinlichkeit kein KVPI-Index-Wert. Nicht für 2.2b-Formel produktiv nutzen. V2 blockiert P3, NICHT P1 (siehe Zuordnungstabelle Requirements Abschnitt 12)."
       },
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    },
+    "kvpi-premium-index": {
+      "label": "BAG-Prämienindex (Ersatz für KVPI-Teilindex Grundversicherung, V2 final gelöst)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://opendata.bagnet.ch/?r=/download&path=L1ByYWVtaWVuL1Byw6RtaWVuX0NILnhsc3g%3D",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "v2FinalFinding": "V2 GELÖST (Betreiber, 25.08.2026): Der KVPI-Teilindex Grundversicherung ist keine eigenständige BFS-Messung — BFS übernimmt für die Grundversicherung 1:1 die BAG-Schätzung der Durchschnittsprämien-Entwicklung ('Eine spezifische KVPI-Erhebung wird für den Grundversicherungsbereich nicht durchgeführt'). Diese Quelle IST damit die Primärquelle für die Prämien-Korrekturkomponente (2.2b), keine Fallback-Ersatzlösung.",
+      "extractionMethod": {
+        "sourceFile": "Prämien_CH.xlsx (opendata.swiss Datensatz 'health-insurance-premiums', BAG) ODER strukturierter über das jährliche KVSTAT-ZIP-Archiv (bag.admin.ch, Statistik der obligatorischen Krankenversicherung), Tabelle 3.01 'Mittlere Prämien je versicherte Person nach Kanton ab 1996', Sheet '301d', Zeile 'CH'.",
+        "note": "Beide Quellen (opendata.swiss-Direktdatei und KVSTAT-ZIP) enthalten dieselbe BAG-Kennzahl. KVSTAT-ZIP bevorzugt für die Pipeline, da es die bereits von BAG berechnete 'CH'-Aggregatzeile enthält (keine eigene Gewichtung über Kantone/Tarife nötig — das würde gegen Requirements-Regel 3 'keine erfundenen Zahlen' verstossen, da BAG die korrekte Versicherten-Gewichtung intern vornimmt, die wir nicht replizieren können ohne Rohdaten zu Versichertenbeständen pro exakter Tarifkombination)."
+      },
+      "methodologicalDecision": {
+        "_comment": "BETREIBER-ENTSCHEIDUNG (25.08.2026): 'mittlere Prämie pro versicherte Person' (ALLE Versicherten inkl. Kinder), NICHT die Erwachsenen-Variante.",
+        "chosenMetric": "Mittlere Prämie je versicherte Person, alle Versicherten (CH 2024 = 4'278 CHF)",
+        "rejectedAlternative": "Mittlere Prämie Erwachsene ab 26 Jahren (CH 2024 = 5'081 CHF) — abgelehnt",
+        "reasoning": "Das HABE-Gewicht ist ein Haushaltsbudget-Anteil, und Haushalte schliessen Kinder ein. Die Erwachsenen-Variante würde die Belastung überzeichnen."
+      },
+      "baseYear": 2010,
+      "coverage": {
+        "start": 1996,
+        "end": 2024,
+        "note": "Live verifiziert 25.08.2026: 29 Jahreswerte, lückenlos 1996-2024, Basisjahr 2010 = 2834.50 CHF (Index 100)."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "XLSX-Download, keine strukturierte API. Neue Jahreswerte erscheinen typischerweise im Herbst (Prämiengenehmigung fürs Folgejahr) — Struktur (Sheetname '301d', Zeile 'CH') bei jedem Import per Datenvertrags-Test prüfen, nicht blind übernehmen."
+      },
+      "validation": {
+        "bulk": {
+          "expectedStart": 1996,
+          "minExpectedPoints": 25,
+          "_comment": "Abdeckungsprüfung analog Betreiber-Vorgabe nach dem M2-Fall ('ein erfolgreicher Import sagt wenig aus') — expectedStart und minExpectedPoints hart geprüft, nicht nur 'Datei liess sich öffnen'."
+        }
+      },
+      "knownLimitations": [
+        "Bruttoprämien — Prämienverbilligungen NICHT abgezogen. BFS schätzt den Effekt auf ca. 0.5 Prozentpunkte pro Jahr Prämienwachstum-Reduktion. Auf Methodik-Seite auszuweisen (US 4.1)."
+      ],
+      "sourceDocPage": "https://opendata.swiss/de/dataset/health-insurance-premiums"
     },
     "lik-medienmitteilungen": {
       "label": "BFS LIK Medienmitteilungen-Feed (Drift-Referenz, US 1.14)",
