@@ -173,6 +173,20 @@
         "note": "Offizielle SNB-Cube-API (data.snb.ch), im Gegensatz zum LIK-Endpunkt eine dokumentierte, stabile Schnittstelle."
       },
       "sourceDocPage": "https://data.snb.ch/"
+    },
+    "snb-leitzins": {
+      "label": "SNB Leitzins-Historie",
+      "status": "unverified",
+      "verifiedDate": null,
+      "url": null,
+      "type": "csv",
+      "frequency": "event-based",
+      "fragility": {
+        "isDocumentedApi": null,
+        "note": "OFFEN (25.08.2026, timeboxed abgebrochen wie V2/KVPI): Der Cube-Name für die Leitzins-/Zinssatz-Historie auf data.snb.ch konnte NICHT ermittelt werden. Geprüft: /api/cube/snbmonagg (funktioniert, ist aber Geldmenge, nicht Zins) diente als Muster für über 20 Cube-Namen-Vermutungen (snbpolzin, snbchpolzin, snbzinssaetze, snbleitzinsen, zire, etc.) — alle 404. Kompilierter Angular-Bundle des Datenportals (main-*.js) enthält keine als Klartext auffindbaren Cube-IDs (wahrscheinlich dynamisch nachgeladen/obfuskiert). SNB-Webseiten zu Leitzins/Interest Rates lieferten wiederholt 404 (evtl. geänderte URL-Struktur seit letzter Verifikation). KEIN Rateweitermachen — V6 (zweiter Teil) bleibt offen. Nutzt NICHT snbmonagg mit falscher Dimension als Ersatz.",
+        "nextSteps": "(1) SNB-Support direkt anfragen (analog BFS-Fachapp-Heuristik: gibt es eine dedizierte Publikation/PDF mit dem exakten Cube-Namen?). (2) datenportal-Suchfunktion im Browser mit echtem JS-Rendering prüfen (in dieser Umgebung nicht möglich, nur curl verfügbar). (3) Offizielle SNB-Statistik-Publikation 'Zinssätze, Renditen und Devisenkurse' nach eingebetteten Tabellenverweisen durchsuchen."
+      },
+      "sourceDocPage": "https://data.snb.ch/"
     }
   },
   "notes": [
