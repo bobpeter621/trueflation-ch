@@ -118,6 +118,61 @@
         "note": "V2 NICHT abgeschlossen (siehe Requirements Abschnitt 12). Endpunkt liefert nur drei Felder (korrekturFaktor, durchschnittlicherEinfluss, vorjahr) — Bedeutung ungeklärt, mit grosser Wahrscheinlichkeit kein KVPI-Index-Wert. Nicht für 2.2b-Formel produktiv nutzen. V2 blockiert P3, NICHT P1 (siehe Zuordnungstabelle Requirements Abschnitt 12)."
       },
       "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    },
+    "snb-m2": {
+      "label": "SNB Geldmenge M2",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snbmonagg/data/csv/de?dimSel=D0(B),D1(GM2)",
+      "type": "csv",
+      "frequency": "monthly",
+      "dimensionSelection": {
+        "_comment": "WICHTIGER FUND (25.08.2026): Requirements-Dokument nannte GM1 als M2-Selektor — das war FALSCH. Live geprüft über /api/cube/snbmonagg/dimensions/de: D1 kennt die Werte B (Bargeldumlauf), S0 (Sichteinlagen), ET (Einlagen auf Transaktionskonti), GM1 (Geldmenge M1), S1 (Spareinlagen), GM2 (Geldmenge M2), T (Termineinlagen), GM3 (Geldmenge M3). GM1=M1, GM2=M2. Nie raten, immer am dimensions-Endpoint bestimmen (Betreiber-Vorgabe befolgt).",
+        "d0": "B (Bestand, nicht Veränderung)",
+        "d1": "GM2 (Geldmenge M2)",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snbmonagg/dimensions/de"
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "conditionalGetVerified": {
+        "status": "unterstützt (ETag)",
+        "finding": "Live geprüft (25.08.2026): Antwort enthält einen echten ETag-Header. SNB-Nutzungsbedingungen verlangen ausdrücklich bedingte Anfragen vor jedem Datenabruf — IP-Sperre bei exzessiver Nutzung ist explizit angedroht, keine Stilfrage (US 1.16)."
+      },
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "bulkImportThrottle": {
+        "sequential": true,
+        "minDelayMsBetweenRequests": 1000,
+        "neverParallel": true,
+        "_comment": "Verbindlich laut Requirements Abschnitt US 1.16 — SNB sperrt IPs bei exzessiver Nutzung."
+      },
+      "validation": {
+        "bulk": {
+          "purpose": "Einmaliger Bulk-Import — KEINE Sprungrate-Prüfung, analog zum LIK-Muster.",
+          "checks": [
+            "completeness: keine Lücken in der Monatsfolge",
+            "monotonicDates: aufsteigend, keine Duplikate",
+            "plausibleRange: grobe Grössenordnung (500'000-2'000'000 Mio. CHF), kein harter Referenzpunkt-Abgleich bisher definiert — V6 unvollständig, siehe unten"
+          ]
+        },
+        "incremental": {
+          "absoluteRange": {
+            "status": "pending-derivation",
+            "note": "Nach Bulk-Import aus echten Daten ableiten, analog LIK-Verfahren — noch nicht durchgeführt."
+          },
+          "monthlyChangeRatePercentMax": 5.0,
+          "_comment": "Aus Requirements US 1.7: 'SNB-Geldmenge ~5%/Monat'."
+        }
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API (data.snb.ch), im Gegensatz zum LIK-Endpunkt eine dokumentierte, stabile Schnittstelle."
+      },
+      "sourceDocPage": "https://data.snb.ch/"
     }
   },
   "notes": [
