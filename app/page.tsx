@@ -13,7 +13,36 @@ export default function Home() {
         </header>
 
         <LikChart />
+
+        <nav className="flex gap-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+          <a href="/methodik" className="underline">
+            Methodik
+          </a>
+          <a href="/datenquellen" className="underline">
+            Datenquellen
+          </a>
+          <a href="/aenderungen" className="underline">
+            Änderungen
+          </a>
+          <a href="/kontakt" className="underline">
+            Kontakt
+          </a>
+        </nav>
       </main>
+
+      <footer className="mt-12 text-xs text-center" style={{ color: "var(--color-text-muted)" }}>
+        <p>
+          trueflation.ch — eigene Inhalte lizenziert unter{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/deed.de" className="underline">
+            CC BY 4.0
+          </a>
+          . Amtliche Quelldaten unterliegen eigenen Lizenzbedingungen (siehe{" "}
+          <a href="/datenquellen" className="underline">
+            Datenquellen
+          </a>
+          ).
+        </p>
+      </footer>
     </div>
   );
 }
