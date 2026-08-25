@@ -1,0 +1,80 @@
+name: Datenpipeline (LIK + SNB M2)
+
+# Requirements Abschnitt 11: Scheduler über GitHub Actions, nicht systemd-Timer
+# — unabhängig vom Droplet-Zustand. Betreiber-Vorgabe (25.08.2026): Scheduler
+# scharf stellen, sobald die LIK-Pipeline inkrementell läuft — nicht bis P4
+# warten, sonst hängt der Datenstand an der Verfügbarkeit des Agenten statt
+# am Betrieb entkoppelt zu sein.
+
+on:
+  schedule:
+    # Publikationsfenster gemäss config/sources.json (lik.publicationWindow):
+    # LIK wird i.d.R. Anfang des Folgemonats publiziert (Tag 1-10).
+    # Täglicher Lauf 06:00 UTC im Fenster deckt US 1.1 AC ab ("nicht zwingend
+    # täglich" — hier bewusst täglich im engen Fenster statt monatlich, da
+    # das Tagesbudget (maxSuccessfulChecksPerDay=1) ohnehin nur einen
+    # erfolgreichen Zyklus pro Tag zulässt, US 1.16).
+    - cron: "0 6 1-10 * *"
+  workflow_dispatch: {} # manueller Override (US 1.5)
+
+# Kein paralleler Lauf (US 1.16: "niemals parallel") — falls ein Lauf noch
+# läuft, wird ein neuer nicht gestartet, sondern der vorherige zuende geführt.
+concurrency:
+  group: trueflation-pipeline
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+
+      - name: LIK — inkrementeller Lauf
+        run: node scripts/pipeline/incremental-update-lik.mjs
+
+      - name: SNB M2 — inkrementeller Lauf
+        run: node scripts/pipeline/bulk-import-snb-m2.mjs
+        # Hinweis: SNB hat noch kein eigenes incremental-update-Skript
+        # (siehe TODO unten) — bulk-import ist bei monatlicher Frequenz
+        # idempotent nutzbar, bis das dedizierte Skript existiert.
+        continue-on-error: true
+
+      - name: Prüfsummen aktualisieren (US 5.5)
+        run: node -e "import('./scripts/pipeline/lib/checksums.mjs').then(m => m.writeChecksums())"
+
+      - name: Änderungen committen (falls vorhanden)
+        run: |
+          git config user.name "trueflation-pipeline-bot"
+          git config user.email "pipeline@trueflation.ch"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "Keine Änderungen — nichts zu committen."
+          else
+            git add data/
+            git commit -m "chore(pipeline): automatisierter Datenabruf $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Fehler-Eskalation
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              --data-urlencode text="[trueflation.ch] ⚠️ Pipeline-Lauf fehlgeschlagen (GitHub Actions). Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht als Secrets gesetzt — keine Eskalation möglich. Betreiber-TODO: Secrets in Repo-Settings hinterlegen."
+          fi
