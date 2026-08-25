@@ -1,0 +1,62 @@
+{
+  "$schema": "./sources.schema.json",
+  "_comment": "Whitelist der Datenquellen (US 1.6). Änderungen ausschliesslich via Git-Commit + Review — kein Runtime-Admin-Endpoint zum Bearbeiten dieser Datei (US 1.9, SSRF-Schutz US 1.6). Jede Pipeline-Komponente darf NUR URLs abrufen, die hier gelistet sind.",
+  "sources": {
+    "lik": {
+      "label": "BFS Landesindex der Konsumentenpreise (LIK)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
+      "type": "json-app-state",
+      "frequency": "monthly",
+      "publicationWindow": {
+        "_comment": "LIK wird i.d.R. Anfang des Folgemonats publiziert (siehe Medienmitteilungen-Historie).",
+        "dayOfMonthStart": 1,
+        "dayOfMonthEnd": 10
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "Last-Modified",
+      "maxChecksPerDay": 1,
+      "maxChecksPerHour": 5,
+      "plausibility": {
+        "absoluteRangeMin": 50,
+        "absoluteRangeMax": 500,
+        "monthlyChangeRatePercentMax": 2.0,
+        "_comment": "Basis: LIK/Trueflation ~1-2%/Monat (US 1.7). Bekannte Ausnahme: keine für LIK direkt (Ausnahmen betreffen Trueflation-Korrekturfaktoren, nicht LIK selbst)."
+      },
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Liefert den Anwendungszustand der BFS-Frontend-App lik-app.bfs.admin.ch, keine dokumentierte öffentliche API. Kein API-Vertrag, keine Stabilitätszusage. Datenvertrags-Test (US 2.7) ist Pflicht vor jeder Weiterverarbeitung. Bei Strukturbruch: Fachapp-Heuristik neu anwenden, NICHT auf Drittanbieter-Spiegel ausweichen (siehe Requirements Abschnitt 3)."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    },
+    "kvpi": {
+      "label": "BFS/BAG Krankenversicherungsprämien-Index (KVPI) — Korrekturfaktor",
+      "status": "partial",
+      "verifiedDate": "2026-08-25",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-kvpi-app-state/master",
+      "type": "json-app-state",
+      "frequency": "yearly",
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "Last-Modified",
+      "maxChecksPerDay": 1,
+      "maxChecksPerHour": 5,
+      "plausibility": {
+        "absoluteRangeMin": 0,
+        "absoluteRangeMax": 100,
+        "yearlyChangeRatePercentMax": 10.0,
+        "_comment": "Basis: KVPI ~10%/Jahr (US 1.7)."
+      },
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "V2 noch NICHT abgeschlossen (siehe Requirements Abschnitt 12). Dieser Endpunkt liefert nur einen fertigen Jahres-Korrekturfaktor (korrekturFaktor, durchschnittlicherEinfluss, vorjahr), KEINE historische Teilindex-Zeitreihe Grundversicherung. Nicht für 2.2b-Formel produktiv nutzen, bevor V2 final geklärt ist."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    }
+  },
+  "notes": [
+    "Weitere Quellen (SNB M2, SNB Leitzins, Mietpreisindex, Strukturerhebung, HABE, Twelve Data) werden erst nach jeweiliger Verifikation (V3-V8) hier ergänzt — kein Eintrag ohne verifizierten Endpunkt.",
+    "SSRF-Schutz (US 1.6): Pipeline-Code darf ausschliesslich URLs aus diesem File abrufen. Kein dynamisches Zusammensetzen von Quellen-URLs aus Nutzereingaben oder Konfigurationswerten, die nicht aus dieser Datei stammen.",
+    "Admin-Zugriff (US 1.9): Diese Datei ist NICHT über einen Runtime-Endpoint änderbar. Jede Änderung läuft über Git-Commit + Agent-Council-Review (siehe AGENTS.md) — das erfüllt die Anforderung 'authentifiziert' für v1, da kein öffentlich erreichbarer Schreibzugriff existiert."
+  ]
+}

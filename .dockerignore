@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+data/*.json
+data/*.csv
+!data/.gitkeep
+verification
+*.md
