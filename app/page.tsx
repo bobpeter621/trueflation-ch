@@ -7,8 +7,9 @@ export default function Home() {
         <header>
           <h1 className="text-2xl font-semibold tracking-tight">trueflation.ch</h1>
           <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            Offizielle Inflation, Trueflation und Geldmengenausweitung für die Schweiz —
-            transparent gegenübergestellt. (P1: Minimal-Chart, nur Linie 1)
+            Offizielle Inflation und Trueflation (LIK + Prämienkorrektur) für die Schweiz —
+            transparent gegenübergestellt. Geldmengenausweitung folgt als eigene Linie in einem
+            späteren Schritt.
           </p>
         </header>
 

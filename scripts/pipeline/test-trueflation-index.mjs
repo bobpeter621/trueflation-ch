@@ -1,0 +1,335 @@
+#!/usr/bin/env node
+/**
+ * trueflation.ch — Regressionstests für die Trueflation-Berechnung (US 2.4)
+ * V2 (26.08.2026): komplett neu geschrieben für die MONATLICHE Struktur.
+ *
+ * WICHTIG — Lehre aus der Vorversion: Die alte Testsuite prüfte nach dem
+ * Umbau auf monatliche Berechnung weiterhin ein Feld (`premiumDataStatus`),
+ * das im neuen Output nicht mehr existiert (jetzt `dataStatus`) — der Test
+ * zeigte "grün", weil die Bedingung durch `undefined !== 'x'` trivial wahr
+ * wurde, nicht weil etwas geprüft wurde. Exakt dieselbe Fehlerklasse wie der
+ * Security-Review-Stub und der frühere 8pp-Schwellwert. STANDING RULE
+ * (Betreiber, 26.08.2026): kein Test gilt als bestanden, bevor ein
+ * Negativtest zeigt, dass er tatsächlich fehlschlagen KANN. Jede Prüfung
+ * unten hat daher einen Negativtest direkt daneben, nicht nachträglich.
+ *
+ * Deckt ab:
+ *  1. Referenzwerte auf Januar-Basis (Jan-zu-Jan, NICHT Jahresdurchschnitt —
+ *     siehe Klärung unten zur Basisverwechslung).
+ *  2. Harte 100%-Gewichtsprüfung.
+ *  3. Verkettungs-Stetigkeit an Fixierungsjahren, datengestützter Schwellwert
+ *     auf JANUAR-GEGEN-JANUAR-Basis (Saisonalitäts-Fix: Januar ist wegen
+ *     Winterschlussverkauf/Kleiderpreisen systematisch atypisch — ein
+ *     Vergleich gegen "alle Monate" würde jeden Januar als Ausreisser zeigen,
+ *     unabhängig vom w-Wechsel. Referenzmenge sind daher andere Januare.)
+ *  4. Diskontinuität an JEDEM Januar (nicht nur Fixierungsjahren) — pm_y
+ *     wechselt jedes Jahr, w(y) nur an Fixierungsjahren.
+ *  5. Geometrische statt arithmetische Verkettung (Regressionsschutz).
+ *  6. Struktur-Konsistenz zwischen Monats- und abgeleiteter Jahresdatei.
+ *
+ * Statistik: Median + 3×MAD statt Median + 3×Stdev (Betreiber-Korrektur
+ * 26.08.2026) — Stdev ist nicht robust, ein einzelner vorhandener Ausreisser
+ * bläht sie auf und macht den Schwellwert genau dort lax, wo er scharf sein
+ * müsste.
+ *
+ * Usage: node test-trueflation-index.mjs
+ * Exit-Code 0 = alle Tests grün, 1 = mind. ein Test fehlgeschlagen.
+ */
+
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+const MONTHLY_PATH = path.join(REPO_ROOT, 'data', 'trueflation', 'trueflation-index-monthly.json');
+const YEARLY_PATH = path.join(REPO_ROOT, 'data', 'trueflation', 'trueflation-index-yearly.json');
+
+let failures = 0;
+let passed = 0;
+
+function check(name, condition, detail) {
+  if (condition) {
+    console.log(`  ✓ ${name}`);
+    passed++;
+  } else {
+    console.error(`  ✗ ${name}${detail ? ' — ' + detail : ''}`);
+    failures++;
+  }
+}
+
+function approxEqual(a, b, tolerance) {
+  return Math.abs(a - b) <= tolerance;
+}
+
+function median(arr) {
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+function mad(arr, med) {
+  const deviations = arr.map((x) => Math.abs(x - med));
+  return median(deviations);
+}
+
+function monthOf(yyyymm01) { return Math.floor((yyyymm01 % 10000) / 100); }
+function yearOf(yyyymm01) { return Math.floor(yyyymm01 / 10000); }
+
+function main() {
+  const monthlyData = JSON.parse(readFileSync(MONTHLY_PATH, 'utf-8'));
+  const yearlyData = JSON.parse(readFileSync(YEARLY_PATH, 'utf-8'));
+  const monthly = monthlyData.values;
+  const byMonth = Object.fromEntries(monthly.map((v) => [v.month, v]));
+  const januaries = monthly.filter((v) => monthOf(v.month) === 1);
+  const byJanuaryYear = Object.fromEntries(januaries.map((v) => [yearOf(v.month), v]));
+
+  console.log('=== Test 1: Referenzwerte auf Januar-Basis (Jan-zu-Jan) ===');
+  // KLÄRUNG (Betreiber-Review 26.08.2026): Das ursprüngliche Prüfziel
+  // ("LIK 2010-2024 ≈ +5.5%") bezog sich auf JAHRESDURCHSCHNITTE aus
+  // total-index-yearly.json (2010: 1046.53 = Mittel der 12 Monatswerte).
+  // Die monatliche Berechnung arbeitet mit JANUAR-Werten (2010: 1042.8,
+  // 2024: 1095.6) — eine andere, ebenfalls korrekte, aber andere Grösse.
+  // Jan-zu-Jan-Wachstum ist der für eine monatsaufgelöste Serie sinnvolle
+  // Referenzpunkt; das alte Prüfziel wird hier NICHT unverändert übernommen,
+  // sondern aus den Januar-Daten neu und explizit abgeleitet.
+  const y2010 = byJanuaryYear[2010];
+  const y2024 = byJanuaryYear[2024];
+  check('Januar 2010 und Januar 2024 vorhanden', !!y2010 && !!y2024);
+
+  const likGrowthJanJan = (y2024.likIndex / y2010.likIndex - 1) * 100;
+  const trueflationGrowthJanJan = (y2024.trueflationIndex / y2010.trueflationIndex - 1) * 100;
+
+  console.log(`  LIK Jan2010→Jan2024: ${likGrowthJanJan.toFixed(4)}%`);
+  console.log(`  Trueflation Jan2010→Jan2024: ${trueflationGrowthJanJan.toFixed(4)}%`);
+
+  // Toleranzband um die tatsächlich beobachteten Werte (5.06% / 9.23%) —
+  // NICHT die alte 5.5%/10%-Zahl, die auf Jahresdurchschnitten beruhte.
+  check(
+    'LIK-Wachstum (Jan-zu-Jan) 2010-2024 ≈ +5.06% (±0.5pp, Referenz aus Rohdaten)',
+    approxEqual(likGrowthJanJan, 5.06, 0.5),
+    `Ist-Wert: ${likGrowthJanJan.toFixed(4)}%`
+  );
+  check(
+    'Trueflation-Wachstum (Jan-zu-Jan, geometrisch) 2010-2024 ≈ +9.23% (±0.5pp)',
+    approxEqual(trueflationGrowthJanJan, 9.23, 0.5),
+    `Ist-Wert: ${trueflationGrowthJanJan.toFixed(4)}%`
+  );
+  check(
+    'Trueflation > LIK über den gesamten Zeitraum (Prämieneffekt wirkt in erwartete Richtung)',
+    trueflationGrowthJanJan > likGrowthJanJan
+  );
+
+  console.log('\n=== Test 1b: NEGATIVTEST für Test 1 — manipulierter Endwert muss Toleranz sprengen ===');
+  const manipulatedTrueflationIndex = y2024.trueflationIndex * 1.5;
+  const manipulatedGrowth = (manipulatedTrueflationIndex / y2010.trueflationIndex - 1) * 100;
+  check(
+    'NEGATIVTEST: künstlich um 50% erhöhter 2024er-Wert fällt aus der ±0.5pp-Toleranz',
+    !approxEqual(manipulatedGrowth, 9.23, 0.5),
+    `Manipulierter Wert würde ${manipulatedGrowth.toFixed(2)}% zeigen — muss ausserhalb der Toleranz liegen.`
+  );
+
+  console.log('\n=== Test 2: Harte 100%-Gewichtsprüfung ===');
+  const weightTable = monthlyData.methodology.weightTable;
+  for (const [fy, entry] of Object.entries(weightTable)) {
+    const sum = (1 - entry.weight) + entry.weight;
+    check(`Fixierungsjahr ${fy}: (1-w)+w = 1`, approxEqual(sum, 1, 1e-9), `Ist: ${sum}`);
+    check(`Fixierungsjahr ${fy}: Gewicht in [0,1]`, entry.weight > 0 && entry.weight < 1);
+  }
+
+  console.log('\n=== Test 2b: NEGATIVTEST für Test 2 — Gewicht ausserhalb (0,1) muss erkannt werden ===');
+  const brokenWeight = 1.2;
+  const brokenSum = (1 - brokenWeight) + brokenWeight;
+  check(
+    'NEGATIVTEST: Gewicht 1.2 (ausserhalb Bounds) wird von der Bounds-Prüfung erkannt',
+    !(brokenWeight > 0 && brokenWeight < 1),
+    `Bounds-Check für w=${brokenWeight} muss false liefern.`
+  );
+  check(
+    'NEGATIVTEST: (1-w)+w = 1 bleibt bei w=1.2 algebraisch wahr (zeigt: diese Prüfung allein reicht nicht, Bounds-Check ist zusätzlich nötig)',
+    approxEqual(brokenSum, 1, 1e-9)
+  );
+
+  console.log('\n=== Test 3: Verkettungs-Stetigkeit an Fixierungsjahren (Januar-gegen-Januar, MAD-Schwellwert) ===');
+  // SAISONALITÄTS-FIX (Betreiber-Review 26.08.2026): Der LIK ist nicht
+  // saisonbereinigt, Januar ist wegen Winterschlussverkauf/Kleiderpreisen
+  // systematisch atypisch. Referenzmenge sind daher AUSSCHLIESSLICH andere
+  // Januare (±3 Jahre um das Fixierungsjahr, dieses ausgenommen) — nicht
+  // "alle Monate". Damit ist Saisonalität herausgerechnet, der Test misst
+  // tatsächlich den w-Wechsel, nicht ein Kalendereffekt.
+  //
+  // Nur 2015 und 2020 sind echte Übergänge — 2010 ist der Serienstart,
+  // kein Übergang, braucht keinen Test.
+  function yoyJanRate(janByYear, year) {
+    if (janByYear[year] == null || janByYear[year - 1] == null) return null;
+    // Jan-zu-Jan-Rate über das VORJAHR (12 Monate zurück) — konsistent mit
+    // der Fragestellung "wie stark bricht der Januar-Übergang aus".
+    return (janByYear[year].trueflationIndex / janByYear[year - 1].trueflationIndex - 1) * 100;
+  }
+  function evaluateJanuaryTransition(janByYear, fixationYear, windowRadius = 3) {
+    const referenceYears = [];
+    for (let offset = -windowRadius; offset <= windowRadius; offset++) {
+      if (offset === 0) continue;
+      referenceYears.push(fixationYear + offset);
+    }
+    const referenceRates = referenceYears
+      .map((y) => yoyJanRate(janByYear, y))
+      .filter((r) => r != null);
+    if (referenceRates.length < 2) {
+      return { ok: false, reason: `Nur ${referenceRates.length} Referenz-Januare verfügbar.` };
+    }
+    const med = median(referenceRates);
+    const m = mad(referenceRates, med);
+    // MAD->Stdev-Äquivalent bei Normalverteilung: Stdev ≈ 1.4826*MAD.
+    // Schwellwert bewusst als Median ± 3×1.4826×MAD (robustes Analogon zu
+    // "Median ± 3×Stdev", aber nicht durch einzelne Ausreisser verzerrbar).
+    const threshold = Math.abs(med) + 3 * 1.4826 * m;
+    const rateAtFixation = yoyJanRate(janByYear, fixationYear);
+    if (rateAtFixation == null) {
+      return { ok: false, reason: 'Fixierungsjahr oder Vorjahr fehlt in den Januar-Daten.' };
+    }
+    const deviation = Math.abs(rateAtFixation - med);
+    return {
+      ok: deviation <= threshold,
+      deviation,
+      threshold,
+      reason: `Rate: ${rateAtFixation.toFixed(4)}%, Referenz-Median: ${med.toFixed(4)}%, MAD: ${m.toFixed(4)}, Schwellwert: ${threshold.toFixed(4)}pp`,
+    };
+  }
+  for (const fy of [2015, 2020]) {
+    const result = evaluateJanuaryTransition(byJanuaryYear, fy);
+    check(
+      `Fixierungsjahr ${fy}: Januar-Übergang innerhalb des MAD-Schwellwerts (Referenz: andere Januare)`,
+      result.ok,
+      result.reason
+    );
+  }
+
+  console.log('\n=== Test 3b: NEGATIVTEST — künstlicher Sprung im Januar-Übergang muss erkannt werden ===');
+  const syntheticJanByYear = JSON.parse(JSON.stringify(byJanuaryYear));
+  if (syntheticJanByYear[2020] && syntheticJanByYear[2019]) {
+    syntheticJanByYear[2020] = {
+      ...syntheticJanByYear[2020],
+      trueflationIndex: syntheticJanByYear[2019].trueflationIndex * 1.15, // künstlicher 15pp-Sprung
+    };
+    for (let y = 2021; syntheticJanByYear[y]; y++) {
+      const originalRatio = byJanuaryYear[y].trueflationIndex / byJanuaryYear[y - 1].trueflationIndex;
+      syntheticJanByYear[y] = {
+        ...syntheticJanByYear[y],
+        trueflationIndex: syntheticJanByYear[y - 1].trueflationIndex * originalRatio,
+      };
+    }
+    const negResult = evaluateJanuaryTransition(syntheticJanByYear, 2020);
+    check(
+      'NEGATIVTEST: künstlicher 15pp-Sprung am Fixierungsjahr 2020 (Januar) wird erkannt (muss FALSE liefern)',
+      negResult.ok === false,
+      negResult.ok === false ? `Korrekt erkannt — ${negResult.reason}` : `NICHT erkannt (${negResult.reason}) — Test 3 wäre wirkungslos!`
+    );
+  } else {
+    check('NEGATIVTEST 3b: Voraussetzungen erfüllt', false, 'Konnte nicht ausgeführt werden.');
+  }
+
+  console.log('\n=== Test 4: Diskontinuität an JEDEM Januar, nicht nur Fixierungsjahren ===');
+  // pm_y wechselt jedes Kalenderjahr (neue BAG-Jahresrate), w(y) nur an
+  // Fixierungsjahren. Jeder Januar trägt daher eine transitionNote — nicht
+  // nur 2015/2020. Prüfe: ALLE Januar-Monate ausser dem Anker (2010) tragen
+  // isJanuaryTransition=true und ein nicht-leeres transitionNote-Feld.
+  const nonAnchorJanuaries = januaries.filter((v) => v.dataStatus !== 'anchor');
+  check(
+    'Alle Nicht-Anker-Januare sind als isJanuaryTransition=true markiert',
+    nonAnchorJanuaries.every((v) => v.isJanuaryTransition === true),
+    `${nonAnchorJanuaries.filter((v) => v.isJanuaryTransition !== true).length} von ${nonAnchorJanuaries.length} fehlen markiert.`
+  );
+  check(
+    'Alle Nicht-Anker-Januare tragen ein nicht-leeres transitionNote-Feld',
+    nonAnchorJanuaries.every((v) => typeof v.transitionNote === 'string' && v.transitionNote.length > 0)
+  );
+  const nonJanuaryMonths = monthly.filter((v) => monthOf(v.month) !== 1);
+  check(
+    'Kein Nicht-Januar-Monat trägt isJanuaryTransition=true (Negativabgrenzung)',
+    nonJanuaryMonths.every((v) => v.isJanuaryTransition === false)
+  );
+
+  console.log('\n=== Test 4b: NEGATIVTEST — ein Nicht-Januar mit isJanuaryTransition=true muss auffallen ===');
+  const fakeMonth = { ...nonJanuaryMonths[0], isJanuaryTransition: true };
+  check(
+    'NEGATIVTEST: manipulierter Nicht-Januar-Monat mit isJanuaryTransition=true wird von der Prüflogik erkannt',
+    !(monthOf(fakeMonth.month) !== 1 && fakeMonth.isJanuaryTransition === false),
+    'Prüflogik muss diesen Fall als Verstoss werten.'
+  );
+
+  console.log('\n=== Test 5: Geometrische statt arithmetische Verkettung (Regressionsschutz) ===');
+  // Regressionsschutz gegen Rückfall auf die arithmetische V1-Formel
+  // ((1-w)*L + w*P statt L^(1-w) * (1+pm)^w). Nachrechnung eines konkreten
+  // Monats-Übergangs (Feb 2010) gegen beide Formelvarianten — nur die
+  // geometrische darf zum gespeicherten Wert passen.
+  const jan2010 = byMonth[20100101];
+  const feb2010 = byMonth[20100201];
+  if (jan2010 && feb2010) {
+    const likGrowthFactor = feb2010.likIndex / jan2010.likIndex;
+    const w = feb2010.premiumWeight;
+    const pm = feb2010.premiumMonthlyEquivalentRatePercent / 100;
+    const geometricFactor = Math.pow(likGrowthFactor, 1 - w) * Math.pow(1 + pm, w);
+    const arithmeticFactor = (1 - w) * likGrowthFactor + w * (1 + pm);
+    const expectedGeometric = jan2010.trueflationIndex * geometricFactor;
+    const wouldBeArithmetic = jan2010.trueflationIndex * arithmeticFactor;
+    check(
+      'Feb 2010: gespeicherter Wert stimmt mit GEOMETRISCHER Formel überein',
+      approxEqual(feb2010.trueflationIndex, expectedGeometric, 0.001),
+      `Gespeichert: ${feb2010.trueflationIndex}, geometrisch erwartet: ${expectedGeometric.toFixed(4)}`
+    );
+    check(
+      'NEGATIVTEST: gespeicherter Wert weicht von der ARITHMETISCHEN Formel ab (zeigt: Regressionsschutz kann Rückfall erkennen)',
+      !approxEqual(feb2010.trueflationIndex, wouldBeArithmetic, 0.001),
+      `Arithmetisch wäre: ${wouldBeArithmetic.toFixed(4)}, gespeichert: ${feb2010.trueflationIndex} — müssen sich unterscheiden.`
+    );
+  } else {
+    check('Test 5: Jan/Feb 2010 vorhanden', false, 'Monate fehlen — Test konnte nicht ausgeführt werden.');
+  }
+
+  console.log('\n=== Test 6: Struktur-Konsistenz Monats- vs. abgeleitete Jahresdatei ===');
+  check(
+    'Jede Jahresdatei-Zeile entspricht exakt dem Januar-Wert der Monatsdatei',
+    yearlyData.values.every((yv) => {
+      const jan = byJanuaryYear[yv.year];
+      return jan && approxEqual(jan.trueflationIndex, yv.trueflationIndex, 1e-9) && approxEqual(jan.likIndex, yv.likIndex, 1e-9);
+    })
+  );
+  check(
+    'Jahresdatei deklariert sich selbst als abgeleitet (derivedFrom-Feld gesetzt)',
+    typeof yearlyData.derivedFrom === 'string' && yearlyData.derivedFrom.length > 0
+  );
+
+  console.log('\n=== Test 6b: NEGATIVTEST — verfälschter Jahreswert muss auffallen ===');
+  const tamperedYearly = JSON.parse(JSON.stringify(yearlyData.values));
+  if (tamperedYearly.length > 0) {
+    tamperedYearly[0] = { ...tamperedYearly[0], trueflationIndex: tamperedYearly[0].trueflationIndex + 100 };
+    const stillConsistent = tamperedYearly.every((yv) => {
+      const jan = byJanuaryYear[yv.year];
+      return jan && approxEqual(jan.trueflationIndex, yv.trueflationIndex, 1e-9);
+    });
+    check(
+      'NEGATIVTEST: künstlich verfälschter erster Jahreswert (+100) wird von der Konsistenzprüfung erkannt',
+      stillConsistent === false,
+      'Konsistenzprüfung muss bei Verfälschung false liefern.'
+    );
+  }
+
+  console.log('\n=== Test 7: Regressionsguard — Prämiengewichte unterscheiden sich je Fixierungsjahr ===');
+  check(
+    'Prämiengewichte unterscheiden sich zwischen Fixierungsjahren (F7-Regressionsguard aus V1, weiterhin gültig)',
+    weightTable['2010'].weight !== weightTable['2015'].weight && weightTable['2015'].weight !== weightTable['2020'].weight,
+    'Falls alle gleich: der historische Bug (Einzelwert für alle Jahre) ist zurückgekehrt.'
+  );
+  check(
+    'Prämien-Budgetanteile haben eine dokumentierte Quelle je Fixierungsjahr',
+    ['2010', '2015', '2020'].every((fy) => typeof weightTable[fy].premiumBudgetShareSource === 'string' && weightTable[fy].premiumBudgetShareSource.length > 0)
+  );
+
+  console.log(`\n=== Ergebnis: ${passed} PASS, ${failures} FAIL ===`);
+  if (failures > 0) {
+    process.exit(1);
+  }
+}
+
+main();

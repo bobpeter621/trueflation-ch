@@ -1,0 +1,195 @@
+{
+  "_comment": "ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene Neuberechnung. Werte sind Januar-Endpunkte der Monatsreihe. Einzige Quelle der Wahrheit ist die Monatsreihe. Diese Datei dient der kompakten Darstellung (Methodik-Seite, Kopfrechnungen), nicht als eigenständige Berechnung.",
+  "scope": "lik_plus_premium_correction_only",
+  "derivedFrom": "trueflation-index-monthly.json",
+  "startYear": 2010,
+  "methodology": {
+    "formula": "pm_y = (1+p_y)^(1/12) - 1 (monatlich-aequivalente Praemienrate); combinedGrowthFactor(m) = LIK_growth_factor(m)^(1-w(y)) * (1+pm_y)^w(y); Trueflation(m) = Trueflation(m-1) * combinedGrowthFactor(m). GEOMETRISCHE Gewichtung, nicht arithmetisch — einzige mit monatlicher Compoundierung konsistente Form.",
+    "weightFormula": "P_konsum = P_brutto / C_brutto; premiumWeight = P_konsum / (1 + P_konsum)",
+    "fixationRhythmYears": 5,
+    "smoothingPolicy": "Kein Glätten der Januar-Sprünge — bewusst deklariert (siehe transitionNote je Januar-Monat). Glätten würde entweder rückwirkend publizierte Monate ändern oder vorausschauend interpolieren, beides mit den Transparenz-/Anti-Erfindung-Prinzipien des Projekts unvereinbar.",
+    "revisionPolicy": "US 1.8: Jeder Lauf berechnet die gesamte Reihe neu aus der aktuellen Prämiendatendatei - eine BAG-Revision (provisorisch -> definitiv) fliesst automatisch ein, keine Sperre/Einfrierung publizierter Monate. OFFEN: automatisches Protokollieren materieller Revisionen in der Aenderungshistorie (US 4.10) ist noch nicht Teil dieses Build-Skripts.",
+    "cBrutto": {
+      "value": 48.8,
+      "unit": "share_of_gross_income",
+      "isApproximation": true,
+      "source": "BFS HABE-Publikation, Summenzeile \"Konsumausgaben\" (aktuellster verfügbarer Einzeljahreswert, nicht je Fixierungsjahr recherchiert)"
+    },
+    "premiumBudgetShareByFixationYear": {
+      "2010": {
+        "value": 5.4089,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2010), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      },
+      "2015": {
+        "value": 6.1841,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2015), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      },
+      "2020": {
+        "value": 6.4457,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2020), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      }
+    },
+    "weightTable": {
+      "2010": {
+        "premiumBudgetSharePercent": 5.4089,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2010), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.11083811475409837,
+        "weight": 0.09977881860727666
+      },
+      "2015": {
+        "premiumBudgetSharePercent": 6.1841,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2015), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.12672336065573772,
+        "weight": 0.11247069607395595
+      },
+      "2020": {
+        "premiumBudgetSharePercent": 6.4457,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2020), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.13208401639344264,
+        "weight": 0.11667333385222742
+      }
+    },
+    "note2025": "2025 und spaeter: 2020er-Gewicht wird fortgeschrieben, bis HABE-Publikation ein neues Fixierungsjahr-Gewicht liefert. Reihe selbst endet aber beim letzten Jahr mit vollstaendigen BAG-Praemiendaten (aktuell 2024) - keine Extrapolation der Praemienkomponente."
+  },
+  "knownGaps": [
+    {
+      "component": "fixer_warenkorb",
+      "status": "zurückgestellt",
+      "reason": "Echte 2010er/2015er/2020er LIK-Gewichtstabellen (Prozentanteile je Hauptgruppe) waren trotz Recherche über BFS-DAM-API-Volltextsuche und Wayback-Archiv-Prüfung nicht auffindbar. Eine Näherung mit aktuellen Gewichten wurde geprüft und verworfen: zirkulär.",
+      "expectedDirection": "additiv positiv (Substitutionseffekt)"
+    },
+    {
+      "component": "mietkorrektur",
+      "status": "zurückgestellt",
+      "reason": "Wachstumsdifferenz-Quelle nicht auffindbar; zusätzlich ungeklärte Konzeptfrage (Bestandsmiete korrekt für Nichtumziehende, ~90%/Jahr).",
+      "expectedDirection": "additiv positiv bei jeder plausiblen Gewichtung"
+    },
+    {
+      "component": "strom",
+      "status": "dauerhaft gestrichen",
+      "reason": "Doppelzählung — Strom bereits vollständig im LIK enthalten."
+    }
+  ],
+  "values": [
+    {
+      "year": 2010,
+      "trueflationIndex": 1042.8,
+      "likIndex": 1042.8,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "anchor"
+    },
+    {
+      "year": 2011,
+      "trueflationIndex": 1053.8205,
+      "likIndex": 1045.7,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2012,
+      "trueflationIndex": 1052.1077,
+      "likIndex": 1037.4,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2013,
+      "trueflationIndex": 1051.8415,
+      "likIndex": 1034.6,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2014,
+      "trueflationIndex": 1053.5125,
+      "likIndex": 1035.2,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2015,
+      "trueflationIndex": 1051.3995,
+      "likIndex": 1030.2,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2016,
+      "trueflationIndex": 1043.8419,
+      "likIndex": 1017.1,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2017,
+      "trueflationIndex": 1052.4972,
+      "likIndex": 1020.7,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2018,
+      "trueflationIndex": 1064.7704,
+      "likIndex": 1028.2,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2019,
+      "trueflationIndex": 1074.1356,
+      "likIndex": 1034,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2020,
+      "trueflationIndex": 1077.1783,
+      "likIndex": 1036.1,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2021,
+      "trueflationIndex": 1072.1227,
+      "likIndex": 1030.4,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2022,
+      "trueflationIndex": 1088.0033,
+      "likIndex": 1047.4,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2023,
+      "trueflationIndex": 1119.3788,
+      "likIndex": 1081.8,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2024,
+      "trueflationIndex": 1139.0157,
+      "likIndex": 1095.6,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    }
+  ]
+}

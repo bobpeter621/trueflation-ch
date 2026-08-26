@@ -1,16 +1,25 @@
 "use client";
 
 /**
- * trueflation.ch — Minimal-Chart (P1-Abschluss)
+ * trueflation.ch — Chart: Linie 1 (LIK) + Linie 2 (Trueflation)
  *
- * Zeigt Linie 1 (offizielle Inflation, Requirements 2.1) aus der "Ewigen
- * Reihe" (data/lik/total-index-monthly.json). Zoom via chartjs-plugin-zoom,
- * Zeitraum-Presets gemäss US 3.4, Default-Darstellung: indexierte Niveaus
- * (Requirements 2.0).
+ * Linie 1 aus der "Ewigen Reihe" (data/lik/total-index-monthly.json),
+ * Linie 2 aus der monatlichen Trueflation-Berechnung
+ * (data/trueflation/trueflation-index-monthly.json, US 2.1-2.4). Beide
+ * Reihen sind jetzt monatlich aufgelöst (Betreiber-Entscheid 26.08.2026,
+ * Frequenz-Angleichung) — ein direkter visueller Vergleich ist damit
+ * sinnvoll, anders als bei einer 15-Punkte-Jahresreihe neben einer
+ * ~1340-Punkte-Monatsreihe.
  *
- * Bewusst minimal für P1: nur Linie 1. Trueflation (Linie 2) und Geldmenge
- * (Linie 3) folgen in P2/P3, sobald die jeweiligen Quellen verifiziert sind.
+ * Trueflation existiert strukturell erst ab 2010 (US 2.5, US 3.16 Zustand 4:
+ * "strukturell nicht existent", kein Fehler) — vor 2010 wird nur Linie 1
+ * gezeigt, keine Interpolation, kein stiller Fallback.
+ *
+ * Zoom via chartjs-plugin-zoom, Zeitraum-Presets gemäss US 3.4, Default-
+ * Darstellung: indexierte Niveaus (Requirements 2.0).
  */
+
+
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -56,6 +65,21 @@ type LikMonthlyFile = {
   values: LikDataPoint[];
 };
 
+type TrueflationDataPoint = {
+  month: number; // YYYYMM01
+  trueflationIndex: number;
+  likIndex: number;
+  dataStatus: "anchor" | "aktuell";
+  transitionNote: string | null;
+};
+
+type TrueflationMonthlyFile = {
+  scope: string;
+  granularity: string;
+  startMonth: number;
+  values: TrueflationDataPoint[];
+};
+
 // Zeitraum-Presets gemäss US 3.4 AC — Default "Seit 2010" (Monatsbereich, US 3.15)
 const PRESETS = [
   { key: "since-2010", label: "Seit 2010", startYear: 2010 },
@@ -75,6 +99,8 @@ function parseIndexDate(indexDate: number): Date {
 
 export default function LikChart() {
   const [data, setData] = useState<LikMonthlyFile | null>(null);
+  const [trueflationData, setTrueflationData] = useState<TrueflationMonthlyFile | null>(null);
+  const [trueflationError, setTrueflationError] = useState<string | null>(null);
   const [preset, setPreset] = useState<PresetKey>("since-2010");
   const [error, setError] = useState<string | null>(null);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
@@ -87,6 +113,16 @@ export default function LikChart() {
       })
       .then(setData)
       .catch((err) => setError(err.message));
+
+    // Trueflation-Ausfall darf die LIK-Linie nicht blockieren (US 3.16
+    // Zustand 3: Ausfall wird separat kommuniziert, Kernlinie bleibt stehen).
+    fetch("/data/trueflation/trueflation-index-monthly.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(setTrueflationData)
+      .catch((err) => setTrueflationError(err.message));
   }, []);
 
   const filteredValues = useMemo(() => {
@@ -97,6 +133,20 @@ export default function LikChart() {
       return year >= activePreset.startYear;
     });
   }, [data, preset]);
+
+  const filteredTrueflationValues = useMemo(() => {
+    if (!trueflationData) return [];
+    const activePreset = PRESETS.find((p) => p.key === preset)!;
+    // Trueflation existiert strukturell erst ab startMonth (2010) — kein
+    // Interpolieren vor diesem Punkt, die Reihe selbst enthält schlicht keine
+    // früheren Werte (US 3.16 Zustand 4, US 2.5).
+    return trueflationData.values.filter((v) => {
+      const year = Math.floor(v.month / 10000);
+      return year >= activePreset.startYear;
+    });
+  }, [trueflationData, preset]);
+
+  const trueflationExistsInRange = filteredTrueflationValues.length > 0;
 
   const chartData: ChartData<"line"> = useMemo(
     () => ({
@@ -114,9 +164,27 @@ export default function LikChart() {
           pointHoverRadius: 4,
           tension: 0,
         },
+        ...(trueflationExistsInRange
+          ? [
+              {
+                label: "Trueflation (LIK + Prämienkorrektur)",
+                data: filteredTrueflationValues.map((v) => ({
+                  x: parseIndexDate(v.month).getTime(),
+                  y: v.trueflationIndex,
+                })),
+                borderColor: "var(--color-line-trueflation, #c1440e)",
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                borderDash: [6, 3], // zusätzlich zur Farbe unterscheidbar (US 3.11, Farbfehlsichtigkeit)
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                tension: 0,
+              },
+            ]
+          : []),
       ],
     }),
-    [filteredValues]
+    [filteredValues, filteredTrueflationValues, trueflationExistsInRange]
   );
 
   const options: ChartOptions<"line"> = useMemo(
@@ -143,7 +211,13 @@ export default function LikChart() {
           callbacks: {
             label: (ctx) => {
               const v = ctx.parsed.y ?? null;
-              return v === null ? "" : `LIK: ${v.toFixed(1)} (Quelle: BFS, Basis: Ewige Reihe)`;
+              if (v === null) return "";
+              if (ctx.dataset.label?.startsWith("Trueflation")) {
+                const point = filteredTrueflationValues[ctx.dataIndex];
+                const base = `Trueflation: ${v.toFixed(1)} (LIK + Prämienkorrektur, Untergrenze — siehe Methodik)`;
+                return point?.transitionNote ? [base, point.transitionNote] : base;
+              }
+              return `LIK: ${v.toFixed(1)} (Quelle: BFS, Basis: Ewige Reihe)`;
             },
           },
         },
@@ -157,7 +231,7 @@ export default function LikChart() {
         },
       },
     }),
-    [preset]
+    [preset, filteredTrueflationValues]
   );
 
   const resetZoom = () => {
@@ -210,6 +284,28 @@ export default function LikChart() {
         {" · "}
         <span>Quelle: BFS LIK, publiziert {publishDateFormatted}</span>
       </div>
+
+      {/* US 3.16: Ausfall (Zustand 3) und strukturelle Nicht-Existenz
+          (Zustand 4) sind unterschiedliche Sachverhalte und werden getrennt
+          kommuniziert — nie stillschweigend dieselbe leere Fläche. */}
+      {trueflationError && (
+        <div className="tf-chart-status" role="status">
+          <span>Trueflation-Daten derzeit nicht verfügbar (Ausfall) — LIK-Linie bleibt unberührt.</span>
+        </div>
+      )}
+      {!trueflationError && trueflationData && !trueflationExistsInRange && (
+        <div className="tf-chart-status" role="status">
+          <span>Trueflation existiert im gewählten Zeitraum nicht — die Reihe beginnt{" "}
+            {Math.floor(trueflationData.startMonth / 10000)} (keine früheren Daten, keine Interpolation).</span>
+        </div>
+      )}
+      {trueflationExistsInRange && (
+        <div className="tf-chart-status">
+          <span>Trueflation = LIK + Prämienkorrektur, dokumentierte Untergrenze (fixer Warenkorb und
+            Mietkorrektur zurückgestellt) — Details siehe{" "}
+            <a href="/methodik" className="underline">Methodik</a>.</span>
+        </div>
+      )}
     </div>
   );
 }
