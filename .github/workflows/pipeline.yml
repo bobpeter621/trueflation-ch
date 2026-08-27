@@ -50,6 +50,37 @@ jobs:
         # idempotent nutzbar, bis das dedizierte Skript existiert.
         continue-on-error: true
 
+      - name: Trueflation — Neuberechnung (LIK + Prämienkorrektur)
+        # Läuft NACH dem LIK-Update, da die Berechnung von der aktuellen
+        # LIK-Monatsreihe abhängt. Betreiber-Fund 26.08.2026: dieser Schritt
+        # fehlte ursprünglich in der Pipeline — ohne ihn hätte die Website
+        # eine Trueflation-Reihe gezeigt, die nur bei manuellen lokalen Läufen
+        # aktualisiert wird, obwohl der LIK-Scheduler bereits produktiv läuft.
+        run: node scripts/pipeline/build-trueflation-index.mjs
+
+      - name: Trueflation — Regressionstests (harte Prüfziele, muss vor Commit bestehen)
+        # Bricht den Workflow ab (kein continue-on-error), falls ein Test
+        # fehlschlägt — verhindert, dass eine fehlerhafte Neuberechnung
+        # committed und live geschaltet wird (analog zur Plausi-Prüfung, US 1.7).
+        run: node scripts/pipeline/test-trueflation-index.mjs
+
+      - name: Trueflation — public/-Kopien synchronisieren
+        # Next.js liest Client-seitig aus public/data/, die Pipeline schreibt
+        # aber nach data/ — ohne diesen Schritt divergieren beide Kopien
+        # (bereits einmal manuell aufgefallen, siehe Session-Log 26.08.2026).
+        # F5-Fix (Code-Review 26.08.2026): M2-Sync-Fehlschlag nicht mehr
+        # stillschweigend verschlucken (vorher "2>/dev/null || true" ohne
+        # sichtbaren Hinweis) — ein WARN-Log macht einen veralteten
+        # public/data/snb-m2-Stand im Actions-Log sichtbar, statt dass er
+        # unbemerkt bleibt.
+        run: |
+          mkdir -p public/data/trueflation
+          cp data/trueflation/trueflation-index-monthly.json public/data/trueflation/
+          mkdir -p public/data/snb-m2
+          if ! cp data/snb-m2/m2-monthly.json public/data/snb-m2/ 2>/dev/null; then
+            echo "::warning::M2-Sync uebersprungen — data/snb-m2/m2-monthly.json fehlt oder nicht lesbar. public/data/snb-m2/ koennte veraltet sein."
+          fi
+
       - name: Prüfsummen aktualisieren (US 5.5)
         run: node -e "import('./scripts/pipeline/lib/checksums.mjs').then(m => m.writeChecksums())"
 
@@ -60,7 +91,7 @@ jobs:
           if git diff --quiet && git diff --staged --quiet; then
             echo "Keine Änderungen — nichts zu committen."
           else
-            git add data/
+            git add data/ public/data/
             git commit -m "chore(pipeline): automatisierter Datenabruf $(date -u +%Y-%m-%d)"
             git push
           fi

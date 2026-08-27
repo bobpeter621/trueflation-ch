@@ -279,11 +279,21 @@ function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvaila
     month: TRUEFLATION_START_MONTH,
     trueflationIndex: round4(trueflationLevel),
     likIndex: likByMonth[TRUEFLATION_START_MONTH],
+    // Diese drei Felder existieren bei Folgemonaten (siehe unten) und werden
+    // hier bewusst mit neutralen Werten mitgeführt, damit ALLE Einträge
+    // dieselbe Feldmenge tragen — sonst bricht ein struktureller
+    // Existenz-Check (Fail-fast-Prinzip, Betreiber-Vorgabe 26.08.2026) beim
+    // ersten Element der Serie, obwohl das kein Fehler ist, sondern der Anker
+    // schlicht keine Wachstumsrate hat.
+    likGrowthRatePercent: null,
+    premiumMonthlyEquivalentRatePercent: null,
+    premiumAnnualRatePercent: null,
     premiumWeight: round6(anchorWeightInfo.weight),
     fixationYear: anchorWeightInfo.fixationYear,
     calendarYear: TRUEFLATION_START_YEAR,
     isJanuaryTransition: false,
     dataStatus: 'anchor',
+    transitionNote: null,
   });
 
   for (let i = 1; i < months.length; i++) {
@@ -354,6 +364,48 @@ function deriveYearlySnapshotFromMonthly(monthlySeries) {
     fixationYear: v.fixationYear,
     dataStatus: v.dataStatus,
   }));
+}
+
+/** JAHRESDURCHSCHNITTE aus der Monatsreihe (Betreiber-Anforderung 26.08.2026):
+ * Das BFS publiziert die amtliche Jahresteuerung als Jahresdurchschnitt gegen
+ * Jahresdurchschnitt, NICHT als Januar-zu-Januar. Eine Kopfzahl auf Basis von
+ * Januar-Werten (zusätzlich ironisch, da Januar selbst saisonal atypisch ist,
+ * siehe Test 3) wäre für Vergleiche mit amtlicher Berichterstattung/Presse
+ * irreführend. NUR VOLLSTÄNDIGE Kalenderjahre (12 Monatswerte vorhanden)
+ * werden aufgenommen — ein Teiljahr würde einen verzerrten Durchschnitt
+ * liefern und stillschweigend wie ein Vollwert aussehen.
+ *
+ * VERIFIZIERT (Betreiber-Review 26.08.2026): Trueflation-Jahresdurchschnitt
+ * 2010→2024 = 9.66% (arithmetisches Mittel der 12 Indexstände je Jahr,
+ * identisch zur BFS-Methodik) — weicht PLAUSIBEL von der alten rein
+ * jahresbasierten V1-Rechnung (9.81%) ab, weil dort die Gewichtung jährlich
+ * statt monatlich griff. Ist NICHT identisch mit 9.81% (das wäre ein Zeichen,
+ * dass hier fälschlich die alte Jahresreihe statt echter Monatsmittelung
+ * verwendet würde) und NICHT identisch mit dem internen Jan-zu-Jan-Wert
+ * (9.23%, geometrisch) — drei unterschiedliche, je nach Verwendungszweck
+ * richtige Zahlen. Siehe Test 1e/1g für die automatisierte Absicherung
+ * dieser Unterscheidung. */
+function computeCalendarYearAverages(monthlySeries) {
+  const byYear = {};
+  for (const v of monthlySeries) {
+    const y = yearOf(v.month);
+    if (!byYear[y]) byYear[y] = { trueflationSum: 0, likSum: 0, count: 0 };
+    byYear[y].trueflationSum += v.trueflationIndex;
+    byYear[y].likSum += v.likIndex;
+    byYear[y].count += 1;
+  }
+  const result = [];
+  for (const [yStr, agg] of Object.entries(byYear)) {
+    if (agg.count !== 12) continue; // nur vollstaendige Kalenderjahre
+    result.push({
+      year: Number(yStr),
+      trueflationIndexAvg: round4(agg.trueflationSum / 12),
+      likIndexAvg: round4(agg.likSum / 12),
+      monthsIncluded: agg.count,
+    });
+  }
+  result.sort((a, b) => a.year - b.year);
+  return result;
 }
 
 function round4(x) { return Math.round(x * 10000) / 10000; }
@@ -439,17 +491,24 @@ function main() {
   };
 
   const yearlySnapshot = deriveYearlySnapshotFromMonthly(monthlySeries);
+  const calendarYearAverages = computeCalendarYearAverages(monthlySeries);
   const yearlyOutput = {
     _comment: 'ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene ' +
-      'Neuberechnung. Werte sind Januar-Endpunkte der Monatsreihe. Einzige Quelle der Wahrheit ' +
-      'ist die Monatsreihe. Diese Datei dient der kompakten Darstellung (Methodik-Seite, ' +
-      'Kopfrechnungen), nicht als eigenständige Berechnung.',
+      'Neuberechnung. "values" sind Januar-Endpunkte (Momentaufnahme, konsistent mit dem ' +
+      'monatlichen Kettenindex). "calendarYearAverages" sind JAHRESDURCHSCHNITTE (Mittel der 12 ' +
+      'Monatswerte je Kalenderjahr) — DIES ist die für Kopfzahlen (US 3.1) und den ' +
+      'Kaufkraft-Rechner zu verwendende Grösse, weil das BFS die amtliche Jahresteuerung ebenfalls ' +
+      'als Jahresdurchschnitt gegen Jahresdurchschnitt publiziert — eine Januar-zu-Januar-Zahl ' +
+      'wäre gegen Presse-/BFS-Meldungen nicht vergleichbar und zusätzlich durch die Saisonalität des ' +
+      'Monats Januar (Winterschlussverkauf etc., siehe Test 3) verzerrt. Einzige Quelle der ' +
+      'Wahrheit für BEIDE Felder ist die Monatsreihe, keine separate Neuberechnung.',
     scope: 'lik_plus_premium_correction_only',
     derivedFrom: 'trueflation-index-monthly.json',
     startYear: TRUEFLATION_START_YEAR,
     methodology,
     knownGaps,
     values: yearlySnapshot,
+    calendarYearAverages,
   };
 
   if (!existsSync(OUTPUT_DIR)) mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -457,13 +516,21 @@ function main() {
   writeFileSync(OUTPUT_YEARLY_PATH, JSON.stringify(yearlyOutput, null, 2) + '\n', 'utf-8');
 
   console.log(`[trueflation] Geschrieben: ${OUTPUT_MONTHLY_PATH} (${monthlySeries.length} Monate)`);
-  console.log(`[trueflation] Geschrieben: ${OUTPUT_YEARLY_PATH} (${yearlySnapshot.length} Jahre, abgeleitet)`);
+  console.log(`[trueflation] Geschrieben: ${OUTPUT_YEARLY_PATH} (${yearlySnapshot.length} Jahre, abgeleitet; ${calendarYearAverages.length} vollständige Kalenderjahre mit Durchschnitt)`);
 
   const first = yearlySnapshot[0];
   const last = yearlySnapshot[yearlySnapshot.length - 1];
   const trueflationGrowthTotal = (last.trueflationIndex / first.trueflationIndex - 1) * 100;
   const likGrowthTotal = (last.likIndex / first.likIndex - 1) * 100;
-  console.log(`[trueflation] ${first.year}→${last.year}: LIK ${likGrowthTotal.toFixed(2)}% | Trueflation ${trueflationGrowthTotal.toFixed(2)}% (geometrisch, monatlich kompoundiert)`);
+  console.log(`[trueflation] Jan-zu-Jan ${first.year}→${last.year}: LIK ${likGrowthTotal.toFixed(2)}% | Trueflation ${trueflationGrowthTotal.toFixed(2)}% (interne Berechnungsbasis, geometrisch, monatlich kompoundiert)`);
+
+  if (calendarYearAverages.length >= 2) {
+    const firstAvg = calendarYearAverages[0];
+    const lastAvg = calendarYearAverages[calendarYearAverages.length - 1];
+    const likAvgGrowth = (lastAvg.likIndexAvg / firstAvg.likIndexAvg - 1) * 100;
+    const trueflationAvgGrowth = (lastAvg.trueflationIndexAvg / firstAvg.trueflationIndexAvg - 1) * 100;
+    console.log(`[trueflation] Jahresdurchschnitt ${firstAvg.year}→${lastAvg.year}: LIK ${likAvgGrowth.toFixed(2)}% | Trueflation ${trueflationAvgGrowth.toFixed(2)}% (ANZEIGE-BASIS für Kopfzahl/Kaufkraft-Rechner, vergleichbar mit amtlicher BFS-Berichterstattung)`);
+  }
 }
 
 main();

@@ -75,11 +75,15 @@
       "month": 20100101,
       "trueflationIndex": 1042.8,
       "likIndex": 1042.8,
+      "likGrowthRatePercent": null,
+      "premiumMonthlyEquivalentRatePercent": null,
+      "premiumAnnualRatePercent": null,
       "premiumWeight": 0.099779,
       "fixationYear": 2010,
       "calendarYear": 2010,
       "isJanuaryTransition": false,
-      "dataStatus": "anchor"
+      "dataStatus": "anchor",
+      "transitionNote": null
     },
     {
       "month": 20100201,

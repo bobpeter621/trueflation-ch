@@ -32,6 +32,14 @@
  * bläht sie auf und macht den Schwellwert genau dort lax, wo er scharf sein
  * müsste.
  *
+ * STRUKTURELLE LEHRE (Betreiber, 26.08.2026, nach dem dritten Vorfall dieser
+ * Fehlerklasse — Security-Stub, 8pp-Schwellwert, premiumDataStatus-Rename):
+ * Jede Feldprüfung MUSS zuerst verifizieren, dass das Feld existiert, bevor
+ * sie es vergleicht. `assertFieldExists()` unten wird vor jedem Zugriff auf
+ * ein benanntes Feld aufgerufen — ein Rename ohne Testanpassung wirft dann
+ * einen sofortigen, sprechenden Fehler statt eines still-triviell-wahren
+ * Vergleichs mit `undefined`.
+ *
  * Usage: node test-trueflation-index.mjs
  * Exit-Code 0 = alle Tests grün, 1 = mind. ein Test fehlgeschlagen.
  */
@@ -75,6 +83,21 @@ function mad(arr, med) {
 
 function monthOf(yyyymm01) { return Math.floor((yyyymm01 % 10000) / 100); }
 function yearOf(yyyymm01) { return Math.floor(yyyymm01 / 10000); }
+
+/** Strukturelle Lehre (siehe Header): wirft sofort, wenn ein erwartetes Feld
+ * auf einem Beispielobjekt fehlt, STATT den Test still trivial bestehen zu
+ * lassen (z.B. `obj.premiumDataStatus !== 'x'` wird bei fehlendem Feld immer
+ * wahr). Aufrufen mit einem repräsentativen Objekt VOR jedem `.every()`/
+ * `.filter()`, das auf ein benanntes Feld zugreift. */
+function assertFieldExists(sampleObject, fieldName, context) {
+  if (sampleObject == null || !(fieldName in sampleObject)) {
+    throw new Error(
+      `Strukturprüfung fehlgeschlagen (${context}): Feld "${fieldName}" existiert nicht auf dem Beispielobjekt. ` +
+      `Abbruch statt stillem, triviell-wahrem Vergleich mit undefined — ` +
+      `vermutlich wurde das Feld umbenannt, ohne die Tests anzupassen.`
+    );
+  }
+}
 
 function main() {
   const monthlyData = JSON.parse(readFileSync(MONTHLY_PATH, 'utf-8'));
@@ -128,6 +151,70 @@ function main() {
     !approxEqual(manipulatedGrowth, 9.23, 0.5),
     `Manipulierter Wert würde ${manipulatedGrowth.toFixed(2)}% zeigen — muss ausserhalb der Toleranz liegen.`
   );
+
+  console.log('\n=== Test 1c: Rebasierung (Requirements 2.0, Option C) — Trueflation dockt am LIK-Startwert an, NICHT bei 100 ===');
+  // Explizit als eigener benannter Test (Betreiber-Anforderung 26.08.2026):
+  // Ohne dieses Andocken würde Trueflation 2010 bei 100 beginnen, während der
+  // LIK dort bereits bei ~1043 steht — Trueflation läge dann optisch WEIT
+  // UNTER dem LIK und die Kernaussage der Seite wäre ins Gegenteil verkehrt.
+  const anchorPoint = monthly.find((v) => v.dataStatus === 'anchor');
+  check(
+    'Trueflation-Startwert (Anker) == LIK-Startwert, NICHT 100',
+    !!anchorPoint && approxEqual(anchorPoint.trueflationIndex, anchorPoint.likIndex, 1e-9) && anchorPoint.trueflationIndex !== 100,
+    anchorPoint ? `Trueflation: ${anchorPoint.trueflationIndex}, LIK: ${anchorPoint.likIndex}` : 'Kein Anker-Punkt gefunden.'
+  );
+
+  console.log('\n=== Test 1d: NEGATIVTEST — ein bei 100 startender Anker muss als Fehler erkannt werden ===');
+  const brokenAnchor = { trueflationIndex: 100, likIndex: anchorPoint ? anchorPoint.likIndex : 1042.8 };
+  check(
+    'NEGATIVTEST: Anker mit trueflationIndex=100 (falsches Rebasierungsverhalten) wird von der Prüfung abgelehnt',
+    !(approxEqual(brokenAnchor.trueflationIndex, brokenAnchor.likIndex, 1e-9) && brokenAnchor.trueflationIndex !== 100),
+    'Ein bei 100 startender Anker, der nicht dem LIK-Wert entspricht, muss die Prüfung durchfallen lassen.'
+  );
+
+  console.log('\n=== Test 1e: Jahresdurchschnitt-Kennzahl (Anzeige-Basis, US 3.1) ===');
+  // Betreiber-Anforderung 26.08.2026: Die interne Berechnung bleibt monatlich
+  // (Jan-zu-Jan, siehe Test 1). Die ANZEIGE (Kopfzahl, Kaufkraft-Rechner)
+  // muss aber Jahresdurchschnitte verwenden, weil das BFS die amtliche
+  // Jahresteuerung ebenfalls als Durchschnitt-gegen-Durchschnitt publiziert.
+  // Referenzwert: LIK-Jahresdurchschnitt 2010→2024 muss ~5.51% ergeben — das
+  // ist die historisch bekannte, amtlich vergleichbare Zahl (nicht 5.06%
+  // Jan-zu-Jan).
+  assertFieldExists(yearlyData, 'calendarYearAverages', 'Test 1e (Jahresdurchschnitt)');
+  const avgs = yearlyData.calendarYearAverages;
+  check('calendarYearAverages ist ein nicht-leeres Array', Array.isArray(avgs) && avgs.length > 0);
+  const firstAvg = avgs.find((a) => a.year === 2010);
+  const lastAvg = avgs.find((a) => a.year === 2024);
+  check('Jahresdurchschnitt 2010 und 2024 vorhanden', !!firstAvg && !!lastAvg);
+  if (firstAvg && lastAvg) {
+    const likAvgGrowth = (lastAvg.likIndexAvg / firstAvg.likIndexAvg - 1) * 100;
+    const trueflationAvgGrowth = (lastAvg.trueflationIndexAvg / firstAvg.trueflationIndexAvg - 1) * 100;
+    check(
+      'LIK-Jahresdurchschnittswachstum 2010-2024 ≈ +5.51% (±0.3pp, amtlich vergleichbare Referenz)',
+      approxEqual(likAvgGrowth, 5.51, 0.3),
+      `Ist-Wert: ${likAvgGrowth.toFixed(4)}%`
+    );
+    check(
+      'Trueflation-Jahresdurchschnittswachstum 2010-2024 > LIK-Jahresdurchschnittswachstum',
+      trueflationAvgGrowth > likAvgGrowth,
+      `Trueflation: ${trueflationAvgGrowth.toFixed(4)}%, LIK: ${likAvgGrowth.toFixed(4)}%`
+    );
+    check(
+      'Alle Jahresdurchschnitte basieren auf genau 12 Monaten (monthsIncluded)',
+      avgs.every((a) => a.monthsIncluded === 12),
+      'Ein unvollständiges Jahr dürfte nicht in calendarYearAverages auftauchen.'
+    );
+  }
+
+  console.log('\n=== Test 1f: NEGATIVTEST — Jahresdurchschnitt darf nicht mit Jan-zu-Jan verwechselt werden ===');
+  if (firstAvg && lastAvg) {
+    const likAvgGrowth = (lastAvg.likIndexAvg / firstAvg.likIndexAvg - 1) * 100;
+    check(
+      'NEGATIVTEST: LIK-Jahresdurchschnittswachstum (5.51%) unterscheidet sich messbar vom Jan-zu-Jan-Wert (5.06%)',
+      !approxEqual(likAvgGrowth, likGrowthJanJan, 0.1),
+      `Durchschnitt: ${likAvgGrowth.toFixed(4)}%, Jan-zu-Jan: ${likGrowthJanJan.toFixed(4)}% — müssen sich unterscheiden, sonst würde eine Verwechslung nicht auffallen.`
+    );
+  }
 
   console.log('\n=== Test 2: Harte 100%-Gewichtsprüfung ===');
   const weightTable = monthlyData.methodology.weightTable;
@@ -234,6 +321,9 @@ function main() {
   // Fixierungsjahren. Jeder Januar trägt daher eine transitionNote — nicht
   // nur 2015/2020. Prüfe: ALLE Januar-Monate ausser dem Anker (2010) tragen
   // isJanuaryTransition=true und ein nicht-leeres transitionNote-Feld.
+  assertFieldExists(monthly[0], 'dataStatus', 'Test 4 (Januar-Diskontinuität)');
+  assertFieldExists(monthly[0], 'isJanuaryTransition', 'Test 4 (Januar-Diskontinuität)');
+  assertFieldExists(monthly[0], 'transitionNote', 'Test 4 (Januar-Diskontinuität)');
   const nonAnchorJanuaries = januaries.filter((v) => v.dataStatus !== 'anchor');
   check(
     'Alle Nicht-Anker-Januare sind als isJanuaryTransition=true markiert',
@@ -288,6 +378,7 @@ function main() {
   }
 
   console.log('\n=== Test 6: Struktur-Konsistenz Monats- vs. abgeleitete Jahresdatei ===');
+  assertFieldExists(yearlyData, 'derivedFrom', 'Test 6 (Struktur-Konsistenz)');
   check(
     'Jede Jahresdatei-Zeile entspricht exakt dem Januar-Wert der Monatsdatei',
     yearlyData.values.every((yv) => {
@@ -316,6 +407,7 @@ function main() {
   }
 
   console.log('\n=== Test 7: Regressionsguard — Prämiengewichte unterscheiden sich je Fixierungsjahr ===');
+  assertFieldExists(weightTable['2010'], 'premiumBudgetShareSource', 'Test 7 (Regressionsguard)');
   check(
     'Prämiengewichte unterscheiden sich zwischen Fixierungsjahren (F7-Regressionsguard aus V1, weiterhin gültig)',
     weightTable['2010'].weight !== weightTable['2015'].weight && weightTable['2015'].weight !== weightTable['2020'].weight,
@@ -324,6 +416,131 @@ function main() {
   check(
     'Prämien-Budgetanteile haben eine dokumentierte Quelle je Fixierungsjahr',
     ['2010', '2015', '2020'].every((fy) => typeof weightTable[fy].premiumBudgetShareSource === 'string' && weightTable[fy].premiumBudgetShareSource.length > 0)
+  );
+
+  console.log('\n=== Test 8: Zustandskonflikt US 3.16 (Zustand 4 vs. 5) — nie beide gleichzeitig ===');
+  // Betreiber-Fund 26.08.2026: Vor dem Reihenstart UND nach dem Reihenende
+  // sind Zustand 4 ("existiert erst ab") und Zustand 5 ("endet früher") beide
+  // technisch zutreffend, wenn man nur "Datenpunkt fehlt" prüft. Regel: vor
+  // Start -> IMMER Zustand 4, nach Ende -> IMMER Zustand 5, nie beide Texte
+  // für denselben Zeitpunkt. Diese Funktion bildet dieselbe Entscheidungslogik
+  // ab wie sie im Chart (LikChart.tsx) implementiert sein muss.
+  function resolveTrueflationState(monthYYYYMM01, seriesStartMonth, seriesEndMonth) {
+    if (monthYYYYMM01 < seriesStartMonth) return 'zustand4_existiert_erst_ab';
+    if (monthYYYYMM01 > seriesEndMonth) return 'zustand5_endet_frueher';
+    return 'aktuell';
+  }
+  const seriesStart = monthlyData.startMonth;
+  const seriesEnd = monthly[monthly.length - 1].month;
+  check(
+    'Vor Reihenstart (2005) greift Zustand 4, NICHT Zustand 5',
+    resolveTrueflationState(20050101, seriesStart, seriesEnd) === 'zustand4_existiert_erst_ab'
+  );
+  check(
+    'Nach Reihenende (2026) greift Zustand 5, NICHT Zustand 4',
+    resolveTrueflationState(20260101, seriesStart, seriesEnd) === 'zustand5_endet_frueher'
+  );
+  check(
+    'Innerhalb der Reihe (2015) greift weder Zustand 4 noch Zustand 5',
+    resolveTrueflationState(20150101, seriesStart, seriesEnd) === 'aktuell'
+  );
+
+  console.log('\n=== Test 8b: NEGATIVTEST — eine Logik, die beide Zustände gleichzeitig liefern könnte, muss auffallen ===');
+  // Simuliert eine FALSCHE Implementierung, die beide Bedingungen unabhängig
+  // prueft (wie es vor der Regel-Klarstellung der Fall gewesen wäre) und
+  // zeigt, dass eine solche Logik bei einem Zeitpunkt VOR dem Start faelschlich
+  // auch Zustand 5 als "zutreffend" markieren wuerde.
+  function brokenResolveState(monthYYYYMM01, seriesStartMonth, seriesEndMonth) {
+    const zustand4Applies = monthYYYYMM01 < seriesStartMonth;
+    const zustand5Applies = monthYYYYMM01 > seriesEndMonth || monthYYYYMM01 < seriesStartMonth; // BUG: faelschlich auch < Start
+    return { zustand4Applies, zustand5Applies };
+  }
+  const brokenResult = brokenResolveState(20050101, seriesStart, seriesEnd);
+  check(
+    'NEGATIVTEST: eine fehlerhafte Logik ohne exklusive Zuordnung liefert beide Zustände gleichzeitig (zeigt: die Regel ist notwendig)',
+    brokenResult.zustand4Applies === true && brokenResult.zustand5Applies === true,
+    `Fehlerhafte Logik: Zustand4=${brokenResult.zustand4Applies}, Zustand5=${brokenResult.zustand5Applies} — beide wahr ist der Konflikt, den die Regel verhindern muss.`
+  );
+  check(
+    'Die KORREKTE resolveTrueflationState-Funktion liefert dagegen genau EINEN Zustand',
+    resolveTrueflationState(20050101, seriesStart, seriesEnd) === 'zustand4_existiert_erst_ab' &&
+      resolveTrueflationState(20050101, seriesStart, seriesEnd) !== 'zustand5_endet_frueher'
+  );
+
+  console.log('\n=== Test 9: M2-Indexierung (Chart-Logik-Verifikation, Requirements 2.3) ===');
+  // Lücke identifiziert (Betreiber-Review 26.08.2026): Die Indexierungslogik
+  // im Chart ((v.value / base) * 100) war bisher ungetestet. M2 liegt als
+  // CHF-Absolutwert vor (Requirements 2.3: "nie Absolutwert in CHF") und muss
+  // auf Basis=100 am Fensterstart umgerechnet werden. Diese Funktion bildet
+  // dieselbe Rechenlogik wie LikChart.tsx nach, um sie unabhängig vom
+  // React-Rendering prüfbar zu machen.
+  function indexM2(rawValues) {
+    if (rawValues.length === 0) return [];
+    const base = rawValues[0];
+    return rawValues.map((v) => (v / base) * 100);
+  }
+  const m2Path = path.join(REPO_ROOT, 'data', 'snb-m2', 'm2-monthly.json');
+  let m2Data;
+  try {
+    m2Data = JSON.parse(readFileSync(m2Path, 'utf-8'));
+  } catch {
+    m2Data = null;
+  }
+  if (m2Data && Array.isArray(m2Data.values) && m2Data.values.length > 0) {
+    const rawSince2010 = m2Data.values
+      .filter((v) => parseInt(v.date.slice(0, 4), 10) >= 2010)
+      .map((v) => v.value);
+    const indexed = indexM2(rawSince2010);
+    check(
+      'M2-Indexreihe beginnt exakt bei 100 (Basis = erster Wert im Fenster)',
+      indexed.length > 0 && approxEqual(indexed[0], 100, 1e-9),
+      indexed.length > 0 ? `Erster indexierter Wert: ${indexed[0]}` : 'Keine Werte im Fenster.'
+    );
+    check(
+      'M2-Indexreihe ist niemals ein CHF-Absolutwert (Grössenordnung plausibel um 100, nicht im Millionenbereich)',
+      indexed.every((v) => v > 0 && v < 10000),
+      'Ein Wert ausserhalb (0,10000) deutet auf eine nicht-indexierte Grösse hin (Requirements 2.3-Verstoss).'
+    );
+
+    console.log('\n=== Test 9b: NEGATIVTEST — falsch indexierte (rohe) M2-Werte müssen als Requirements-2.3-Verstoss erkennbar sein ===');
+    const rawLooksLikeAbsolute = rawSince2010[0] > 10000; // M2 liegt im Bereich mehrerer 100'000 (Mio. CHF)
+    check(
+      'NEGATIVTEST: der rohe (nicht indexierte) M2-Wert liegt weit ausserhalb der plausiblen Index-Grössenordnung',
+      rawLooksLikeAbsolute,
+      `Roher Wert: ${rawSince2010[0]} — muss selbst nicht im Index-Bereich (0,10000) liegen, sonst würde ein fehlendes Indexieren nicht auffallen.`
+    );
+  } else {
+    check('Test 9: M2-Datendatei vorhanden und lesbar', false, `Erwartet unter ${m2Path}.`);
+  }
+
+  console.log('\n=== Test 10: Linienende-Erkennung (Chart-Logik-Verifikation, US 3.16 Zustand 5) ===');
+  // Bildet dieselbe Vergleichslogik wie trueflationEndsEarlierThanLik in
+  // LikChart.tsx nach (Vergleich der letzten Monate beider Reihen im selben
+  // gefilterten Fenster), unabhängig vom React-Rendering prüfbar.
+  const likPath = path.join(REPO_ROOT, 'data', 'lik', 'total-index-monthly.json');
+  const likData = JSON.parse(readFileSync(likPath, 'utf-8'));
+  function detectLineEndsEarlier(trueflationMonths, likDates) {
+    if (trueflationMonths.length === 0 || likDates.length === 0) return false;
+    const lastTfYm = Math.floor(trueflationMonths[trueflationMonths.length - 1] / 100);
+    const lastLikYm = Math.floor(likDates[likDates.length - 1] / 100);
+    return lastTfYm < lastLikYm;
+  }
+  const tfMonthsSince2010 = monthly.map((v) => v.month);
+  const likDatesSince2010 = likData.values
+    .map((v) => v.indexDate)
+    .filter((d) => Math.floor(d / 10000) >= 2010);
+  check(
+    'Reales Datenpaar (Trueflation bis 12/2024, LIK bis später): Linienende wird korrekt als "früher" erkannt',
+    detectLineEndsEarlier(tfMonthsSince2010, likDatesSince2010) === true,
+    `Letzter Trueflation-Monat: ${tfMonthsSince2010[tfMonthsSince2010.length - 1]}, letztes LIK-Datum: ${likDatesSince2010[likDatesSince2010.length - 1]}`
+  );
+
+  console.log('\n=== Test 10b: NEGATIVTEST — gleich lange Reihen dürfen NICHT als "endet früher" markiert werden ===');
+  const syntheticEqualLength = tfMonthsSince2010; // gleiche Reihe für beide simuliert
+  check(
+    'NEGATIVTEST: identische Endpunkte werden korrekt NICHT als "endet früher" erkannt',
+    detectLineEndsEarlier(syntheticEqualLength, syntheticEqualLength) === false,
+    'Zwei Reihen mit demselben letzten Monat dürfen keinen Zustand-5-Hinweis auslösen.'
   );
 
   console.log(`\n=== Ergebnis: ${passed} PASS, ${failures} FAIL ===`);

@@ -1,5 +1,5 @@
 {
-  "_comment": "ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene Neuberechnung. Werte sind Januar-Endpunkte der Monatsreihe. Einzige Quelle der Wahrheit ist die Monatsreihe. Diese Datei dient der kompakten Darstellung (Methodik-Seite, Kopfrechnungen), nicht als eigenständige Berechnung.",
+  "_comment": "ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene Neuberechnung. \"values\" sind Januar-Endpunkte (Momentaufnahme, konsistent mit dem monatlichen Kettenindex). \"calendarYearAverages\" sind JAHRESDURCHSCHNITTE (Mittel der 12 Monatswerte je Kalenderjahr) — DIES ist die für Kopfzahlen (US 3.1) und den Kaufkraft-Rechner zu verwendende Grösse, weil das BFS die amtliche Jahresteuerung ebenfalls als Jahresdurchschnitt gegen Jahresdurchschnitt publiziert — eine Januar-zu-Januar-Zahl wäre gegen Presse-/BFS-Meldungen nicht vergleichbar und zusätzlich durch die Saisonalität des Monats Januar (Winterschlussverkauf etc., siehe Test 3) verzerrt. Einzige Quelle der Wahrheit für BEIDE Felder ist die Monatsreihe, keine separate Neuberechnung.",
   "scope": "lik_plus_premium_correction_only",
   "derivedFrom": "trueflation-index-monthly.json",
   "startYear": 2010,
@@ -190,6 +190,98 @@
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
       "dataStatus": "aktuell"
+    }
+  ],
+  "calendarYearAverages": [
+    {
+      "year": 2010,
+      "trueflationIndexAvg": 1050.1065,
+      "likIndexAvg": 1046.5333,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2011,
+      "trueflationIndexAvg": 1059.5974,
+      "likIndexAvg": 1048.95,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2012,
+      "trueflationIndexAvg": 1057.1104,
+      "likIndexAvg": 1041.6667,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2013,
+      "trueflationIndexAvg": 1056.7099,
+      "likIndexAvg": 1039.4083,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2014,
+      "trueflationIndexAvg": 1058.2886,
+      "likIndexAvg": 1039.2833,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2015,
+      "trueflationIndexAvg": 1050.8045,
+      "likIndexAvg": 1027.3917,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2016,
+      "trueflationIndexAvg": 1051.6025,
+      "likIndexAvg": 1022.9167,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2017,
+      "trueflationIndexAvg": 1062.0623,
+      "likIndexAvg": 1028.3917,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2018,
+      "trueflationIndexAvg": 1075.7567,
+      "likIndexAvg": 1038.0083,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2019,
+      "trueflationIndexAvg": 1081.8519,
+      "likIndexAvg": 1041.7833,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2020,
+      "trueflationIndexAvg": 1075.5316,
+      "likIndexAvg": 1034.225,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2021,
+      "trueflationIndexAvg": 1081.3115,
+      "likIndexAvg": 1040.225,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2022,
+      "trueflationIndexAvg": 1108.1099,
+      "likIndexAvg": 1069.7167,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2023,
+      "trueflationIndexAvg": 1132.2926,
+      "likIndexAvg": 1092.5583,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2024,
+      "trueflationIndexAvg": 1151.576,
+      "likIndexAvg": 1104.1583,
+      "monthsIncluded": 12
     }
   ]
 }
