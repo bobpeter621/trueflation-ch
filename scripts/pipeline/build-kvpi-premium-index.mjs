@@ -32,12 +32,25 @@
  *
  * Usage:
  *   node build-kvpi-premium-index.mjs --input <xlsx-datei-aus-kvstat-zip>
+ *
+ * DEPENDENCY-WECHSEL (Betreiber, 27.08.2026): xlsx@0.18.5 durch read-excel-file
+ * ersetzt. Grund: npm audit meldet für xlsx dauerhaft HIGH (GHSA-4r6h-8v6p-xvw6
+ * Prototype Pollution, behoben in SheetJS 0.19.3; GHSA-5pgg-2g8v-p4x9 ReDoS,
+ * behoben in 0.20.2) — beide Fixes verteilt SheetJS nur noch über
+ * cdn.sheetjs.com, nicht mehr über npm, die npm-Registry-Advisory bleibt
+ * daher unabhängig vom tatsächlichen Sicherheitszustand bestehen (osv.dev
+ * Issue #4313). read-excel-file ist npm-audit-sauber (0 vulnerabilities),
+ * aktiv gepflegt, schlanker (4 Dependencies) und deckt das hier benötigte
+ * .xlsx-Format ab (BAG-KVSTAT-Dateien sind .xlsx, verifiziert 27.08.2026).
+ * API-Unterschied: `readSheet(pfad, sheetName)` — sheet-Selektor ist
+ * POSITIONAL, kein Options-Feld (bei v9.3.10 der read-excel-file-Bibliothek
+ * ansonsten stillschweigend das erste Sheet zurückgibt statt zu werfen).
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import XLSX from 'xlsx';
+import readXlsxFile, { readSheet } from 'read-excel-file/node';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -61,15 +74,20 @@ const COVERAGE_EXPECTATIONS = {
   minExpectedPoints: 25, // 1996-2024 = 29 Jahre, grosszügiger Puffer nach unten
 };
 
-function extractChRow(xlsxPath) {
-  const wb = XLSX.readFile(xlsxPath);
-  // Deutsches Sheet "301d" (siehe requirements.md 2.2b) — Tabelle 3.01
-  const sheetName = wb.SheetNames.find((n) => n.toLowerCase().includes('301d'));
+async function extractChRow(xlsxPath) {
+  // Deutsches Sheet "301d" (siehe requirements.md 2.2b) — Tabelle 3.01.
+  // WICHTIG: `sheet` bei read-excel-file ist ein POSITIONALER zweiter
+  // Parameter, kein Options-Feld — als Options-Feld übergeben liefert die
+  // Bibliothek stillschweigend das erste Sheet statt zu werfen (geprüft
+  // 27.08.2026, v9.3.10). Sheet-Existenz daher zusätzlich vorab über den
+  // Default-Export geprüft, um diesen Stillschweige-Fall auszuschliessen.
+  const allSheets = await readXlsxFile(xlsxPath);
+  const sheetNames = allSheets.map((s) => s.sheet);
+  const sheetName = sheetNames.find((n) => n && n.toLowerCase().includes('301d'));
   if (!sheetName) {
-    throw new DataContractError([`Erwartetes Sheet '301d' nicht gefunden. Vorhanden: ${wb.SheetNames.join(', ')}`]);
+    throw new DataContractError([`Erwartetes Sheet '301d' nicht gefunden. Vorhanden: ${sheetNames.join(', ')}`]);
   }
-  const ws = wb.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+  const rows = await readSheet(xlsxPath, sheetName);
 
   // Header-Zeile mit Jahren finden (enthält 'Kanton' in Spalte 0)
   const headerRow = rows.find((r) => r[0] === 'Kanton');
@@ -126,7 +144,7 @@ async function main() {
   }
   console.log('=== trueflation.ch — BAG-Prämienindex (V2, US 2.2b) ===\n');
 
-  const rawSeries = extractChRow(path.resolve(REPO_ROOT, inputPath));
+  const rawSeries = await extractChRow(path.resolve(REPO_ROOT, inputPath));
   console.log(`[datenvertrag] OK — CH-Zeile gefunden, ${rawSeries.length} Jahre.`);
   assertCoverage(rawSeries);
 

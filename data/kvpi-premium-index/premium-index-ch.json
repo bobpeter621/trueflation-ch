@@ -4,7 +4,7 @@
   "metric": "Mittlere Prämie je versicherte Person, alle Versicherten (inkl. Kinder), national aggregiert (CH)",
   "baseYear": 2010,
   "unit": "CHF (Prämie), Index (indexValue, Basisjahr = 100)",
-  "importedAt": "2026-08-25T19:21:02.373Z",
+  "importedAt": "2026-08-27T05:21:50.864Z",
   "importType": "bulk",
   "knownLimitations": [
     "Bruttoprämien — Prämienverbilligungen nicht abgezogen (BFS-Schätzung: ca. 0.5 Prozentpunkte/Jahr Effekt).",
