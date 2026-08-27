@@ -301,7 +301,64 @@
         "note": "Offizielle SNB-Cube-API. ABER: Deckung für die Vor-2019-Periode noch nicht abschliessend verifiziert (siehe coverage.note) — nicht produktiv nutzen, bevor das geklärt ist."
       },
       "sourceDocPage": "https://data.snb.ch/de/publishingSet/A"
+    },
+    "bfs-miete-bezugsdauer-zimmerzahl": {
+      "label": "BFS Strukturerhebung: Durchschnittlicher Mietpreis nach Bezugsdauer der Wohnung und Zimmerzahl (V3/2.2b Miet-Korrektur)",
+      "status": "partial",
+      "verifiedDate": "2026-08-27",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36398529/master",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "discoveryMethod": "Fachapp-Heuristik ausgeschöpft (keine dedizierte App für diese Tabelle) — gefunden über opendata.swiss Datensatz 'durchschnittlicher-mietpreis-nach-bezugsdauer-der-wohnung-und-zimmerzahl1', bestätigt gegen die BFS-Themenseite (Bau- und Wohnungswesen, Prodima 09.03.03).",
+      "sheetStructure": {
+        "note": "Datei enthält EIN Sheet PRO JAHR (Sheetname = Jahreszahl als String, z.B. '2024'), nicht eine durchgehende Zeitreihe in einem Sheet. Zeilen: 'Total', 'Neubau', 'Neubezug einer mehr als zwei Jahre alten Wohnung', '2 bis 5 Jahre', '6 bis 10 Jahre', '11 bis 20 Jahre', '21 Jahre und mehr'. Spalten: Total + Zimmerzahl 1-6+.",
+        "proxyRow": "'Neubezug einer mehr als zwei Jahre alten Wohnung' — gewählter Neumieter-Proxy (methodische Entscheidung, siehe rentCorrectionMethodology unten)."
+      },
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG — WESENTLICHE EINSCHRÄNKUNG",
+        "start": 2020,
+        "end": 2024,
+        "note": "Live verifiziert 27.08.2026: Datei enthält NUR die Sheets 2020-2024 (5 Jahre), NICHT ab 2010 wie in Requirements 2.2b angenommen. Kein Archiv-/Historienzugang über DAM, opendata.swiss oder BFS-Themenseite gefunden (dieselbe damId liefert immer nur den aktuellen 5-Jahres-Stand). Requirements-Annahme 'jährlich, ab 2010' ist für DIESEN Zugriffsweg falsch — an Betreiber gemeldet, nicht stillschweigend auf 2020 verkürzt weitergebaut."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "XLSX-Download ohne API-Vertrag, wie kvpi-premium-index. Sheet-Namen sind Jahreszahlen — bei jedem neuen Jahrgang verschiebt sich vermutlich die Sheet-Liste (ältestes Jahr fällt weg, neuestes kommt hinzu) statt einer wachsenden Reihe. Muss bei jedem manuellen Re-Import geprüft werden."
+      },
+      "sourceDocPage": "https://opendata.swiss/de/dataset/durchschnittlicher-mietpreis-nach-bezugsdauer-der-wohnung-und-zimmerzahl1"
+    },
+    "bfs-miete-anteile-zimmerzahl": {
+      "label": "BFS Strukturerhebung: Mietwohnungen nach Anzahl Zimmer und Bezugsdauer der Wohnung (Anteile für Gewichtung, V3/2.2b Miet-Korrektur)",
+      "status": "partial",
+      "verifiedDate": "2026-08-27",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36398519/master",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "discoveryMethod": "Selbe Recherche wie bfs-miete-bezugsdauer-zimmerzahl — dieselbe Tabellengruppe (T 09.03.03.6x), unterschiedliches Merkmal (Anteil der Mietwohnungen je Bezugsdauerklasse statt Durchschnittspreis).",
+      "sheetStructure": {
+        "note": "Gleiche Struktur wie bfs-miete-bezugsdauer-zimmerzahl (ein Sheet pro Jahr, Jahreszahl als Sheetname), aber Spalte 'Anteil in %' statt Mietpreis. Zeile 'Total' liefert den bevölkerungsweiten Anteil je Bezugsdauerklasse — das ist die Gewichtungsgrundlage für die 'mit Umzugsquote/Verteilung gewichtete' Variante der Mietkorrektur (Requirements 3, Konzeptfrage b/d).",
+        "verifiedTotalRow2024": "Neubau 1.9%, Neubezug>2J 23.1%, 2-5J 31.3%, 6-10J 17%, 11-20J 14.6%, 21J+ 12.2% (Summe = 100%, Total-Zeile)."
+      },
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG — dieselbe Einschränkung wie bfs-miete-bezugsdauer-zimmerzahl",
+        "start": 2020,
+        "end": 2024,
+        "note": "Nur 2020-2024 verfügbar, kein Archivzugang gefunden (27.08.2026)."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Wie bfs-miete-bezugsdauer-zimmerzahl."
+      },
+      "sourceDocPage": "https://opendata.swiss/de/dataset/mietwohnungen-nach-anzahl-zimmer-und-bezugsdauer-der-wohnung1"
     }
+  },
+  "rentCorrectionMethodology": {
+    "_comment": "Methodische Entscheidung V3/2.2b (Betreiber-Vorgabe 27.08.2026, KONZEPTFRAGE — Betreiber entscheidet zwischen zwei Varianten, beide berechnet):",
+    "proxyDefinition": "Neumieter-Proxy = Zeile 'Neubezug einer mehr als zwei Jahre alten Wohnung' (kürzeste NICHT-Neubau-Klasse) gegen Zeile 'Total' (Gesamtdurchschnitt aller Bezugsdauerklassen). 'Neubau' bewusst ausgeschlossen — Neubauwohnungen sind eine Sondersituation (Erstvermietung, oft Sondersegment), keine repräsentativen 'neuen' Mieter im Bestand.",
+    "variantFull": "Miet-Korrekturfaktor = volles Wachstum der Neubezug-Proxy-Zeile ggü. Bestandsmiete (LIK-Mietpreisindex), ungewichtet.",
+    "variantWeighted": "Miet-Korrekturfaktor gewichtet mit dem tatsächlichen Bevölkerungsanteil der Neubezug-Klasse (23.1% in 2024, aus bfs-miete-anteile-zimmerzahl) statt mit der in einer früheren Session diskutierten separaten Umzugsquote (BFS 9.3%/Jahr) — der Anteilswert stammt aus DERSELBEN Erhebung wie die Mietpreise selbst (interne Konsistenz), die Umzugsquote ist eine andere, nicht direkt vergleichbare Kennzahl (Personen-Umzüge, nicht Wohnungs-Bezugsdauerverteilung).",
+    "openDecision": "Betreiber entscheidet nach Vorlage beider berechneter Varianten, welche in 2.2b produktiv verwendet wird."
   },
   "notes": [
     "Weitere Quellen (SNB M2, SNB Leitzins, Mietpreisindex, Strukturerhebung, HABE, Twelve Data) werden erst nach jeweiliger Verifikation (V3-V8) hier ergänzt — kein Eintrag ohne verifizierten Endpunkt.",

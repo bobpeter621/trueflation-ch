@@ -1,0 +1,88 @@
+{
+  "_comment": "Automatisch generiert durch scripts/pipeline/build-rent-correction.mjs. BEIDE Varianten (full/weighted) werden berechnet — Betreiber entscheidet, welche produktiv in 2.2b verwendet wird. WESENTLICHE EINSCHRÄNKUNG: Quelltabellen liefern nur 2020-2024 (5 Jahre), NICHT ab 2010 wie ursprünglich in Requirements 2.2b angenommen — kein Archivzugang für 2010-2019 über DAM/opendata.swiss gefunden (Stand 27.08.2026). Formel-Reihenfolge (Betreiber-Vorgabe, verbindlich): Diese Miet-Korrektur wird ERST auf die Preisreihen angewendet, BEVOR der Warenkorb fixiert/reskaliert wird (siehe 2.2a) — in der Trueflation-Gesamtberechnung zu beachten, sobald diese Komponente eingebaut wird.",
+  "proxyDefinition": "Neubezug einer mehr als zwei Jahre alten Wohnung",
+  "excludedRow": "Neubau (Sondersituation Erstvermietung, nicht repräsentativ für Bestandsmieter-Wechsel)",
+  "coverageLimitation": {
+    "requestedStart": 2010,
+    "actualStart": 2020,
+    "actualEnd": 2024,
+    "reason": "Quelltabellen (BFS DAM assets 36398529/36398519) liefern nur die letzten 5 Jahrgänge, kein Archivzugang gefunden."
+  },
+  "priceSeries": [
+    {
+      "year": 2020,
+      "totalPrice": 1373,
+      "proxyPrice": 1414
+    },
+    {
+      "year": 2021,
+      "totalPrice": 1393,
+      "proxyPrice": 1432
+    },
+    {
+      "year": 2022,
+      "totalPrice": 1412,
+      "proxyPrice": 1450
+    },
+    {
+      "year": 2023,
+      "totalPrice": 1451,
+      "proxyPrice": 1478
+    },
+    {
+      "year": 2024,
+      "totalPrice": 1485,
+      "proxyPrice": 1520
+    }
+  ],
+  "shareSeries": [
+    {
+      "year": 2020,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2021,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2022,
+      "neubezugSharePercent": 23.8
+    },
+    {
+      "year": 2023,
+      "neubezugSharePercent": 23.3
+    },
+    {
+      "year": 2024,
+      "neubezugSharePercent": 23.1
+    }
+  ],
+  "variants": {
+    "full": {
+      "variant": "full",
+      "fromYear": 2020,
+      "toYear": 2024,
+      "totalGrowthPercent": 8.16,
+      "proxyGrowthPercent": 7.5,
+      "correctionDeltaPercentagePoints": -0.66
+    },
+    "weighted": {
+      "variant": "weighted",
+      "fromYear": 2020,
+      "toYear": 2024,
+      "avgNeubezugSharePercent": 23.96,
+      "totalGrowthPercent": 8.16,
+      "proxyGrowthPercent": 7.5,
+      "weightedGrowthPercent": 8,
+      "correctionDeltaPercentagePoints": -0.16
+    }
+  },
+  "crossCheckPerSqm": {
+    "fromYear": 2020,
+    "toYear": 2024,
+    "totalGrowthPercent": 7.88,
+    "proxyGrowthPercent": 9.71,
+    "correctionDeltaPercentagePoints": 1.84,
+    "_comment": "Kreuzprüfung aus T 09.03.03.63 (Mietpreis PRO M2 statt absolut). WIDERSPRUCH: entgegengesetzte Korrekturrichtung ggü. absolutem Mietpreis (variants.full) — vor produktiver Nutzung an Betreiber zu melden."
+  }
+}
