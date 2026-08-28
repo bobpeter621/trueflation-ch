@@ -19,7 +19,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { shouldEscalate, recordEscalation } from './plausibility-state.mjs';
+import { evaluatePending, recordEscalation, markReminderSent } from './plausibility-state.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
@@ -125,7 +125,7 @@ function buildEscalationMessage({ title, sourceKey, bodyLines, sourceUrl, questi
  * @param {string} [params.expectedJumpReason]
  * @param {(msg: string) => boolean} [params.notifyFn]
  * @param {string} [params.plausiStateDir] - Override für Tests (siehe lib/plausibility-state.mjs)
- * @returns {{status: 'ok'|'range-violation'|'jump-violation'|'expected-jump'|'pending-unchanged', changePercent: number}}
+ * @returns {{status: 'ok'|'range-violation'|'jump-violation'|'expected-jump'|'pending-unchanged'|'approved-override'|'rejected-suppressed'|'reminder-sent', changePercent: number, dataFreshnessImpact?: 'none'|'stale'}}
  */
 export function checkPlausibility({
   sourceKey,
@@ -139,15 +139,84 @@ export function checkPlausibility({
   notifyFn = defaultNotify,
   plausiStateDir,
 }) {
-  // FIX 2 (Betreiber-Direktive 28.08.2026, Zustandspersistenz): Bevor
-  // überhaupt geprüft wird, ob dieser Wert einen Verstoss darstellt — falls
-  // ein FRUEHERER Aufruf für GENAU DIESEN sourceKey+newValue bereits
-  // eskaliert hat und noch UNENTSCHIEDEN ist (kein Freigabe-/Verwerfungs-
-  // Zustand), wird NICHT erneut eskaliert. Ein sich ändernder Wert (neuer
-  // newValue) hingegen löst erneut aus — das ist eine neue Information, kein
-  // Wiederholungsspam. Betrifft NUR die beiden eskalierenden Pfade
-  // (Bereichs-/Sprungverletzung, Typfehler), NICHT 'ok'/'expected-jump'.
-  const pendingCheck = shouldEscalate(sourceKey, newValue, plausiStateDir);
+  // FIX 2+3 (Betreiber-Direktive 28.08.2026, Zustandspersistenz + drei
+  // Ausgänge): Bevor überhaupt geprüft wird, ob dieser Wert einen Verstoss
+  // darstellt, wird der bestehende Pending-Zustand ausgewertet:
+  //   - 'approved-override': eine frühere Eskalation für GENAU DIESEN Wert
+  //     wurde freigegeben — der Wert wird publiziert (siehe Rückgabe unten),
+  //     der Aufrufer (incremental-validation.mjs) übernimmt ihn als neue
+  //     Vergleichsbasis und löscht den Pending-Zustand.
+  //   - 'rejected-suppressed': eine frühere Eskalation wurde verworfen, der
+  //     Wert bleibt UNVERÄNDERT verworfen, solange die Quelle denselben
+  //     Wert liefert — keine erneute Meldung, Datenstand gilt als
+  //     'vorläufig/veraltet' (US 3.16 Zustand 2).
+  //   - 'reminder-sent': 7 Tage unbeantwortet — GENAU EINE Erinnerung wird
+  //     jetzt gesendet, danach Ruhe (wie 'rejected-suppressed' behandelt).
+  //   - 'pending-unchanged': bereits gemeldet, noch unentschieden, noch
+  //     keine Erinnerung fällig — keine erneute Eskalation (Fix 2).
+  const pendingEval = evaluatePending(sourceKey, newValue, plausiStateDir);
+
+  if (pendingEval.action === 'approved-override') {
+    console.log(
+      `[plausi/${sourceKey}] Wert war zuvor freigegeben ("JA") — wird publiziert, ` +
+      `Vergleichsbasis wird vom Aufrufer aktualisiert.`
+    );
+    return { status: 'approved-override', changePercent: oldValue !== 0 ? ((newValue - oldValue) / oldValue) * 100 : 0, dataFreshnessImpact: 'none' };
+  }
+
+  if (pendingEval.action === 'send-reminder') {
+    const message = buildEscalationMessage({
+      title: '⏰ Plausi-Check: Erinnerung (7 Tage unbeantwortet)',
+      sourceKey,
+      bodyLines: [
+        `Alter Wert: ${pendingEval.pending.oldValue}`,
+        `Neuer Wert: ${pendingEval.pending.newValue}`,
+        `Erstmalig gemeldet: ${pendingEval.pending.firstEscalatedAt}`,
+        'Seit 7 Tagen keine Antwort — dies ist die EINZIGE Erinnerung, danach bleibt der Datenstand ohne weitere Meldung auf dem letzten validen Punkt stehen, bis eine Entscheidung vorliegt.',
+      ],
+      sourceUrl,
+      question: null,
+    });
+    notifyFn(message);
+    markReminderSent(sourceKey, plausiStateDir);
+    console.error(`[plausi/${sourceKey}] 7-Tage-Erinnerung gesendet — Datenstand bleibt 'vorläufig/veraltet' (US 3.16 Zustand 2).`);
+    return { status: 'reminder-sent', changePercent: NaN, dataFreshnessImpact: 'stale' };
+  }
+
+  if (pendingEval.action === 'suppress') {
+    // WICHTIG (Regressionsfund 28.08.2026, während Fix-3-Bau selbst entdeckt):
+    // 'suppress' deckt DREI unterschiedliche Situationen ab, die bestehende
+    // Aufrufer (test-plausibility-state.mjs, Fix 2) unterscheiden können
+    // müssen — alle drei pauschal als 'rejected-suppressed' zurückzugeben
+    // war falsch und brach den bereits bestehenden Fix-2-Vertrag (Status
+    // 'pending-unchanged' für den einfachen "noch unentschieden"-Fall):
+    //   a) resolution === 'rejected' -> ECHTE Verwerfung (Ausgang 2)
+    //   b) reminderSentAt gesetzt, resolution === null -> nach der einzigen
+    //      Erinnerung, weiterhin unentschieden (Ausgang 3, Ruhephase)
+    //   c) resolution === null, kein reminderSentAt -> schlicht noch nicht
+    //      fällig (Fix 2, unveränderter Alt-Fall) -> 'pending-unchanged'
+    const isActuallyRejected = pendingEval.pending.resolution === 'rejected';
+    const isPostReminderQuiet = !isActuallyRejected && !!pendingEval.pending.reminderSentAt;
+    const status = isActuallyRejected || isPostReminderQuiet ? 'rejected-suppressed' : 'pending-unchanged';
+    const reason = isActuallyRejected
+      ? 'verworfen ("NEIN")'
+      : isPostReminderQuiet
+        ? 'unentschieden, Erinnerung bereits gesendet'
+        : 'bereits gemeldet, noch unentschieden (Fix 2)';
+    console.log(`[plausi/${sourceKey}] Wert bleibt zurückgehalten (${reason}), Quellwert unverändert — keine erneute Meldung.`);
+    return {
+      status,
+      changePercent: NaN,
+      dataFreshnessImpact: status === 'rejected-suppressed' ? pendingEval.dataFreshnessImpact : 'none',
+    };
+  }
+
+  // Ab hier: pendingEval.action === 'escalate' (Ausgang "neue Eskalation
+  // nötig" — entweder erste Meldung oder geänderter Wert; ein bereits
+  // gemeldeter, unveränderter, noch unentschiedener Wert wurde oben bereits
+  // als 'suppress' abgefangen). Der folgende Code ist die eigentliche
+  // Prüflogik, wird also nur erreicht, wenn tatsächlich neu eskaliert
+  // werden muss.
   // SECURITY-FIX (Security-Review Durchgang 1/3, 28.08.2026, Finding F2 —
   // MEDIUM): Ohne diese Prüfung würde ein nicht-numerischer/NaN-Wert (z.B.
   // durch einen Formatwechsel der Quelle oder eine manipulierte Antwort)
@@ -156,13 +225,6 @@ export function checkPlausibility({
   // Ergebnis ohne diesen Guard: status 'ok', der ungültige Wert würde
   // publiziert — genau die Fehlerklasse, die diese Prüfung verhindern soll.
   if (typeof newValue !== 'number' || !Number.isFinite(newValue)) {
-    if (!pendingCheck.shouldEscalate) {
-      console.log(
-        `[plausi/${sourceKey}] Typfehler bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
-        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
-      );
-      return { status: 'pending-unchanged', changePercent: NaN };
-    }
     const message = buildEscalationMessage({
       title: '⚠️ Plausi-Check FEHLGESCHLAGEN',
       sourceKey,
@@ -180,13 +242,6 @@ export function checkPlausibility({
 
   // Prüfart 1 — Bereichsprüfung
   if (newValue < absoluteRange.min || newValue > absoluteRange.max) {
-    if (!pendingCheck.shouldEscalate) {
-      console.log(
-        `[plausi/${sourceKey}] Bereichsverletzung bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
-        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
-      );
-      return { status: 'pending-unchanged', changePercent };
-    }
     const message = buildEscalationMessage({
       title: '⚠️ Plausi-Check FEHLGESCHLAGEN',
       sourceKey,
@@ -208,13 +263,6 @@ export function checkPlausibility({
         `Regelvorgang markiert (${expectedJumpReason ?? 'kein Grund angegeben'}) — KEINE Eskalation (US 1.7 AC).`
       );
       return { status: 'expected-jump', changePercent };
-    }
-    if (!pendingCheck.shouldEscalate) {
-      console.log(
-        `[plausi/${sourceKey}] Sprungverletzung bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
-        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
-      );
-      return { status: 'pending-unchanged', changePercent };
     }
     const message = buildEscalationMessage({
       title: '⚠️ Plausi-Check',

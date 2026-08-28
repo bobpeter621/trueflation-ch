@@ -95,7 +95,7 @@ export async function processSeries({ label, existingFile, freshValues, dateFiel
 
   if (newPoints.length === 0) {
     console.log(`[${label}] Keine neuen Datenpunkte — Historie bleibt unverändert (erwartetes Ergebnis bei unveränderter Quelle).`);
-    return { existing, hashBefore, hashAfter: hashBefore, newPoints: [], withheldPoints: [], escalated: false, unchanged: true };
+    return { existing, hashBefore, hashAfter: hashBefore, newPoints: [], withheldPoints: [], escalated: false, unchanged: true, staleImpact: false };
   }
 
   const lastKnownValue = existing.values[existing.values.length - 1][valueField];
@@ -103,7 +103,7 @@ export async function processSeries({ label, existingFile, freshValues, dateFiel
   // Normalisieren: manche Serien führen den Wert unter 'mainIndex' statt 'valueField'.
   const normalizedPoints = newPoints.map((p) => ({ ...p, [valueField]: p[valueField] ?? p.mainIndex }));
 
-  const { acceptedPoints, withheldPoints, escalated, firstViolation } = validateIncrementalPoints({
+  const { acceptedPoints, withheldPoints, escalated, firstViolation, staleImpact } = validateIncrementalPoints({
     newPoints: normalizedPoints,
     lastKnownValue,
     dateField,
@@ -114,6 +114,14 @@ export async function processSeries({ label, existingFile, freshValues, dateFiel
     sourceUrl,
     notifyFn,
     plausiStateDir,
+    // FIX 2 (Code-Review 28.08.2026, WICHTIG): dryRun MUSS durchgereicht
+    // werden — sonst löscht ein --dry-run-Lauf bereits freigegebene
+    // Pending-Zustände und protokolliert eine Freigabe, OHNE dass überhaupt
+    // etwas geschrieben wird. Ein nachfolgender ECHTER Lauf fände dann
+    // weder Pending-Zustand noch publizierten Wert vor — die Freigabe wäre
+    // unwiederbringlich verloren (exakt die Endlosschleife, die Fix 3
+    // verhindern sollte, nur über einen anderen Pfad wieder eingeführt).
+    dryRun,
   });
 
   if (withheldPoints.length > 0) {
@@ -146,7 +154,7 @@ export async function processSeries({ label, existingFile, freshValues, dateFiel
   }
 
   const hashAfter = hashValues(updatedValues.slice(0, existing.values.length));
-  return { existing, hashBefore, hashAfter, newPoints: acceptedPoints, withheldPoints, escalated, unchanged: false };
+  return { existing, hashBefore, hashAfter, newPoints: acceptedPoints, withheldPoints, escalated, unchanged: false, staleImpact };
 }
 
 async function main() {
