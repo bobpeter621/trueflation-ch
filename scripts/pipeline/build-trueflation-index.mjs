@@ -9,9 +9,14 @@
  * LIK-Monatsreihe im selben Chart wäre keine Designentscheidung, sondern
  * sähe wie ein Fehler aus.
  *
- * SCOPE v1 (unverändert seit Betreiber-Freigabe 26.08.2026): Trueflation =
- * LIK + Prämienkorrektur. Fixer Warenkorb und Mietkorrektur sind
- * ZURÜCKGESTELLT (siehe knownGaps unten und Requirements 2.2).
+ * SCOPE v1 (final, Betreiber-Entscheid 28.08.2026 nach Messung beider offener
+ * Komponenten): Trueflation = LIK + Prämienkorrektur. Fixer Warenkorb (Effekt
+ * -0.035 pp/Jahr, Kriterium nicht erfüllt) und Mietkorrektur (Effekt je nach
+ * Vergleichsgruppe -0.156/+0.253 pp/Jahr, aber Abdeckung nur 5/15 Jahre,
+ * Kriterium nicht erfüllt) sind GEPRÜFT UND ALS BEFUND DOKUMENTIERT, bewusst
+ * NICHT in diese Kernberechnung integriert (siehe knownGaps unten und
+ * Requirements 2.2d). Das ist kein Zwischenstand mehr, sondern der
+ * abschliessende v1-Scope.
  *
  * ═══ KERNFORMEL (geometrisch, NICHT arithmetisch — kritischer Unterschied
  * zur vorherigen Jahresversion) ═══
@@ -456,18 +461,30 @@ function main() {
   const knownGaps = [
     {
       component: 'fixer_warenkorb',
-      status: 'zurückgestellt',
-      reason: 'Echte 2010er/2015er/2020er LIK-Gewichtstabellen (Prozentanteile je Hauptgruppe) ' +
-        'waren trotz Recherche über BFS-DAM-API-Volltextsuche und Wayback-Archiv-Prüfung nicht ' +
-        'auffindbar. Eine Näherung mit aktuellen Gewichten wurde geprüft und verworfen: zirkulär.',
-      expectedDirection: 'additiv positiv (Substitutionseffekt)',
+      status: 'geprüft, Ergebnis dokumentiert (28.08.2026)',
+      reason: 'Aktuellste Gewichte ("LIK-Warenkorb und Gewichte 2026", 13 Hauptgruppen, siehe ' +
+        'config/lik-warenkorb-gewichte-2026.json) rückwirkend 2010-2024 fixiert und gegen dieselbe ' +
+        '13er-posId-Struktur wie die verkettete Reihe verrechnet (siehe build-warenkorb-fixation-test.mjs) ' +
+        '— kein 12<->13-Zuordnungsproblem. Gemessener Effekt -0.035 pp/Jahr, Kriterium (|Effekt| >= 0.10 ' +
+        'pp/Jahr UND Abdeckung >= 10/15 Jahre) NICHT erfüllt (Betrag zu klein, Abdeckung war voll: 15/15). ' +
+        'Als Befund dokumentiert, NICHT als Overlay umgesetzt — nicht in diese Kernberechnung integriert.',
+      measuredEffectPpPerYear: -0.035,
+      criterionMet: false,
+      decision: 'als Befund dokumentiert, kein Overlay',
     },
     {
       component: 'mietkorrektur',
-      status: 'zurückgestellt',
-      reason: 'Wachstumsdifferenz-Quelle nicht auffindbar; zusätzlich ungeklärte Konzeptfrage ' +
-        '(Bestandsmiete korrekt für Nichtumziehende, ~90%/Jahr).',
-      expectedDirection: 'additiv positiv bei jeder plausiblen Gewichtung',
+      status: 'geprüft, Ergebnis dokumentiert (28.08.2026)',
+      reason: 'Zwei Vergleichsgruppen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr; gegen längste ' +
+        'Bezugsdauer-Klasse 21J+: +0.253 pp/Jahr — Vorzeichen dreht sich je nach Vergleichsgruppe). ' +
+        'Betrag erfüllt in beiden Varianten die Schwelle (>= 0.10 pp/Jahr), aber Abdeckungsprüfung ' +
+        '(BFS-DAM-API, timeboxed) fand keine älteren Rohdaten-Jahrgänge — Abdeckung bleibt 5 von 15 ' +
+        'Jahren (2020-2024), Kriterium (>= 10/15) NICHT erfüllt. Zusätzlich meldepflichtiger ' +
+        'Widerspruchsbefund: Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp).',
+      measuredEffectPpPerYearVsTotal: -0.156,
+      measuredEffectPpPerYearVsLongestTenure: 0.253,
+      criterionMet: false,
+      decision: 'als Befund dokumentiert, kein Overlay',
     },
     {
       component: 'strom',
@@ -479,7 +496,8 @@ function main() {
   const monthlyOutput = {
     _comment: 'Automatisch generiert durch build-trueflation-index.mjs (V2, monatlich). ' +
       'SCOPE v1: Trueflation = LIK + Prämienkorrektur. Fixer Warenkorb und Mietkorrektur sind ' +
-      'ZURÜCKGESTELLT. Dieser Wert ist eine dokumentierte UNTERGRENZE, nicht das vollständige ' +
+      'GEPRÜFT UND ALS BEFUND DOKUMENTIERT (siehe knownGaps), bewusst nicht integriert. Dieser Wert ' +
+      'ist der abschliessende v1-Scope (LIK + Prämienkorrektur), nicht das vollständige ' +
       'Ergebnis. Geometrische Gewichtung (siehe methodology.formula) — Wechsel von der ' +
       'arithmetischen V1-Formel ist eine bewusste, mathematisch begründete Änderung, kein Fehler.',
     scope: 'lik_plus_premium_correction_only',

@@ -96,10 +96,31 @@ function isWhitelistedWithDateRange(url, whitelisted) {
   return false;
 }
 
+/**
+ * DoS-Schutzschwelle (Security-Review, 28.08.2026, Finding "keine
+ * Grössenlimits bei externen Responses"): Verteidigung in der Tiefe gegen
+ * eine kompromittierte/fehlerhafte Quelle, die eine ungewöhnlich grosse
+ * Antwort liefert (Speicher-Exhaustion beim spaeteren Volltext-Einlesen via
+ * res.text()/res.json()). Reale Antworten dieses Projekts liegen im
+ * niedrigen MB-Bereich (LIK-App-State ~190KB, siehe config/sources.json).
+ * Nur als Content-Length-Vorabprüfung wirksam (Angreifer mit Kontrolle
+ * ueber Response-Header koennte diesen Header weglassen/fälschen) — kein
+ * Ersatz fuer serverseitige Limits, aber ein kostenloser erster Schutzwall.
+ */
+const MAX_RESPONSE_BYTES = 100 * 1024 * 1024; // 100 MB
+
 export async function fetchWhitelisted(url, options = {}) {
   const whitelisted = loadWhitelistedUrls();
   if (!isWhitelistedWithDateRange(url, whitelisted)) {
     throw new WhitelistViolationError(url);
   }
-  return fetch(url, options);
+  const res = await fetch(url, options);
+  const contentLength = res.headers?.get?.('content-length');
+  if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) {
+    throw new Error(
+      `Antwort überschreitet DoS-Schutzschwelle (${MAX_RESPONSE_BYTES} Bytes): ` +
+      `Content-Length=${contentLength} bei ${url} — Abruf verweigert.`
+    );
+  }
+  return res;
 }

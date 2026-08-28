@@ -1,0 +1,58 @@
+{
+  "_comment": "Automatisch generiert durch build-rent-correction-longtenure-check.mjs. Ergänzt build-rent-correction.mjs um eine ZWEITE Vergleichsgruppe (21 Jahre und mehr statt Gesamtdurchschnitt) auf Betreiber-Anweisung (28.08.2026) — \"Total\" enthält die Neubezüge bereits, was die gemessene Differenz künstlich dämpft.",
+  "series": [
+    {
+      "year": 2020,
+      "totalPrice": 1373,
+      "proxyPrice": 1414,
+      "longestTenurePrice": 1166
+    },
+    {
+      "year": 2021,
+      "totalPrice": 1393,
+      "proxyPrice": 1432,
+      "longestTenurePrice": 1174
+    },
+    {
+      "year": 2022,
+      "totalPrice": 1412,
+      "proxyPrice": 1450,
+      "longestTenurePrice": 1193
+    },
+    {
+      "year": 2023,
+      "totalPrice": 1451,
+      "proxyPrice": 1478,
+      "longestTenurePrice": 1202
+    },
+    {
+      "year": 2024,
+      "totalPrice": 1485,
+      "proxyPrice": 1520,
+      "longestTenurePrice": 1241
+    }
+  ],
+  "variantVsTotal": {
+    "comparisonGroup": "Gesamtdurchschnitt (Total, bisherige Methode)",
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceTotalGrowthPercent": 8.16,
+    "proxyTotalGrowthPercent": 7.5,
+    "referenceAnnualPercent": 1.9798,
+    "proxyAnnualPercent": 1.8236,
+    "correctionDeltaTotalPp": -0.66,
+    "correctionDeltaPpPerYear": -0.1561
+  },
+  "variantVsLongest": {
+    "comparisonGroup": "21 Jahre und mehr (längste Bezugsdauer-Klasse)",
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceTotalGrowthPercent": 6.43,
+    "proxyTotalGrowthPercent": 7.5,
+    "referenceAnnualPercent": 1.5707,
+    "proxyAnnualPercent": 1.8236,
+    "correctionDeltaTotalPp": 1.06,
+    "correctionDeltaPpPerYear": 0.253
+  },
+  "signFlips": true
+}

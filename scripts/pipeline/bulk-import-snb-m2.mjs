@@ -22,6 +22,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { fetchWhitelisted } from './lib/fetch-whitelisted.mjs';
+import { assertExactColumns, parseSnbCsvLine } from './lib/csv-header-validation.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -75,9 +76,16 @@ function parseSnbCsv(csvText) {
     throw new DataContractError(["Keine Header-Zeile ('\"Date\"...') im CSV gefunden — Format unerwartet."]);
   }
 
+  // Header-Validierung (US 2.7, Fund 28.08.2026): Spaltennamen UND -reihenfolge
+  // prüfen, BEVOR positional geparst wird — sonst würde eine geänderte
+  // Spaltenreihenfolge/-benennung der Quelle lautlos falsche Werte in die
+  // falschen Felder schreiben.
+  const headerColumns = parseSnbCsvLine(lines[headerIdx]);
+  assertExactColumns(headerColumns, ['Date', 'D0', 'D1', 'Value'], 'snb-m2');
+
   const dataLines = lines.slice(headerIdx + 1);
   const values = dataLines.map((line) => {
-    const parts = line.split(';').map((p) => p.replace(/^"|"$/g, ''));
+    const parts = parseSnbCsvLine(line);
     const [dateStr, d0, d1, valueStr] = parts;
     return {
       date: dateStr, // "YYYY-MM"

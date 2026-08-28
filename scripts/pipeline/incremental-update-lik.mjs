@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fetchWhitelisted } from './lib/fetch-whitelisted.mjs';
+import { validateIncrementalPoints } from './lib/incremental-validation.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -39,8 +40,8 @@ function loadSourcesConfig() {
   return JSON.parse(readFileSync(SOURCES_CONFIG_PATH, 'utf-8'));
 }
 
-function loadExistingData(filename) {
-  const filePath = path.join(DATA_DIR, filename);
+function loadExistingData(filename, dataDir = DATA_DIR) {
+  const filePath = path.join(dataDir, filename);
   if (!existsSync(filePath)) {
     throw new Error(`Existierende Datendatei fehlt: ${filePath} — Bulk-Import (US 1.12) muss zuerst laufen.`);
   }
@@ -85,23 +86,8 @@ function findNewPoints(existingValues, freshValues, dateField = 'indexDate') {
   return freshValues.filter((v) => v[dateField] > lastKnownDate);
 }
 
-/** Inkrementelle Sprungrate-Validierung (US 1.7, Prüfart 2 — NICHT das Bulk-Profil). */
-function validateIncrementalJump(newPoints, lastKnownValue, maxRatePercent, label) {
-  let prevValue = lastKnownValue;
-  for (const point of newPoints) {
-    const changePercent = Math.abs((point.indexValue ?? point.mainIndex) / prevValue - 1) * 100;
-    if (changePercent > maxRatePercent) {
-      console.warn(
-        `[plausi-warnung/${label}] Sprung von ${changePercent.toFixed(2)}% > ${maxRatePercent}% bei ${point.indexDate} ` +
-        `— würde im Produktivbetrieb zur Telegram-Eskalation (US 1.7) führen, nicht automatisch übernommen.`
-      );
-    }
-    prevValue = point.indexValue ?? point.mainIndex;
-  }
-}
-
-async function processSeries({ label, existingFile, freshValues, dateField, valueField, maxRatePercent }) {
-  const existing = loadExistingData(existingFile);
+export async function processSeries({ label, existingFile, freshValues, dateField, valueField, maxRatePercent, absoluteRange, sourceUrl, notifyFn, dataDir = DATA_DIR, dryRun = isDryRun, plausiStateDir }) {
+  const existing = loadExistingData(existingFile, dataDir);
   const hashBefore = hashValues(existing.values);
 
   const newPoints = findNewPoints(existing.values, freshValues, dateField);
@@ -109,13 +95,36 @@ async function processSeries({ label, existingFile, freshValues, dateField, valu
 
   if (newPoints.length === 0) {
     console.log(`[${label}] Keine neuen Datenpunkte — Historie bleibt unverändert (erwartetes Ergebnis bei unveränderter Quelle).`);
-    return { existing, hashBefore, hashAfter: hashBefore, newPoints, unchanged: true };
+    return { existing, hashBefore, hashAfter: hashBefore, newPoints: [], withheldPoints: [], escalated: false, unchanged: true };
   }
 
   const lastKnownValue = existing.values[existing.values.length - 1][valueField];
-  validateIncrementalJump(newPoints, lastKnownValue, maxRatePercent, label);
 
-  const updatedValues = [...existing.values, ...newPoints];
+  // Normalisieren: manche Serien führen den Wert unter 'mainIndex' statt 'valueField'.
+  const normalizedPoints = newPoints.map((p) => ({ ...p, [valueField]: p[valueField] ?? p.mainIndex }));
+
+  const { acceptedPoints, withheldPoints, escalated, firstViolation } = validateIncrementalPoints({
+    newPoints: normalizedPoints,
+    lastKnownValue,
+    dateField,
+    valueField,
+    absoluteRange,
+    maxChangeRatePercent: maxRatePercent,
+    sourceKey: `lik-${label}`,
+    sourceUrl,
+    notifyFn,
+    plausiStateDir,
+  });
+
+  if (withheldPoints.length > 0) {
+    console.error(
+      `[${label}] ${withheldPoints.length} Punkt(e) ZURÜCKGEHALTEN, NICHT publiziert — Plausi-Check ` +
+      `(${firstViolation?.status}, ${firstViolation?.changePercent?.toFixed?.(2)}% bei ${firstViolation?.point?.[dateField]}). ` +
+      `Telegram-Eskalation ausgelöst: ${escalated}.`
+    );
+  }
+
+  const updatedValues = [...existing.values, ...acceptedPoints];
   const hashOfOriginalPortion = hashValues(updatedValues.slice(0, existing.values.length));
 
   if (hashOfOriginalPortion !== hashBefore) {
@@ -126,18 +135,18 @@ async function processSeries({ label, existingFile, freshValues, dateField, valu
   }
   console.log(`[${label}] Prüfsumme der bestehenden ${existing.values.length} Punkte unverändert bestätigt: ${hashBefore.slice(0, 16)}...`);
 
-  if (!isDryRun) {
-    const filePath = path.join(DATA_DIR, existingFile);
+  if (!dryRun) {
+    const filePath = path.join(dataDir, existingFile);
     const updated = { ...existing, values: updatedValues, lastIncrementalUpdate: new Date().toISOString() };
     delete updated._comment;
     writeFileSync(filePath, JSON.stringify({ _comment: existing._comment, ...updated }, null, 2) + '\n');
-    console.log(`[${label}] Geschrieben: ${filePath} (${updatedValues.length} Punkte total, ${newPoints.length} neu)`);
+    console.log(`[${label}] Geschrieben: ${filePath} (${updatedValues.length} Punkte total, ${acceptedPoints.length} neu übernommen, ${withheldPoints.length} zurückgehalten)`);
   } else {
-    console.log(`[${label}] [dry-run] Würde ${newPoints.length} neue Punkte anhängen, kein Schreibvorgang.`);
+    console.log(`[${label}] [dry-run] Würde ${acceptedPoints.length} neue Punkte anhängen (${withheldPoints.length} zurückgehalten), kein Schreibvorgang.`);
   }
 
   const hashAfter = hashValues(updatedValues.slice(0, existing.values.length));
-  return { existing, hashBefore, hashAfter, newPoints, unchanged: false };
+  return { existing, hashBefore, hashAfter, newPoints: acceptedPoints, withheldPoints, escalated, unchanged: false };
 }
 
 async function main() {
@@ -161,6 +170,8 @@ async function main() {
     dateField: 'indexDate',
     valueField: 'indexValue',
     maxRatePercent: incrementalCfg.totalIndex.monthlyChangeRatePercentMax,
+    absoluteRange: incrementalCfg.totalIndex.absoluteRange,
+    sourceUrl: likCfg.url,
   });
 
   console.log('\n--- totalIndex (Ewige Reihe), jährlich ---');
@@ -171,6 +182,8 @@ async function main() {
     dateField: 'indexDate',
     valueField: 'indexValue',
     maxRatePercent: incrementalCfg.totalIndex.monthlyChangeRatePercentMax,
+    absoluteRange: incrementalCfg.totalIndex.absoluteRange,
+    sourceUrl: likCfg.url,
   });
 
   console.log('\n--- majorGroups, monatlich ---');
@@ -181,6 +194,8 @@ async function main() {
     dateField: 'indexDate',
     valueField: 'mainIndex',
     maxRatePercent: incrementalCfg.majorGroups.monthlyChangeRatePercentMax,
+    absoluteRange: incrementalCfg.majorGroups.absoluteRange,
+    sourceUrl: likCfg.url,
   });
 
   console.log('\n--- majorGroups, jährlich ---');
@@ -191,21 +206,38 @@ async function main() {
     dateField: 'indexDate',
     valueField: 'mainIndex',
     maxRatePercent: incrementalCfg.majorGroups.monthlyChangeRatePercentMax,
+    absoluteRange: incrementalCfg.majorGroups.absoluteRange,
+    sourceUrl: likCfg.url,
   });
 
   console.log('\n=== Zusammenfassung ===');
+  let anyEscalated = false;
   for (const [label, r] of [
     ['totalIndex-monthly', totalMonthlyResult],
     ['totalIndex-yearly', totalYearlyResult],
     ['majorGroups-monthly', mgMonthlyResult],
     ['majorGroups-yearly', mgYearlyResult],
   ]) {
-    console.log(`  ${label}: ${r.newPoints.length} neue Punkte, bestehende Historie ${r.hashBefore === r.hashAfter ? 'UNVERÄNDERT ✓' : 'ABWEICHUNG ✗'}`);
+    const withheld = r.withheldPoints?.length ?? 0;
+    if (r.escalated) anyEscalated = true;
+    console.log(
+      `  ${label}: ${r.newPoints.length} neue Punkte übernommen` +
+      `${withheld > 0 ? `, ${withheld} ZURÜCKGEHALTEN (Plausi-Verstoss)` : ''}, ` +
+      `bestehende Historie ${r.hashBefore === r.hashAfter ? 'UNVERÄNDERT ✓' : 'ABWEICHUNG ✗'}`
+    );
+  }
+  if (anyEscalated) {
+    console.log('\n⚠️  Mindestens eine Serie hat Werte zurückgehalten und eine Telegram-Eskalation ausgelöst (US 1.7).');
   }
   console.log('=== Inkrementeller Lauf abgeschlossen ===');
 }
 
-main().catch((err) => {
-  console.error(`FEHLER: ${err.message}`);
-  process.exit(1);
-});
+// Nur ausführen, wenn direkt als Skript gestartet — nicht bei Import durch
+// einen Test (z.B. test-incremental-plausibility.mjs, der processSeries()
+// isoliert mit einer temporären Fixture und Mock-notifyFn aufruft).
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(`FEHLER: ${err.message}`);
+    process.exit(1);
+  });
+}

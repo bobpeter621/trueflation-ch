@@ -13,7 +13,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
@@ -47,9 +47,16 @@ function saveStatus(sourceKey, status) {
  * bestehende Notification-Infrastruktur, keine neue). Optional deaktivierbar
  * für Tests via notifyFn-Override.
  */
+/**
+ * SECURITY-FIX (Security-Review Durchgang 1/3, 28.08.2026, Finding F1,
+ * gleiches Muster wie lib/plausibility-check.mjs behoben): execFileSync
+ * statt execSync mit String-Interpolation — verhindert Command Substitution
+ * (`$(...)`/Backticks) innerhalb der Message, falls diese je Werte aus
+ * externen Quellen transportiert.
+ */
 function defaultNotify(message) {
   try {
-    execSync(`bash "${path.join(REPO_ROOT, 'scripts', 'notify-telegram.sh')}" "${message.replace(/"/g, '\\"')}"`, {
+    execFileSync('bash', [path.join(REPO_ROOT, 'scripts', 'notify-telegram.sh'), message], {
       stdio: 'pipe',
     });
     return true;

@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { fetchWhitelisted } from './lib/fetch-whitelisted.mjs';
+import { assertExactColumns, parseSnbCsvLine } from './lib/csv-header-validation.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -61,10 +62,16 @@ function parseSnbCsv(csvText) {
   }
   if (headerIdx === -1) throw new DataContractError(["Keine Header-Zeile im CSV gefunden."]);
 
+  // Header-Validierung (US 2.7, Fund 28.08.2026): siehe bulk-import-snb-m2.mjs
+  // für den vollen Fund-Kontext — gleiche Klasse Problem, andere Quelle (nur
+  // 3 statt 4 Spalten: kein D1 bei diesem Cube).
+  const headerColumns = parseSnbCsvLine(lines[headerIdx]);
+  assertExactColumns(headerColumns, ['Date', 'D0', 'Value'], 'snb-leitzins');
+
   const dataLines = lines.slice(headerIdx + 1);
   const values = dataLines
     .map((line) => {
-      const parts = line.split(';').map((p) => p.replace(/^"|"$/g, ''));
+      const parts = parseSnbCsvLine(line);
       const [date, d0, valueStr] = parts;
       return { date, d0, value: valueStr === '' || valueStr === undefined ? null : parseFloat(valueStr) };
     })

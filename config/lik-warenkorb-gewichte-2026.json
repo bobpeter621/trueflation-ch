@@ -1,0 +1,24 @@
+{
+  "_comment": "trueflation.ch — HABE/LIK-Hauptgruppengewichte, jüngste verfügbare Fixierung (Requirements 2.2a, Betreiber-Direktive 28.08.2026). Quelle: BFS-Themenseite 'Warenkorb und Gewichtung' (https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/warenkorb.html), eingebettete Tabelle 'LIK-Warenkorb und Gewichte 2026', live extrahiert 28.08.2026. NICHT aus dem V1-Fund '2026er-Gewichte = 0.06' übernommen — jener Wert war eine geschätzte Platzhalter-Zahl aus einer früheren Session, keine amtliche Quelle. Diese Datei ersetzt ihn vollständig mit der echten, amtlich publizierten Tabelle.",
+  "sourcePage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/warenkorb.html",
+  "tableTitle": "LIK-Warenkorb und Gewichte 2026",
+  "extractedAt": "2026-08-28",
+  "unit": "Anteil in % (Summe = 100.000)",
+  "verifiedAgainstMajorGroups": "Live geprüft (28.08.2026): gewichteter Durchschnitt der 13 posId-Teilindizes (majorGroupsMonthly, Monat 2026-07) mit diesen Gewichten ergibt 101.13788 — identisch (auf 4 Nachkommastellen) mit dem publizierten mainIndex 101.1379 desselben Monats. Bestätigt: posId 1-13 entspricht exakt der Reihenfolge dieser Tabelle, UND diese Gewichte sind die aktuell vom BFS verwendeten (nicht nur irgendeine historische Fixierung).",
+  "positions": [
+    { "posId": 1, "label": "Nahrungsmittel und alkoholfreie Getränke", "weightPercent": 10.307 },
+    { "posId": 2, "label": "Alkoholische Getränke und Tabak", "weightPercent": 3.468 },
+    { "posId": 3, "label": "Bekleidung und Schuhe", "weightPercent": 2.420 },
+    { "posId": 4, "label": "Wohnen und Energie", "weightPercent": 25.595 },
+    { "posId": 5, "label": "Hausrat und Haushaltsführung", "weightPercent": 3.302 },
+    { "posId": 6, "label": "Gesundheit", "weightPercent": 17.379 },
+    { "posId": 7, "label": "Verkehr", "weightPercent": 10.715 },
+    { "posId": 8, "label": "Information und Kommunikation", "weightPercent": 3.279 },
+    { "posId": 9, "label": "Freizeit, Sport und Kultur", "weightPercent": 7.501 },
+    { "posId": 10, "label": "Bildung", "weightPercent": 0.851 },
+    { "posId": 11, "label": "Restaurants und Hotels", "weightPercent": 9.568 },
+    { "posId": 12, "label": "Versicherungen und Finanzdienstleistungen", "weightPercent": 2.252 },
+    { "posId": 13, "label": "Sonstige Waren und Dienstleistungen", "weightPercent": 3.363 }
+  ],
+  "weightSumCheck": 100.0
+}

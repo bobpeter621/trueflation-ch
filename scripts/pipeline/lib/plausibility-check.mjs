@@ -16,16 +16,30 @@
  * (Kennzahl, alter Wert, neuer Wert, Abweichung in %, Link zur Quelle).
  */
 
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { shouldEscalate, recordEscalation } from './plausibility-state.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 
+/**
+ * SECURITY-FIX (Security-Review Durchgang 1/3, 28.08.2026, Finding F1 —
+ * HIGH): Vorherige Implementierung baute den Shell-Befehl per String-
+ * Interpolation (`execSync(\`bash "..." "${message...}"\`)`). Das Escaping
+ * neutralisierte nur `"`, liess aber `$(...)`/Backticks/`${...}`
+ * (Command Substitution) INNERHALB der doppelten Anführungszeichen aktiv.
+ * Da `message` u.a. `sourceKey` enthält, der wiederum ungeprüfte Werte aus
+ * externen BFS/SNB-Antworten transportiert (z.B. `point[dateField]` in
+ * incremental-validation.mjs), hätte eine manipulierte Quelle beliebigen
+ * Shell-Code mit den Rechten des Pipeline-Users ausführen können (inkl.
+ * Exfiltration des Telegram-Tokens). Fix: `execFileSync` mit Argument-Array
+ * — kein Shell-Parsing der Message mehr, `message` wird nie interpretiert.
+ */
 function defaultNotify(message) {
   try {
-    execSync(`bash "${path.join(REPO_ROOT, 'scripts', 'notify-telegram.sh')}" "${message.replace(/"/g, '\\"')}"`, {
+    execFileSync('bash', [path.join(REPO_ROOT, 'scripts', 'notify-telegram.sh'), message], {
       stdio: 'pipe',
     });
     return true;
@@ -33,6 +47,70 @@ function defaultNotify(message) {
     console.error(`[plausi/notify] Telegram-Versand fehlgeschlagen: ${err.message}`);
     return false;
   }
+}
+
+/**
+ * FIX 4 (Betreiber-Direktive 28.08.2026, Fund: Link kaputt — "...masterWert",
+ * zwei Steuerzeichen U+FFFC plus das Wort "Wert" wurden ins Linkziel gezogen).
+ * URSACHE: Die bisherigen Templates hingen den Folgetext direkt (nur `\n`,
+ * kein Leerzeilen-Abstand) an die URL an — manche Telegram-Client-Renderer
+ * (Linkerkennung per Regex, endet erst an Whitespace ODER am Zeilenende,
+ * abhängig von Client-Version) zogen dadurch das erste Wort der Folgezeile
+ * mit ins Link-Ziel, wenn zwischen URL und Folgetext kein sauberer
+ * Absatzumbruch (doppeltes `\n\n`) stand oder unsichtbare Steuerzeichen
+ * (U+FFFC, vermutlich aus einer früheren Kopier-/Formatierungsstufe) in der
+ * Nähe der URL lagen.
+ *
+ * ROBUSTE LÖSUNG: EIN zentraler Message-Builder statt drei unabhängiger
+ * Templates (verhindert erneutes Auseinanderlaufen). Die URL steht IMMER:
+ *   - auf einer eigenen Zeile,
+ *   - mit einer Leerzeile DAVOR,
+ *   - mit einer Leerzeile DANACH,
+ *   - ohne jegliches Markup (kein "Quelle:" DAVOR in derselben Zeile, kein
+ *     Klammer-/Doppelpunkt-Zeichen direkt anliegend, das ein Renderer als
+ *     Teil der URL interpretieren könnte),
+ *   - als einziger Inhalt ihrer Zeile (kein Suffix-Text nach der URL in
+ *     derselben Zeile).
+ * Zusätzlich: alle Eingabe-Strings (sourceKey, bodyLines) werden auf
+ * Steuerzeichen (U+0000-U+001F ausser \n, U+007F-U+009F, U+FFF9-U+FFFC)
+ * gefiltert, BEVOR sie in die Nachricht eingebaut werden — verhindert, dass
+ * ein unsichtbares Zeichen aus einer Datenquelle sich erneut in die Nähe
+ * der URL schmuggelt.
+ */
+const CONTROL_CHAR_PATTERN = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uFFF9-\uFFFC]/g;
+
+function stripControlChars(s) {
+  return String(s).replace(CONTROL_CHAR_PATTERN, '');
+}
+
+/**
+ * @param {object} params
+ * @param {string} params.title
+ * @param {string} params.sourceKey
+ * @param {string[]} params.bodyLines
+ * @param {string} params.sourceUrl
+ * @param {string|null} params.question - optionale Frage vor dem Freigabe-Hinweis
+ * @returns {string}
+ */
+function buildEscalationMessage({ title, sourceKey, bodyLines, sourceUrl, question }) {
+  const cleanSourceKey = stripControlChars(sourceKey);
+  const cleanUrl = stripControlChars(sourceUrl).trim();
+  const cleanBodyLines = bodyLines.map(stripControlChars);
+
+  const lines = [
+    `${title}: ${cleanSourceKey}`,
+    '',
+    ...cleanBodyLines,
+    '', // Leerzeile VOR der URL
+    cleanUrl, // URL AUF EIGENER ZEILE, kein Präfix wie "Quelle:" in derselben Zeile
+    '', // Leerzeile NACH der URL
+    'Wert wurde zurückgehalten, NICHT publiziert.',
+  ];
+  if (question) {
+    lines.push(question);
+  }
+  lines.push(`Antworte mit "JA ${cleanSourceKey}" zum Freigeben oder "NEIN ${cleanSourceKey}" zum Verwerfen.`);
+  return lines.join('\n');
 }
 
 /**
@@ -46,7 +124,8 @@ function defaultNotify(message) {
  * @param {boolean} [params.expectedJump=false] - Rebasierung/provisorische Revision (US 1.7 AC)
  * @param {string} [params.expectedJumpReason]
  * @param {(msg: string) => boolean} [params.notifyFn]
- * @returns {{status: 'ok'|'range-violation'|'jump-violation'|'expected-jump', changePercent: number}}
+ * @param {string} [params.plausiStateDir] - Override für Tests (siehe lib/plausibility-state.mjs)
+ * @returns {{status: 'ok'|'range-violation'|'jump-violation'|'expected-jump'|'pending-unchanged', changePercent: number}}
  */
 export function checkPlausibility({
   sourceKey,
@@ -58,19 +137,65 @@ export function checkPlausibility({
   expectedJump = false,
   expectedJumpReason,
   notifyFn = defaultNotify,
+  plausiStateDir,
 }) {
+  // FIX 2 (Betreiber-Direktive 28.08.2026, Zustandspersistenz): Bevor
+  // überhaupt geprüft wird, ob dieser Wert einen Verstoss darstellt — falls
+  // ein FRUEHERER Aufruf für GENAU DIESEN sourceKey+newValue bereits
+  // eskaliert hat und noch UNENTSCHIEDEN ist (kein Freigabe-/Verwerfungs-
+  // Zustand), wird NICHT erneut eskaliert. Ein sich ändernder Wert (neuer
+  // newValue) hingegen löst erneut aus — das ist eine neue Information, kein
+  // Wiederholungsspam. Betrifft NUR die beiden eskalierenden Pfade
+  // (Bereichs-/Sprungverletzung, Typfehler), NICHT 'ok'/'expected-jump'.
+  const pendingCheck = shouldEscalate(sourceKey, newValue, plausiStateDir);
+  // SECURITY-FIX (Security-Review Durchgang 1/3, 28.08.2026, Finding F2 —
+  // MEDIUM): Ohne diese Prüfung würde ein nicht-numerischer/NaN-Wert (z.B.
+  // durch einen Formatwechsel der Quelle oder eine manipulierte Antwort)
+  // BEIDE Prüfarten unbemerkt durchlaufen — `NaN < min`/`NaN > max` sind
+  // beide `false`, `Math.abs(NaN) > schwellwert` ist ebenfalls `false`.
+  // Ergebnis ohne diesen Guard: status 'ok', der ungültige Wert würde
+  // publiziert — genau die Fehlerklasse, die diese Prüfung verhindern soll.
+  if (typeof newValue !== 'number' || !Number.isFinite(newValue)) {
+    if (!pendingCheck.shouldEscalate) {
+      console.log(
+        `[plausi/${sourceKey}] Typfehler bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
+        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
+      );
+      return { status: 'pending-unchanged', changePercent: NaN };
+    }
+    const message = buildEscalationMessage({
+      title: '⚠️ Plausi-Check FEHLGESCHLAGEN',
+      sourceKey,
+      bodyLines: [`Typprüfung: neuer Wert ist nicht-numerisch oder nicht endlich (${JSON.stringify(newValue)})`, `Alter Wert: ${oldValue}`],
+      sourceUrl,
+      question: null,
+    });
+    notifyFn(message);
+    recordEscalation(sourceKey, { newValue, oldValue, status: 'range-violation' }, plausiStateDir);
+    console.error(`[plausi/${sourceKey}] Typprüfung fehlgeschlagen (nicht-numerischer Wert) — Eskalation gesendet.`);
+    return { status: 'range-violation', changePercent: NaN };
+  }
+
   const changePercent = oldValue !== 0 ? ((newValue - oldValue) / oldValue) * 100 : 0;
 
   // Prüfart 1 — Bereichsprüfung
   if (newValue < absoluteRange.min || newValue > absoluteRange.max) {
-    const message =
-      `⚠️ Plausi-Check FEHLGESCHLAGEN: ${sourceKey}\n\n` +
-      `Bereichsprüfung: Wert ${newValue} liegt ausserhalb [${absoluteRange.min}, ${absoluteRange.max}]\n` +
-      `Alter Wert: ${oldValue}\n\n` +
-      `Quelle:\n${sourceUrl}\n\n` +
-      `Wert wurde zurückgehalten, NICHT publiziert.\n` +
-      `Antworte mit "JA ${sourceKey}" zum Freigeben oder "NEIN ${sourceKey}" zum Verwerfen.`;
+    if (!pendingCheck.shouldEscalate) {
+      console.log(
+        `[plausi/${sourceKey}] Bereichsverletzung bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
+        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
+      );
+      return { status: 'pending-unchanged', changePercent };
+    }
+    const message = buildEscalationMessage({
+      title: '⚠️ Plausi-Check FEHLGESCHLAGEN',
+      sourceKey,
+      bodyLines: [`Bereichsprüfung: Wert ${newValue} liegt ausserhalb [${absoluteRange.min}, ${absoluteRange.max}]`, `Alter Wert: ${oldValue}`],
+      sourceUrl,
+      question: null,
+    });
     notifyFn(message);
+    recordEscalation(sourceKey, { newValue, oldValue, status: 'range-violation' }, plausiStateDir);
     console.error(`[plausi/${sourceKey}] Bereichsprüfung fehlgeschlagen — Eskalation gesendet.`);
     return { status: 'range-violation', changePercent };
   }
@@ -84,16 +209,22 @@ export function checkPlausibility({
       );
       return { status: 'expected-jump', changePercent };
     }
-    const message =
-      `⚠️ Plausi-Check: ${sourceKey}\n\n` +
-      `Alter Wert: ${oldValue}\n` +
-      `Neuer Wert: ${newValue}\n` +
-      `Abweichung: ${changePercent.toFixed(2)}% (Schwellwert: ${maxChangeRatePercent}%)\n\n` +
-      `Quelle:\n${sourceUrl}\n\n` +
-      `Wert wurde zurückgehalten, NICHT publiziert.\n` +
-      `Ist das ein echtes Ereignis oder ein Datenfehler?\n` +
-      `Antworte mit "JA ${sourceKey}" zum Freigeben oder "NEIN ${sourceKey}" zum Verwerfen.`;
+    if (!pendingCheck.shouldEscalate) {
+      console.log(
+        `[plausi/${sourceKey}] Sprungverletzung bereits gemeldet, Wert unverändert (${pendingCheck.reason}) — ` +
+        `KEINE erneute Eskalation (Fix 2, Zustandspersistenz).`
+      );
+      return { status: 'pending-unchanged', changePercent };
+    }
+    const message = buildEscalationMessage({
+      title: '⚠️ Plausi-Check',
+      sourceKey,
+      bodyLines: [`Alter Wert: ${oldValue}`, `Neuer Wert: ${newValue}`, `Abweichung: ${changePercent.toFixed(2)}% (Schwellwert: ${maxChangeRatePercent}%)`],
+      sourceUrl,
+      question: 'Ist das ein echtes Ereignis oder ein Datenfehler?',
+    });
     notifyFn(message);
+    recordEscalation(sourceKey, { newValue, oldValue, status: 'jump-violation' }, plausiStateDir);
     console.error(`[plausi/${sourceKey}] Sprungprüfung fehlgeschlagen (${changePercent.toFixed(2)}% > ${maxChangeRatePercent}%) — Eskalation gesendet.`);
     return { status: 'jump-violation', changePercent };
   }
