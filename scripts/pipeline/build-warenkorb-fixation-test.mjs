@@ -32,6 +32,38 @@
  * Fixierungseffekt" — dieser Einwand war falsch, siehe Betreiber-Notiz
  * 28.08.2026).
  *
+ * ═══ METHODISCHE EINORDNUNG DES VORZEICHENS (Betreiber-Korrektur
+ * 28.08.2026, WICHTIG für die Methodik-Seite) ═══
+ * Dieses Skript wendet AKTUELLE (2026er) Gewichte RÜCKWÄRTS auf historische
+ * Preisrelationen (2010-2024) an. Das ist KEIN Laspeyres-Index (der würde
+ * BASISJAHR-Gewichte VORWÄRTS auf spätere Preise anwenden — genau umgekehrt).
+ * Es ist eine PAASCHE-ARTIGE Konstruktion (aktuelle Gewichte, historische
+ * Preise) — und Paasche-Indizes zeigen SYSTEMATISCH WENIGER Teuerung als ein
+ * verketteter/Laspeyres-Index, wegen des Substitutionseffekts: Konsumenten
+ * verschieben ihre Ausgaben tendenziell HIN ZU relativ günstiger gewordenen
+ * Gütern, und ein rückwirkend mit AKTUELLEN (also bereits an diese
+ * Verschiebung angepassten) Gewichten berechneter Index gewichtet genau
+ * diese günstiger gewordenen Posten stärker als der historische Warenkorb
+ * es tat — das drückt das gemessene historische Wachstum nach unten.
+ * KONSEQUENZ FÜR DIE INTERPRETATION: Das gemessene negative Vorzeichen
+ * (-0.035 pp/Jahr, siehe unten) FOLGT AUS DER METHODE, nicht aus einer
+ * Widerlegung der Ausgangshypothese (dass ein fixierter Warenkorb generell
+ * mehr Teuerung zeigen würde als ein verketteter). Ein Index mit HISTORISCHEN
+ * Basisjahr-Gewichten (echter Laspeyres, vorwärts gerechnet) würde
+ * TENDENZIELL IN DIE ANDERE RICHTUNG weisen — solche Gewichte sind für die
+ * aktuelle 13-Gruppen-Struktur aber NICHT verfügbar (siehe
+ * config/lik-warenkorb-gewichte-2026.json -> herkunftBelegGegen12erVs13er).
+ * VERBINDLICHE FORMULIERUNG für die Methodik-Seite (P5): "Mit aktuellen
+ * Gewichten rückwärts gerechnet liegt der Effekt bei -0.035 pp/Jahr. Ein
+ * Index mit historischen Basisjahr-Gewichten würde tendenziell in die andere
+ * Richtung weisen; solche Gewichte sind für die 13-Gruppen-Struktur nicht
+ * verfügbar." NICHT SCHREIBEN: "der fixe Warenkorb dämpft die Teuerung" —
+ * das wäre eine Fehlinterpretation der eigenen Messung (suggeriert eine
+ * inhaltliche Eigenschaft des fixierten Warenkorbs statt einer Eigenschaft
+ * der gewählten Berechnungsrichtung). Die Entscheidung selbst (Befund statt
+ * Overlay-Komponente, siehe Kriterium unten) ändert sich durch diese
+ * Klarstellung NICHT — nur die Begründung des Vorzeichens wird korrekt.
+ *
  * ═══ BASISJAHRWAHL ═══
  * Die Wahl "2026-Gewichte fixiert über 2010-2024" verschiebt das Ergebnis
  * leicht (andere Fixierungsjahre — 2010/2015/2020 — würden andere,
@@ -200,6 +232,16 @@ function main() {
       'Fixierungsjahr 2026 (aktuellste verfügbare Gewichtstabelle), rückwärts angewendet auf 2010-2024. ' +
       'Andere Fixierungsjahre (2010/2015/2020) würden das Ergebnis leicht verschieben, nicht die Grössenordnung ' +
       '— nicht separat berechnet (Zeitbudget), aber als Sensitivitätsvorbehalt hier dokumentiert.',
+    methodologicalSignExplanation:
+      'AKTUELLE Gewichte rückwärts angewendet ist KEIN Laspeyres-Index (Basisjahr-Gewichte vorwärts), ' +
+      'sondern eine Paasche-artige Konstruktion — diese zeigt methodisch bedingt systematisch WENIGER ' +
+      'Teuerung als ein verketteter Index (Substitutionseffekt: aktuelle Gewichte gewichten bereits ' +
+      'günstiger gewordene Posten stärker). Verbindliche Formulierung für die Methodik-Seite: "Mit ' +
+      'aktuellen Gewichten rückwärts gerechnet liegt der Effekt bei -0.035 pp/Jahr. Ein Index mit ' +
+      'historischen Basisjahr-Gewichten würde tendenziell in die andere Richtung weisen; solche Gewichte ' +
+      'sind für die 13-Gruppen-Struktur nicht verfügbar." NICHT: "der fixe Warenkorb dämpft die Teuerung" ' +
+      '— das Vorzeichen folgt aus der Berechnungsrichtung (Paasche vs. Laspeyres), nicht aus einer ' +
+      'Widerlegung der Ausgangshypothese. Die Entscheidung (Befund statt Overlay) ändert sich dadurch nicht.',
     window: { start: START_MONTH, end: END_MONTH, months: series.length, years: round4(exactYears) },
     result: {
       chainedTotalGrowthPercent: round2(chainedTotalGrowthPercent),

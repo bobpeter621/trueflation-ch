@@ -64,6 +64,27 @@ jobs:
         # committed und live geschaltet wird (analog zur Plausi-Prüfung, US 1.7).
         run: node scripts/pipeline/test-trueflation-index.mjs
 
+      - name: Twelve-Data-Overlays (Gold + BTC) — täglicher Refresh
+        # Requirements 2.5, P4 (28.08.2026). SMI aus v1 gestrichen (auf dem
+        # Free-Tier nicht verfügbar, Betreiber-Entscheidung), nur noch Gold
+        # (abgeleitet: XAU/USD x USD/CHF) und BTC/CHF. Optionales Feature —
+        # continue-on-error, damit ein Twelve-Data-Ausfall/Rate-Limit die
+        # Kernpipeline (LIK/Trueflation/M2) NICHT blockiert (US 3.16 Zustand 3).
+        # Secret TWELVEDATA_API_KEY muss in den Repo-Settings hinterlegt sein
+        # (analog TELEGRAM_BOT_TOKEN) — NIEMALS den Key ins Repo committen.
+        # CODE-REVIEW-FIX (Opus 4.8, 28.08.2026, Finding 2 — WICHTIG): Secret
+        # wird jetzt DIREKT als Env-Var an den Node-Prozess gereicht (analog
+        # TELEGRAM_BOT_TOKEN im Eskalationsschritt unten), NICHT mehr über
+        # den Umweg einer lokalen Klartextdatei geschrieben — kleinere
+        # Angriffsfläche, konsistent mit dem etablierten Projektmuster.
+        # bulk-import-twelvedata-overlays.mjs liest bevorzugt
+        # process.env.TWELVEDATA_API_KEY, fällt nur für lokale/manuelle
+        # Läufe auf die Datei zurück (siehe loadApiKey() dort).
+        env:
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+        run: node scripts/pipeline/bulk-import-twelvedata-overlays.mjs
+        continue-on-error: true
+
       - name: Trueflation — public/-Kopien synchronisieren
         # Next.js liest Client-seitig aus public/data/, die Pipeline schreibt
         # aber nach data/ — ohne diesen Schritt divergieren beide Kopien
@@ -79,6 +100,13 @@ jobs:
           mkdir -p public/data/snb-m2
           if ! cp data/snb-m2/m2-monthly.json public/data/snb-m2/ 2>/dev/null; then
             echo "::warning::M2-Sync uebersprungen — data/snb-m2/m2-monthly.json fehlt oder nicht lesbar. public/data/snb-m2/ koennte veraltet sein."
+          fi
+          mkdir -p public/data/overlays
+          if ! cp data/overlays/btc-chf-daily.json public/data/overlays/ 2>/dev/null; then
+            echo "::warning::BTC-Overlay-Sync uebersprungen — data/overlays/btc-chf-daily.json fehlt (Twelve-Data-Schritt evtl. fehlgeschlagen). Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          if ! cp data/overlays/gold-chf-daily-derived.json public/data/overlays/ 2>/dev/null; then
+            echo "::warning::Gold-Overlay-Sync uebersprungen — data/overlays/gold-chf-daily-derived.json fehlt (Twelve-Data-Schritt evtl. fehlgeschlagen). Overlay bleibt auf altem Stand oder inaktiv."
           fi
 
       - name: Prüfsummen aktualisieren (US 5.5)

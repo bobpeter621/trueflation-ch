@@ -44,11 +44,23 @@ class DataContractError extends Error {
   }
 }
 
+const shareInputPath = argVal('--share-input');
 const PROXY_ROW_LABEL = 'Neubezug einer mehr als zwei Jahre alten Wohnung';
 const TOTAL_ROW_LABEL = 'Total';
 const LONGEST_TENURE_ROW_LABEL = '21 Jahre und mehr';
 const EXPECTED_YEARS = ['2020', '2021', '2022', '2023', '2024'];
 const PRICE_VALUE_COLUMN = 1; // "Total"-Zimmerzahl-Spalte, siehe build-rent-correction.mjs
+const SHARE_NEUBEZUG_VALUE_COLUMN = 5; // siehe build-rent-correction.mjs
+
+// Betreiber-Direktive (28.08.2026): "+0.253 ist die VOLLE oder die mit der
+// Umzugsquote (9.3%) gewichtete Variante? Faktor ~10 Unterschied." -> BEIDE
+// Zahlen nennen, PLUS den Projekt-Standard (tatsächlicher Bevölkerungsanteil
+// der Neubezug-Klasse, ~24%, siehe config/sources.json rentCorrectionMethodology
+// -> variantWeighted, dort bereits als methodische Entscheidung dokumentiert:
+// NICHT die Umzugsquote, weil diese eine andere, nicht direkt vergleichbare
+// Kennzahl ist). Der Betreiber nennt 9.3% als Vergleichswert (zur Einordnung
+// "tragende Komponente vs. Rauschen"), NICHT als neue methodische Vorgabe.
+const RELOCATION_RATE_PERCENT_FOR_COMPARISON_ONLY = 9.3;
 
 function findExactlyOneRow(rows, label, context) {
   const matches = rows.filter((r) => r[0] === label);
@@ -97,9 +109,50 @@ function computeVariant(series, valueKey, label) {
   };
 }
 
+/**
+ * Analoge Gewichtungsformel zu build-rent-correction.mjs::computeWeightedVariant,
+ * hier gegen eine BELIEBIGE Referenzgruppe (Total ODER 21J+) statt fest auf Total.
+ * weightedGrowth = (1-w)*referenceGrowth + w*proxyGrowth, w = weightPercent/100.
+ * NÄHERUNG, nicht exakte Dekomposition (wie im Original dokumentiert) — als
+ * Sensitivitäts-Kennzahl brauchbar.
+ */
+function computeWeightedVariant(series, valueKey, weightPercent, label) {
+  const first = series[0];
+  const last = series[series.length - 1];
+  const years = last.year - first.year;
+  const referenceGrowthPercent = (last[valueKey] / first[valueKey] - 1) * 100;
+  const proxyGrowthPercent = (last.proxyPrice / first.proxyPrice - 1) * 100;
+  const referenceAnnualPercent = (Math.pow(last[valueKey] / first[valueKey], 1 / years) - 1) * 100;
+
+  const weight = weightPercent / 100;
+  const weightedTotalGrowthPercent = (1 - weight) * referenceGrowthPercent + weight * proxyGrowthPercent;
+  const weightedAnnualPercent = (Math.pow(1 + weightedTotalGrowthPercent / 100, 1 / years) - 1) * 100;
+
+  return {
+    comparisonGroup: label,
+    weightPercent,
+    fromYear: first.year,
+    toYear: last.year,
+    referenceAnnualPercent: round4(referenceAnnualPercent),
+    weightedAnnualPercent: round4(weightedAnnualPercent),
+    correctionDeltaTotalPp: round2(weightedTotalGrowthPercent - referenceGrowthPercent),
+    correctionDeltaPpPerYear: round4(weightedAnnualPercent - referenceAnnualPercent),
+  };
+}
+
+async function extractShareRow(xlsxPath, year) {
+  const rows = await readSheet(xlsxPath, year);
+  const totalRow = findExactlyOneRow(rows, TOTAL_ROW_LABEL, `Sheet ${year} (Anteile)`);
+  const neubezugShare = totalRow[SHARE_NEUBEZUG_VALUE_COLUMN];
+  if (typeof neubezugShare !== 'number') {
+    throw new DataContractError([`Sheet ${year} (Anteile): Neubezug-Anteil nicht numerisch (${neubezugShare}).`]);
+  }
+  return { year: Number(year), neubezugSharePercent: neubezugShare };
+}
+
 async function main() {
   if (!priceInputPath) {
-    console.error('Usage: node build-rent-correction-longtenure-check.mjs --price-input <xlsx>');
+    console.error('Usage: node build-rent-correction-longtenure-check.mjs --price-input <xlsx> [--share-input <xlsx>]');
     process.exit(1);
   }
   console.log('=== trueflation.ch — Miet-Korrektur: Vergleichsgruppe LÄNGSTE Bezugsdauer-Klasse ===\n');
@@ -111,6 +164,35 @@ async function main() {
     series.push(await extractRow(resolvedPath, year));
   }
   console.log(`[datenvertrag] OK — ${series.length} Jahre, Spalten Total/Proxy/21J+ vorhanden und numerisch.\n`);
+
+  // Betreiber-Direktive (28.08.2026): "Ist +0.253 die VOLLE oder die
+  // GEWICHTETE Variante? Faktor ~10 Unterschied." -> beide Varianten UND den
+  // Vergleichswert des Betreibers (Umzugsquote 9.3%) berechnen und nennen.
+  let shareSeries = null;
+  let weightedVsLongestActual = null;
+  let weightedVsLongestRelocationRate = null;
+  if (shareInputPath) {
+    const resolvedSharePath = path.resolve(REPO_ROOT, shareInputPath);
+    shareSeries = [];
+    for (const year of EXPECTED_YEARS) {
+      shareSeries.push(await extractShareRow(resolvedSharePath, year));
+    }
+    const avgShare = shareSeries.reduce((s, x) => s + x.neubezugSharePercent, 0) / shareSeries.length;
+    weightedVsLongestActual = computeWeightedVariant(
+      series,
+      'longestTenurePrice',
+      avgShare,
+      `Gewichtet mit tatsächlichem Bevölkerungsanteil (Ø ${round2(avgShare)}%, Projekt-Standard, siehe config/sources.json rentCorrectionMethodology)`
+    );
+    weightedVsLongestRelocationRate = computeWeightedVariant(
+      series,
+      'longestTenurePrice',
+      RELOCATION_RATE_PERCENT_FOR_COMPARISON_ONLY,
+      `Gewichtet mit Umzugsquote ${RELOCATION_RATE_PERCENT_FOR_COMPARISON_ONLY}% (NUR Vergleichswert des Betreibers, NICHT Projekt-Standard — andere Kennzahl, siehe Methodik-Vorbehalt)`
+    );
+  } else {
+    console.log('[hinweis] --share-input nicht angegeben — gewichtete Varianten werden übersprungen (nur volle/ungewichtete Variante berechnet).');
+  }
 
   console.log('--- Roh-Wachstumsraten (2020->2024, Rohreihen) ---');
   for (const r of series) {
@@ -141,8 +223,21 @@ async function main() {
 
   const ABS_THRESHOLD = 0.10;
   const meetsThresholdVsLongest = Math.abs(variantVsLongest.correctionDeltaPpPerYear) >= ABS_THRESHOLD;
-  console.log(`\n  Kriterium (|Effekt| >= ${ABS_THRESHOLD} pp/Jahr) gegen 21J+: |${Math.abs(variantVsLongest.correctionDeltaPpPerYear)}| ${meetsThresholdVsLongest ? '>= ' : '< '}${ABS_THRESHOLD} -> ${meetsThresholdVsLongest ? 'ERFÜLLT (Betrag)' : 'NICHT erfüllt (Betrag)'}`);
-  console.log(`  Hinweis: Abdeckung (4 von 15 Jahren) bleibt der zweite, unabhängige Prüfpunkt — siehe Abdeckungsprüfung.`);
+  console.log(`\n  Kriterium (|Effekt| >= ${ABS_THRESHOLD} pp/Jahr) gegen 21J+ (VOLLE/ungewichtete Variante): |${Math.abs(variantVsLongest.correctionDeltaPpPerYear)}| ${meetsThresholdVsLongest ? '>= ' : '< '}${ABS_THRESHOLD} -> ${meetsThresholdVsLongest ? 'ERFÜLLT (Betrag)' : 'NICHT erfüllt (Betrag)'}`);
+
+  if (weightedVsLongestActual) {
+    console.log('\n--- GEWICHTETE Varianten gegen 21J+ (Betreiber-Direktive: "beide Zahlen nennen") ---');
+    console.log(`  Projekt-Standard (Bevölkerungsanteil Ø${weightedVsLongestActual.weightPercent}%): ${weightedVsLongestActual.correctionDeltaPpPerYear} pp/Jahr`);
+    console.log(`  Vergleichswert Betreiber (Umzugsquote ${weightedVsLongestRelocationRate.weightPercent}%): ${weightedVsLongestRelocationRate.correctionDeltaPpPerYear} pp/Jahr`);
+    console.log(`  Faktor VOLLE vs. Projekt-Standard-gewichtet: ${round2(variantVsLongest.correctionDeltaPpPerYear / weightedVsLongestActual.correctionDeltaPpPerYear)}`);
+    console.log(`  Faktor VOLLE vs. Umzugsquote-gewichtet: ${round2(variantVsLongest.correctionDeltaPpPerYear / weightedVsLongestRelocationRate.correctionDeltaPpPerYear)}`);
+    const meetsThresholdActual = Math.abs(weightedVsLongestActual.correctionDeltaPpPerYear) >= ABS_THRESHOLD;
+    const meetsThresholdRelocation = Math.abs(weightedVsLongestRelocationRate.correctionDeltaPpPerYear) >= ABS_THRESHOLD;
+    console.log(`  Kriterium Projekt-Standard-gewichtet: |${Math.abs(weightedVsLongestActual.correctionDeltaPpPerYear)}| ${meetsThresholdActual ? '>= ' : '< '}${ABS_THRESHOLD} -> ${meetsThresholdActual ? 'ERFÜLLT' : 'NICHT erfüllt'}`);
+    console.log(`  Kriterium Umzugsquote-gewichtet: |${Math.abs(weightedVsLongestRelocationRate.correctionDeltaPpPerYear)}| ${meetsThresholdRelocation ? '>= ' : '< '}${ABS_THRESHOLD} -> ${meetsThresholdRelocation ? 'ERFÜLLT' : 'NICHT erfüllt'}`);
+  }
+
+  console.log(`\n  Hinweis: Abdeckung (5 von 15 Jahren) bleibt der zweite, unabhängige Prüfpunkt — siehe Abdeckungsprüfung.`);
 
   mkdirSync(OUTPUT_DIR, { recursive: true });
   const output = {
@@ -151,8 +246,11 @@ async function main() {
       'um eine ZWEITE Vergleichsgruppe (21 Jahre und mehr statt Gesamtdurchschnitt) auf Betreiber-Anweisung ' +
       '(28.08.2026) — "Total" enthält die Neubezüge bereits, was die gemessene Differenz künstlich dämpft.',
     series,
+    shareSeries,
     variantVsTotal,
     variantVsLongest,
+    weightedVsLongestActual,
+    weightedVsLongestRelocationRate,
     signFlips,
   };
   writeFileSync(path.join(OUTPUT_DIR, 'rent-correction-longtenure-check.json'), JSON.stringify(output, null, 2) + '\n');

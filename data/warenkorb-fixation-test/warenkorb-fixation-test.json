@@ -5,6 +5,7 @@
   "weightsTableTitle": "LIK-Warenkorb und Gewichte 2026",
   "weightsExtractedAt": "2026-08-28",
   "basisYearNote": "Fixierungsjahr 2026 (aktuellste verfügbare Gewichtstabelle), rückwärts angewendet auf 2010-2024. Andere Fixierungsjahre (2010/2015/2020) würden das Ergebnis leicht verschieben, nicht die Grössenordnung — nicht separat berechnet (Zeitbudget), aber als Sensitivitätsvorbehalt hier dokumentiert.",
+  "methodologicalSignExplanation": "AKTUELLE Gewichte rückwärts angewendet ist KEIN Laspeyres-Index (Basisjahr-Gewichte vorwärts), sondern eine Paasche-artige Konstruktion — diese zeigt methodisch bedingt systematisch WENIGER Teuerung als ein verketteter Index (Substitutionseffekt: aktuelle Gewichte gewichten bereits günstiger gewordene Posten stärker). Verbindliche Formulierung für die Methodik-Seite: \"Mit aktuellen Gewichten rückwärts gerechnet liegt der Effekt bei -0.035 pp/Jahr. Ein Index mit historischen Basisjahr-Gewichten würde tendenziell in die andere Richtung weisen; solche Gewichte sind für die 13-Gruppen-Struktur nicht verfügbar.\" NICHT: \"der fixe Warenkorb dämpft die Teuerung\" — das Vorzeichen folgt aus der Berechnungsrichtung (Paasche vs. Laspeyres), nicht aus einer Widerlegung der Ausgangshypothese. Die Entscheidung (Befund statt Overlay) ändert sich dadurch nicht.",
   "window": {
     "start": 20100101,
     "end": 20241201,

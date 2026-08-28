@@ -32,6 +32,28 @@
       "longestTenurePrice": 1241
     }
   ],
+  "shareSeries": [
+    {
+      "year": 2020,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2021,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2022,
+      "neubezugSharePercent": 23.8
+    },
+    {
+      "year": 2023,
+      "neubezugSharePercent": 23.3
+    },
+    {
+      "year": 2024,
+      "neubezugSharePercent": 23.1
+    }
+  ],
   "variantVsTotal": {
     "comparisonGroup": "Gesamtdurchschnitt (Total, bisherige Methode)",
     "fromYear": 2020,
@@ -53,6 +75,26 @@
     "proxyAnnualPercent": 1.8236,
     "correctionDeltaTotalPp": 1.06,
     "correctionDeltaPpPerYear": 0.253
+  },
+  "weightedVsLongestActual": {
+    "comparisonGroup": "Gewichtet mit tatsächlichem Bevölkerungsanteil (Ø 23.96%, Projekt-Standard, siehe config/sources.json rentCorrectionMethodology)",
+    "weightPercent": 23.96,
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceAnnualPercent": 1.5707,
+    "weightedAnnualPercent": 1.6314,
+    "correctionDeltaTotalPp": 0.25,
+    "correctionDeltaPpPerYear": 0.0608
+  },
+  "weightedVsLongestRelocationRate": {
+    "comparisonGroup": "Gewichtet mit Umzugsquote 9.3% (NUR Vergleichswert des Betreibers, NICHT Projekt-Standard — andere Kennzahl, siehe Methodik-Vorbehalt)",
+    "weightPercent": 9.3,
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceAnnualPercent": 1.5707,
+    "weightedAnnualPercent": 1.5943,
+    "correctionDeltaTotalPp": 0.1,
+    "correctionDeltaPpPerYear": 0.0236
   },
   "signFlips": true
 }

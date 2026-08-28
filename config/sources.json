@@ -351,7 +351,84 @@
         "note": "Wie bfs-miete-bezugsdauer-zimmerzahl."
       },
       "sourceDocPage": "https://opendata.swiss/de/dataset/mietwohnungen-nach-anzahl-zimmer-und-bezugsdauer-der-wohnung1"
+    },
+    "twelvedata-btc-chf": {
+      "label": "Twelve Data — Bitcoin/CHF (Overlay-Modul, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=BTC/CHF&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "Direkt getestet (kein Discovery-Prozess nötig) — BTC/CHF ist auf dem Twelve-Data-Free-Tier ohne Einschränkung verfügbar (verifiziert 28.08.2026, echte Werte abgerufen, Quelle Kraken laut API-Metadaten).",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.openclaw/secrets/twelvedata-api-key (NIEMALS ins Repo committen, ausschliesslich aus diesem lokalen Pfad lesen; für GitHub Actions als verschlüsseltes Secret hinterlegen, analog Telegram-Token)",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000,
+        "note": "Live getroffen (28.08.2026): mehrere schnelle Testabfragen lösten HTTP 429 aus ('You have run out of API credits for the current minute'). Bulk-Import MUSS sequenziell mit Pause zwischen Abrufen laufen, analog SNB-Etikette (US 1.16)."
+      },
+      "checkStrategy": "manual-daily",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte, stabile Twelve-Data-API. Kein Fallback für BTC (CoinGecko-Fallback gestrichen, Befund V8 — nur 365 Tage Historie auf dessen Free-Tier, ungeeignet für mehrjährige Reihe). Fällt Twelve Data aus, entfällt das BTC-Overlay (optionales Feature, keine Kernlinie betroffen)."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
+    },
+    "twelvedata-xau-usd": {
+      "label": "Twelve Data — Gold Spot/USD (Zwischenschritt für Gold/CHF-Overlay, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "XAU/CHF direkt getestet und live abgelehnt (HTTP 404: 'This symbol is available starting with the Grow or Venture plan') — XAU/USD auf dem Free-Tier verifiziert verfügbar. Betreiber-Entscheidung 28.08.2026: Umrechnung XAU/USD × USD/CHF statt Plan-Upgrade.",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.openclaw/secrets/twelvedata-api-key",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000
+      },
+      "checkStrategy": "manual-daily",
+      "derivedUsage": "Wird NICHT direkt dargestellt — Gold/CHF = XAU/USD * USD/CHF (siehe twelvedata-usd-chf). Beide Quellreihen UND der Umrechnungsweg sind auf der Methodik-Seite auszuweisen (Betreiber-Vorgabe 28.08.2026): 'abgeleitete Grösse, keine amtliche/direkte CHF-Notierung'.",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte Twelve-Data-API. Datenvertrags-Test (US 2.7) gilt auch für diese Reihe, nicht nur für die Wechselkursreihe."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
+    },
+    "twelvedata-usd-chf": {
+      "label": "Twelve Data — USD/CHF Wechselkurs (Zwischenschritt für Gold/CHF-Overlay, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "Direkt getestet, auf dem Free-Tier verfügbar (verifiziert 28.08.2026).",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.openclaw/secrets/twelvedata-api-key",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000
+      },
+      "checkStrategy": "manual-daily",
+      "derivedUsage": "Zusammen mit twelvedata-xau-usd multipliziert zu Gold/CHF — siehe dortiger derivedUsage-Kommentar. Datenvertrags-Test (US 2.7, Betreiber-Vorgabe 28.08.2026) MUSS auch für diese Wechselkursreihe laufen, nicht nur für die Gold-Rohreihe.",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte Twelve-Data-API, physische Währung, stabiles Schema."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
     }
+  },
+  "overlayModuleNotes": {
+    "_comment": "Requirements 2.5, Betreiber-Direktive 28.08.2026: 'Das Overlay-Modul so bauen, dass eine weitere Trueflation-Variante spaeter ohne Umbau eingehaengt werden kann.'",
+    "smiStricken": "SMI aus v1 GESTRICHEN (Betreiber-Entscheidung 28.08.2026) — auf dem Twelve-Data-Free-Tier nicht verfügbar (HTTP 404 bei allen getesteten Symbolformen: SMI, SSMI, SMI:SW, SMI.SW, XSWX:SMI, ISIN CH0009980894). v1-Overlays sind ausschliesslich Gold und BTC. v2-Kandidat, falls andere kostenlose Quelle gefunden wird oder Plan-Upgrade je gerechtfertigt erscheint.",
+    "extensibilityRequirement": "Das Chart-Overlay-Modul (app/components/LikChart.tsx) MUSS eine generische Overlay-Datenstruktur nutzen (Label, Farbe, Datenpunkte, Kategorisierung 'Wertaufbewahrung' vs. zukuenftig 'Trueflation-Variante'), NICHT fest auf 'Gold/BTC/SMI' verdrahtet sein — ein Miet-korrigiertes Trueflation-Overlay (siehe Requirements 2.2d, Miet-Entscheid ausstehend) muss ohne strukturellen Umbau als weiterer Overlay-Eintrag einhaengbar sein."
   },
   "rentCorrectionMethodology": {
     "_comment": "Methodische Entscheidung V3/2.2b (Betreiber-Vorgabe 27.08.2026, KONZEPTFRAGE — Betreiber entscheidet zwischen zwei Varianten, beide berechnet):",

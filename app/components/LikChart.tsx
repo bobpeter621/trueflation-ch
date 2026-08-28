@@ -93,6 +93,73 @@ type M2MonthlyFile = {
   values: M2DataPoint[];
 };
 
+// ═══ GENERISCHES OVERLAY-MODUL (Requirements 2.5, Betreiber-Direktive
+// 28.08.2026: "so bauen, dass eine weitere Trueflation-Variante später ohne
+// Umbau eingehängt werden kann") ═══
+//
+// Statt Gold/BTC (und künftig z.B. ein Miet-korrigiertes Trueflation-
+// Overlay, siehe Requirements 2.2d Miet-Entscheid) fest zu verdrahten,
+// beschreibt OVERLAY_CONFIGS jede Overlay-Linie generisch: woher die Daten
+// kommen, wie sie geparst/indexiert werden, Kategorisierung und Darstellung.
+// Ein neues Overlay (Markt-Referenz ODER künftig eine Trueflation-Variante)
+// braucht nur einen neuen Eintrag hier — KEINE Änderung an der Render-Logik.
+type OverlayCategory = "wertaufbewahrung" | "trueflation-variante";
+
+type OverlayRawPoint = { date: string; close: number };
+
+type OverlayConfig = {
+  key: string;
+  label: string;
+  fetchUrl: string;
+  color: string;
+  dash: number[];
+  category: OverlayCategory;
+  /** Extrahiert {date, close}-Paare aus der rohen JSON-Antwort — die einzige
+   * Stelle, die pro Overlay unterschiedlich sein darf (unterschiedliche
+   * Quellschemas: Twelve-Data-values[], abgeleitete goldChf-Reihe, künftig
+   * evtl. eine Trueflation-Variante mit eigenem Schema). */
+  extractPoints: (raw: unknown) => OverlayRawPoint[];
+  tooltipLabel: (value: number) => string[];
+};
+
+const OVERLAY_CONFIGS: OverlayConfig[] = [
+  {
+    key: "btc-chf",
+    label: "Bitcoin (CHF)",
+    fetchUrl: "/data/overlays/btc-chf-daily.json",
+    color: "var(--color-line-overlay-btc, #d4a017)",
+    dash: [1, 3],
+    category: "wertaufbewahrung",
+    extractPoints: (raw) => {
+      const file = raw as { values?: Array<{ date: string; close: number }> };
+      return (file.values ?? []).map((v) => ({ date: v.date, close: v.close }));
+    },
+    tooltipLabel: (v) => [
+      `Bitcoin: ${v.toFixed(1)} (indexiert, Quelle: Twelve Data/Kraken)`,
+      "Marktdaten, keine amtliche Quelle — Wertaufbewahrung/Rendite, keine Inflationsmessung.",
+    ],
+  },
+  {
+    key: "gold-chf",
+    label: "Gold (CHF, abgeleitet)",
+    fetchUrl: "/data/overlays/gold-chf-daily-derived.json",
+    color: "var(--color-line-overlay-gold, #b8860b)",
+    dash: [4, 2],
+    category: "wertaufbewahrung",
+    extractPoints: (raw) => {
+      const file = raw as { values?: Array<{ date: string; goldChf: number }> };
+      return (file.values ?? []).map((v) => ({ date: v.date, close: v.goldChf }));
+    },
+    tooltipLabel: (v) => [
+      `Gold: ${v.toFixed(1)} (indexiert, ABGELEITET: XAU/USD × USD/CHF, Quelle: Twelve Data)`,
+      "Keine direkte/amtliche CHF-Notierung verfügbar — abgeleitete Grösse, siehe Methodik. Marktdaten, keine Inflationsmessung.",
+    ],
+  },
+  // SMI ABSICHTLICH NICHT HIER (Betreiber-Entscheidung 28.08.2026): auf dem
+  // Twelve-Data-Free-Tier nicht verfügbar, aus v1 gestrichen, siehe
+  // config/sources.json -> overlayModuleNotes.smiStricken. v2-Kandidat.
+];
+
 // Zeitraum-Presets gemäss US 3.4 AC — Default "Seit 2010" (Monatsbereich, US 3.15).
 // "Seit 2010" deckt LIK+Trueflation+M2 vollständig ab (M2-Realdaten beginnen
 // 12/1984, also lange vor 2010) — explizit geprüft (Betreiber-Anforderung
@@ -129,6 +196,9 @@ export default function LikChart() {
   const [trueflationError, setTrueflationError] = useState<string | null>(null);
   const [m2Data, setM2Data] = useState<M2MonthlyFile | null>(null);
   const [m2Error, setM2Error] = useState<string | null>(null);
+  const [overlayData, setOverlayData] = useState<Record<string, OverlayRawPoint[] | undefined>>({});
+  const [overlayErrors, setOverlayErrors] = useState<Record<string, string | undefined>>({});
+  const [overlaysEnabled, setOverlaysEnabled] = useState<Record<string, boolean>>({});
   const [preset, setPreset] = useState<PresetKey>("since-2010");
   const [error, setError] = useState<string | null>(null);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
@@ -162,6 +232,33 @@ export default function LikChart() {
       .then(setM2Data)
       .catch((err) => setM2Error(err.message));
   }, []);
+
+  // SECURITY/EFFIZIENZ-FIX (Security-Review Durchgang 2/3, 28.08.2026,
+  // Finding F2-2 — LOW): Overlays wurden bisher IMMER beim Mount geladen,
+  // auch wenn keine Checkbox aktiviert war (opt-in galt nur fürs Rendering,
+  // nicht fürs Laden) — unnötige Bandbreite bei jedem Seitenaufruf, auch
+  // wenn niemand ein Overlay je einschaltet. Fix: LAZY LOAD — ein Overlay
+  // wird erst abgerufen, wenn es zum ersten Mal aktiviert wird, danach
+  // bleibt es im State gecacht (kein wiederholter Abruf bei Ein-/Ausschalten
+  // derselben Checkbox in derselben Sitzung).
+  useEffect(() => {
+    for (const overlay of OVERLAY_CONFIGS) {
+      if (!overlaysEnabled[overlay.key]) continue; // nicht aktiviert -> nicht laden
+      if (overlayData[overlay.key] !== undefined) continue; // bereits geladen -> nicht erneut abrufen
+      if (overlayErrors[overlay.key] !== undefined) continue; // bereits fehlgeschlagen -> kein Retry-Loop
+      fetch(overlay.fetchUrl)
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((raw) => {
+          const points = overlay.extractPoints(raw);
+          setOverlayData((prev) => ({ ...prev, [overlay.key]: points }));
+        })
+        .catch((err) => setOverlayErrors((prev) => ({ ...prev, [overlay.key]: err.message })));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overlaysEnabled]);
 
   const filteredValues = useMemo(() => {
     if (!data) return [];
@@ -228,6 +325,32 @@ export default function LikChart() {
   }, [m2Data, preset]);
 
   const m2ExistsInRange = filteredM2Values.length > 0;
+
+  // Overlays: gefiltert nach Preset UND auf indexierte Niveaus umgerechnet
+  // (Basis 100 am Start des jeweils gefilterten Zeitraums, konsistent mit
+  // der M2-Behandlung oben) — Requirements 2.5: "dargestellt als indexierte
+  // Wertentwicklung, nicht als 'Kaufkraft'".
+  const filteredOverlays = useMemo(() => {
+    const result: Record<string, { date: string; indexValue: number }[]> = {};
+    for (const overlay of OVERLAY_CONFIGS) {
+      const raw = overlayData[overlay.key];
+      if (!raw || raw.length === 0) continue;
+      const validPoints = raw.filter(
+        (p) => typeof p.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.date) && typeof p.close === "number" && Number.isFinite(p.close)
+      );
+      const filtered = filterByPreset(validPoints, preset, (p) => parseInt(p.date.slice(0, 4), 10));
+      if (filtered.length === 0) continue;
+      const base = filtered[0].close;
+      if (base === 0) continue; // F2-Fix-Analogie: Basis 0 würde NaN/Infinity fortpflanzen
+      result[overlay.key] = filtered.map((p) => ({ date: p.date, indexValue: (p.close / base) * 100 }));
+    }
+    return result;
+  }, [overlayData, preset]);
+
+  function parseIsoDate(iso: string): Date {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, (m ?? 1) - 1, d ?? 1);
+  }
 
   function parseYearMonth(ym: string): Date {
     // F3-Fix: filteredM2Values enthält nach obigem Filter nur noch valide
@@ -307,9 +430,23 @@ export default function LikChart() {
               },
             ]
           : []),
+        ...OVERLAY_CONFIGS.filter((o) => overlaysEnabled[o.key] && filteredOverlays[o.key]?.length).map((overlay) => ({
+          label: overlay.label,
+          data: filteredOverlays[overlay.key].map((v) => ({
+            x: parseIsoDate(v.date).getTime(),
+            y: v.indexValue,
+          })),
+          borderColor: overlay.color,
+          backgroundColor: "transparent",
+          borderWidth: 1.5,
+          borderDash: overlay.dash,
+          pointRadius: 0,
+          pointHoverRadius: 3,
+          tension: 0,
+        })),
       ],
     }),
-    [filteredValues, filteredTrueflationValues, trueflationExistsInRange, filteredM2Values, m2ExistsInRange, trueflationEndsEarlierThanLik]
+    [filteredValues, filteredTrueflationValues, trueflationExistsInRange, filteredM2Values, m2ExistsInRange, trueflationEndsEarlierThanLik, filteredOverlays, overlaysEnabled]
   );
 
   const options: ChartOptions<"line"> = useMemo(
@@ -354,6 +491,10 @@ export default function LikChart() {
                   `Geldmenge M2: ${v.toFixed(1)} (indexiert, Quelle: SNB)`,
                   "Misst Verwässerung der Geldmenge, NICHT Preisentwicklung — keine direkte Vergleichsgrösse zu LIK/Trueflation.",
                 ];
+              }
+              const matchingOverlay = OVERLAY_CONFIGS.find((o) => o.label === ctx.dataset.label);
+              if (matchingOverlay) {
+                return matchingOverlay.tooltipLabel(v);
               }
               return `LIK: ${v.toFixed(1)} (Quelle: BFS, Basis: Ewige Reihe)`;
             },
@@ -410,6 +551,34 @@ export default function LikChart() {
         </button>
       </div>
 
+      {/* Overlay-Checkboxen (Requirements 2.5): Standardzustand alle AUS
+          (opt-in), eigene Kategorisierung "Wertaufbewahrung/Rendite" statt
+          "Inflationsmessung" — auch in der Bedienelement-Beschriftung
+          sichtbar, nicht nur im Tooltip. */}
+      {/* CODE-REVIEW-FIX (Opus 4.8, 28.08.2026): pro Kategorie EIN eigener
+          Toolbar-Block mit dynamischem Label aus OVERLAY_CATEGORY_LABELS —
+          ein künftiges Overlay mit category:"trueflation-variante" bekommt
+          automatisch die korrekte Gruppe/Beschriftung, ohne dass diese
+          Render-Logik geändert werden muss (das ist der eigentliche Beweis
+          der Erweiterbarkeits-Anforderung). */}
+      {(Object.keys(OVERLAY_CATEGORY_LABELS) as OverlayCategory[])
+        .filter((cat) => OVERLAY_CONFIGS.some((o) => o.category === cat))
+        .map((cat) => (
+          <div key={cat} className="tf-chart-toolbar" role="group" aria-label={`Referenz-Overlays (${OVERLAY_CATEGORY_LABELS[cat]})`}>
+            {OVERLAY_CONFIGS.filter((o) => o.category === cat).map((overlay) => (
+              <label key={overlay.key} className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                <input
+                  type="checkbox"
+                  checked={!!overlaysEnabled[overlay.key]}
+                  onChange={(e) => setOverlaysEnabled((prev) => ({ ...prev, [overlay.key]: e.target.checked }))}
+                  aria-label={`Overlay ${overlay.label} ein-/ausblenden`}
+                />
+                {overlay.label}
+              </label>
+            ))}
+          </div>
+        ))}
+
       <div className="tf-chart-canvas-wrapper">
         <Line ref={chartRef} data={chartData} options={options} />
       </div>
@@ -439,8 +608,9 @@ export default function LikChart() {
       )}
       {trueflationExistsInRange && (
         <div className="tf-chart-status">
-          <span>Trueflation = LIK + Prämienkorrektur, dokumentierte Untergrenze (fixer Warenkorb und
-            Mietkorrektur zurückgestellt) — Details siehe{" "}
+          <span>Trueflation = LIK + Prämienkorrektur (finaler v1-Scope, 28.08.2026). Warenkorb-Fixierung
+            und Miet-Korrektur wurden geprüft und als Befund dokumentiert (nicht in die Kernzahl
+            integriert) — Details siehe{" "}
             <a href="/methodik" className="underline">Methodik</a>.</span>
         </div>
       )}
@@ -466,6 +636,28 @@ export default function LikChart() {
             (Details siehe <a href="/methodik" className="underline">Methodik</a>).</span>
         </div>
       )}
+
+      {/* Overlay-Ausfälle: nur anzeigen, wenn das jeweilige Overlay auch
+          aktiviert wurde (sonst würde ein "aus"-Overlay unnötig einen
+          Fehler melden, den niemand angefordert hat). */}
+      {OVERLAY_CONFIGS.filter((o) => overlaysEnabled[o.key] && overlayErrors[o.key]).map((overlay) => (
+        <div className="tf-chart-status" role="status" key={overlay.key}>
+          <span>{overlay.label}-Daten derzeit nicht verfügbar (Ausfall) — Kernlinien bleiben unberührt.</span>
+        </div>
+      ))}
     </div>
   );
 }
+// CODE-REVIEW-FUND (Opus 4.8, 28.08.2026, WICHTIG): OverlayCategory wurde
+// deklariert, aber nirgends gelesen — die Toolbar trug ein hart verdrahtetes
+// aria-label ("keine Inflationsmessung") für ALLE Overlays. Ein künftiges
+// Miet-korrigiertes Trueflation-Overlay (Requirements 2.2d) wäre damit
+// fälschlich in dieselbe Gruppe gefallen. Fix: Label/Kategorisierung wird
+// jetzt AUS overlay.category ABGELEITET — ein neuer Eintrag mit
+// category:"trueflation-variante" bekommt automatisch die korrekte
+// Beschriftung, ohne die Render-Logik anzufassen. Das war der eigentliche
+// Test der Erweiterbarkeits-Anforderung, nicht nur ein neuer Config-Eintrag.
+const OVERLAY_CATEGORY_LABELS: Record<OverlayCategory, string> = {
+  "wertaufbewahrung": "Wertaufbewahrung/Rendite, keine Inflationsmessung",
+  "trueflation-variante": "Trueflation-Variante, alternative Berechnung",
+};
