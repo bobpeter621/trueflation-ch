@@ -101,10 +101,10 @@ export default function MethodikPage() {
             Linie 2 — Trueflation
           </h2>
           <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            <strong>Trueflation v1 = offizieller LIK + Prämienkorrektur.</strong> Das ist eine engere
-            Definition als ursprünglich geplant (drei Korrekturkomponenten). Zwei Komponenten sind
-            zurückgestellt — siehe &quot;Offene Punkte&quot; unten. Diese Seite beschreibt ausschliesslich das
-            real implementierte System.
+            <strong>Trueflation v1 (final, 29.08.2026) = offizieller LIK (ab 2020 miet-korrigiert) +
+            Prämienkorrektur.</strong> Der fixe Warenkorb wurde ebenfalls geprüft, aber bewusst nicht
+            integriert — siehe &quot;Offene Punkte&quot; unten. Diese Seite beschreibt ausschliesslich das real
+            implementierte System.
           </p>
 
           <h3 className="mt-6 text-base font-medium">Formel (monatlich)</h3>
@@ -112,12 +112,25 @@ export default function MethodikPage() {
             className="mt-2 rounded-md p-3 text-sm font-mono"
             style={{ backgroundColor: "var(--color-surface-secondary)" }}
           >
+            <p>rentMonthlyFactor = (1 + Miet-Korrektur_pp/Jahr / 100)^(1/12)&nbsp;&nbsp;[nur ab 2020]</p>
+            <p>LIK_korrigiert(Monat) = LIK_Wachstumsfaktor(Monat) × rentMonthlyFactor&nbsp;&nbsp;[nur ab 2020, sonst unverändert]</p>
             <p>P_konsum(Fixierungsjahr) = P_brutto(Fixierungsjahr) / C_brutto</p>
             <p>Prämiengewicht w(Fixierungsjahr) = P_konsum / (1 + P_konsum)</p>
             <p>pm(Jahr) = (1 + Prämien_Jahreswachstum(Jahr))^(1/12) − 1</p>
-            <p>combined_growth(Monat) = LIK_Wachstumsfaktor(Monat)^(1−w) × (1 + pm)^w</p>
+            <p>combined_growth(Monat) = LIK_korrigiert(Monat)^(1−w) × (1 + pm)^w</p>
             <p>Trueflation(Monat) = Trueflation(Monat − 1) × combined_growth(Monat)</p>
           </div>
+          <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            <strong>Reihenfolge ist verbindlich (nicht vertauschbar):</strong> erst wird die Preisreihe
+            (LIK-Wachstumsfaktor) um die Miet-Korrektur bereinigt, <strong>danach</strong> greift die
+            Prämien-Gewichtsformel. Die Miet-Korrektur wirkt <strong>ausschliesslich ab Januar 2020</strong>
+            (Datengrundlage beginnt dort) — davor läuft die LIK-Komponente unverändert, der Bruch wird
+            am Datenpunkt sichtbar gekennzeichnet, nicht rückwirkend geglättet. Sie verwendet die
+            Variante &quot;Bevölkerungsanteil&quot;: gewichtet mit dem tatsächlichen Anteil der Neubezug-Klasse an
+            der Bevölkerung (+0,0608 Prozentpunkte/Jahr) — nicht die volle Neubezugs-Variante (die
+            unterstellen würde, alle wohnten zu Neuvermietungspreisen) und nicht die mit der
+            Umzugsquote gewichtete Variante (die nur Jahresumzüge statt kumulierter Exposition erfasst).
+          </p>
           <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
             Die Datenpunkte sind monatlich (wie beim offiziellen LIK), die Prämienkorrektur wird jedes
             Jahr aktualisiert. <strong>pm</strong> ist die monatlich-äquivalente Prämienrate — rechnerisch
@@ -125,6 +138,12 @@ export default function MethodikPage() {
             Prämien ergeben. Die Gewichtung ist <strong>geometrisch</strong> (Exponenten), nicht arithmetisch
             (gewichtete Summe) — nur die geometrische Form bleibt konsistent, wenn zwölf monatliche
             Schritte zu einem Jahresschritt verkettet werden.
+          </p>
+          <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            <strong>Wichtig für die Interpretation der offiziellen LIK-Linie im Chart:</strong> Die
+            Miet-Korrektur fliesst ausschliesslich in die Trueflation-Linie ein. Der ausgewiesene LIK-Wert
+            und die ausgewiesene LIK-Wachstumsrate bleiben in jedem Monat identisch mit dem amtlichen
+            BFS-Wert, unabhängig davon, ob die Miet-Korrektur für den betreffenden Zeitraum aktiv ist.
           </p>
           <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
             <strong>P_brutto</strong> ist der Anteil der obligatorischen Krankenkassenprämien
@@ -172,25 +191,15 @@ export default function MethodikPage() {
             <div>
               <dt className="font-medium">Fixer Warenkorb (Substitutionseffekt-Korrektur)</dt>
               <dd style={{ color: "var(--color-text-secondary)" }}>
-                Zurückgestellt. Echte historische LIK-Gewichtstabellen für 2010/2015/2020 (Prozentanteile
-                je Hauptgruppe) waren trotz Recherche in BFS-Publikationen und Webarchiven nicht
-                auffindbar. Eine Näherung mit aktuellen Gewichten wurde geprüft und verworfen — sie würde
-                nicht den gesuchten Effekt messen, sondern nur einen Rechenartefakt. Erwartete Wirkrichtung,
-                falls die Daten später vorliegen: Der Effekt würde die Lücke leicht vergrössern
-                (Substitutionseffekt — Standardresultat der Indextheorie).
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium">Mietkorrektur (Neuvermietungs-Proxy)</dt>
-              <dd style={{ color: "var(--color-text-secondary)" }}>
-                Zurückgestellt, aus zwei Gründen: (1) Die benötigte Quelle für die Wachstumsdifferenz
-                zwischen Angebots- und Bestandsmieten war nicht auffindbar. (2) Eine ungeklärte
-                Konzeptfrage: Bestandsmiete ist für Haushalte, die nicht umziehen (in der Schweiz die
-                grosse Mehrheit — rund 90&nbsp;% pro Jahr laut BFS-Umzugsstatistik), der methodisch
-                korrekte Wert. Eine volle Korrektur würde die Belastung der Mehrheit überzeichnen; eine
-                Gewichtung mit der realen Umzugsquote würde den Effekt praktisch auf null reduzieren.
-                Erwartete Wirkrichtung, falls die Daten später vorliegen: Der Effekt würde die Lücke
-                vergrössern, unabhängig von der gewählten Gewichtungsvariante.
+                Geprüft, als Befund dokumentiert, bewusst <strong>nicht</strong> integriert. Die aktuellsten
+                amtlichen Gewichte (13 Hauptgruppen, Tabelle &quot;LIK-Warenkorb und Gewichte 2026&quot;) wurden
+                rückwirkend 2010–2024 fixiert und gegen dieselbe 13er-Struktur verrechnet wie die
+                verkettete Reihe. Gemessener Effekt: &minus;0,035 Prozentpunkte/Jahr — das Kriterium
+                (Betrag &ge; 0,10&nbsp;pp/Jahr) wurde nicht erfüllt, obwohl die Datenabdeckung vollständig war
+                (15 von 15 Jahren). Mit aktuellen Gewichten rückwärts gerechnet ist das methodisch eine
+                Paasche-artige Konstruktion (nicht Laspeyres) — ein Index mit historischen
+                Basisjahr-Gewichten würde tendenziell in die andere Richtung weisen; solche Gewichte sind
+                für die aktuelle 13-Gruppen-Struktur aber nicht verfügbar.
               </dd>
             </div>
             <div>
@@ -202,6 +211,24 @@ export default function MethodikPage() {
               </dd>
             </div>
           </dl>
+
+          <h3 className="mt-6 text-base font-medium">Miet-Korrektur — integriert, mit Vorbehalt</h3>
+          <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            Anders als der Warenkorb-Befund ist die Miet-Korrektur seit dem 29.08.2026 Teil der
+            Hauptlinie (siehe Formel oben). Drei Varianten wurden geprüft: gegen den Gesamtdurchschnitt
+            (&minus;0,156&nbsp;pp/Jahr, verworfen — Vorzeichen dreht gegenüber den anderen Varianten), voll
+            gegen die längste Bezugsdauer-Klasse (+0,253&nbsp;pp/Jahr, verworfen — unterstellt, alle
+            wohnten zu Neuvermietungspreisen), und mit der Umzugsquote gewichtet (+0,024&nbsp;pp/Jahr,
+            verworfen — erfasst nur Jahresumzüge statt kumulierter Exposition). Gewählt wurde die
+            Variante <strong>Bevölkerungsanteil</strong> (+0,0608&nbsp;pp/Jahr): gewichtet mit dem
+            tatsächlichen Bevölkerungsanteil der Neubezug-Klasse — dieselbe Logik wie bei der
+            Prämienkorrektur, tatsächliche statt hypothetische Exposition. Datengrundlage deckt nur
+            2020–2024 ab (5 von 15 Jahren) — deshalb greift die Korrektur ausschliesslich ab 2020, nicht
+            rückwirkend auf die gesamte Reihe. <strong>Meldepflichtiger Widerspruchsbefund:</strong> Eine
+            Kreuzprüfung gegen die Mietpreis-pro-Quadratmeter-Tabelle zeigt die entgegengesetzte
+            Korrekturrichtung (+1,84&nbsp;pp) — mögliche, nicht verifizierte Ursache: Neumieter beziehen im
+            Schnitt kleinere Wohnungen.
+          </p>
 
           <h3 className="mt-6 text-base font-medium">Bekannte Einschränkungen der Prämiendaten</h3>
           <ul className="mt-2 list-disc pl-5 text-sm" style={{ color: "var(--color-text-secondary)" }}>

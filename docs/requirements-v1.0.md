@@ -160,7 +160,7 @@ Jeder Gewichtungswert in der Formel muss auf eine amtliche Messung zurückführb
 
 **Strom: bleibt GESTRICHEN** (unverändert, siehe 2.2c — Doppelzählung belegt, Elektrizität bereits vollständig im LIK enthalten).
 
-**Kernzahl (LIK 5.51% / Trueflation 9.66% Jahresdurchschnitt 2010-2024): VORLÄUFIG-Markierung bleibt aufgehoben.** Der Warenkorb-Befund ist final (Befund dokumentiert, kein Overlay, Kernzahl unberührt). Der Miet-Befund ist GEMESSEN, aber die UMSETZUNG (Hauptlinie/Overlay/Befund-only, plus Variantenwahl voll-vs-gewichtet) wartet auf den Betreiber-Entscheid — bis dahin bleibt die Kernzahl unverändert (LIK + Prämienkorrektur), das ist kein Zwischenstand der Zahl selbst, nur der Dokumentationsstatus der Miet-Komponente ist noch offen.
+**Kernzahl FINAL (29.08.2026, dritte Korrekturrunde): LIK 5.51% / Trueflation 9.93% Jahresdurchschnitt 2010-2024 (vorher 9.66%, VOR Integration der Miet-Korrektur).** Der Warenkorb-Befund bleibt final (Befund dokumentiert, kein Overlay, Kernzahl unberührt). Der Miet-Befund ist GEMESSEN UND UMGESETZT: Betreiber-Entscheid für die Variante "Bevölkerungsanteil" (+0.0608 pp/Jahr), integriert als Hauptlinie ab 2020 (Datengrundlage-Grenze), multiplikativ auf den LIK-Wachstumsfaktor vor der Prämien-Gewichtsformel (Formel-Reihenfolge 2.2b eingehalten). Verbindliche Anzeige-/Prüfzahl ab sofort: 9.93% (Jahresdurchschnitt) bzw. 9.47% (Jan-zu-Jan, intern). 9.66%/9.23% sind historische Werte vor dieser Integration, nirgends mehr als aktuelle Kernzahl verwenden.
 
 #### 2.2c Bewusst nicht enthalten (Ausschlüsse mit Begründung)
 

@@ -71,6 +71,8 @@ type TrueflationDataPoint = {
   likIndex: number;
   dataStatus: "anchor" | "aktuell";
   transitionNote: string | null;
+  rentCorrectionApplied?: boolean;
+  rentCorrectionNote?: string | null;
 };
 
 type TrueflationMonthlyFile = {
@@ -481,8 +483,11 @@ export default function LikChart() {
               if (v === null) return "";
               if (ctx.dataset.label?.startsWith("Trueflation")) {
                 const point = filteredTrueflationValues[ctx.dataIndex];
-                const base = `Trueflation: ${v.toFixed(1)} (LIK + Prämienkorrektur, Untergrenze — siehe Methodik)`;
-                return point?.transitionNote ? [base, point.transitionNote] : base;
+                const base = `Trueflation: ${v.toFixed(1)} (LIK + Prämienkorrektur${point?.rentCorrectionApplied ? " + Miet-Korrektur" : ""} — siehe Methodik)`;
+                const notes = [point?.transitionNote, point?.rentCorrectionNote].filter(
+                  (n): n is string => typeof n === "string" && n.length > 0
+                );
+                return notes.length > 0 ? [base, ...notes] : base;
               }
               if (ctx.dataset.label?.startsWith("Geldmenge")) {
                 // US 3.7: zentraler Denkfehler direkt am Chart abfangen, nicht
@@ -608,10 +613,25 @@ export default function LikChart() {
       )}
       {trueflationExistsInRange && (
         <div className="tf-chart-status">
-          <span>Trueflation = LIK + Prämienkorrektur (finaler v1-Scope, 28.08.2026). Warenkorb-Fixierung
-            und Miet-Korrektur wurden geprüft und als Befund dokumentiert (nicht in die Kernzahl
-            integriert) — Details siehe{" "}
+          <span>Trueflation = LIK (ab 2020 miet-korrigiert) + Prämienkorrektur (finaler v1-Scope,
+            29.08.2026). Fixer Warenkorb wurde geprüft und als Befund dokumentiert (nicht in die
+            Kernzahl integriert) — Details siehe{" "}
             <a href="/methodik" className="underline">Methodik</a>.</span>
+        </div>
+      )}
+      {/* SICHTBARKEITSPFLICHT (Betreiber-Vorgabe 29.08.2026): Ein Bruch, der
+          nur im JSON steht (rentCorrectionNote), erfüllt die
+          Kennzeichnungspflicht nicht — bei dieser kleinen Effektgrösse
+          (+0.0608 pp/Jahr) ist der Bruch optisch unsichtbar, deshalb MUSS er
+          textlich sichtbar sein, nicht nur im Tooltip am einzelnen
+          Datenpunkt. Eigener, dauerhaft sichtbarer Status-Hinweis (nicht nur
+          Tooltip-Text, der ein Hover erfordert). */}
+      {trueflationExistsInRange && filteredTrueflationValues.some((v) => v.rentCorrectionApplied) && (
+        <div className="tf-chart-status" role="note">
+          <span>ℹ️ Ab Januar 2020 enthält die Trueflation-Linie zusätzlich eine Miet-Korrektur
+            (Variante Bevölkerungsanteil, +0.0608 Prozentpunkte/Jahr) — davor läuft die Linie ohne
+            diese Korrektur. Bewusst als Bruch gekennzeichnet, nicht rückwirkend geglättet.
+            Details siehe <a href="/methodik" className="underline">Methodik</a>.</span>
         </div>
       )}
       {/* US 3.16 Zustand 5: früheres Ende ist Datenrealität (amtliche

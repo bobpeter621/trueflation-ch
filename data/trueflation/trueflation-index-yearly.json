@@ -1,6 +1,6 @@
 {
   "_comment": "ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene Neuberechnung. \"values\" sind Januar-Endpunkte (Momentaufnahme, konsistent mit dem monatlichen Kettenindex). \"calendarYearAverages\" sind JAHRESDURCHSCHNITTE (Mittel der 12 Monatswerte je Kalenderjahr) — DIES ist die für Kopfzahlen (US 3.1) und den Kaufkraft-Rechner zu verwendende Grösse, weil das BFS die amtliche Jahresteuerung ebenfalls als Jahresdurchschnitt gegen Jahresdurchschnitt publiziert — eine Januar-zu-Januar-Zahl wäre gegen Presse-/BFS-Meldungen nicht vergleichbar und zusätzlich durch die Saisonalität des Monats Januar (Winterschlussverkauf etc., siehe Test 3) verzerrt. Einzige Quelle der Wahrheit für BEIDE Felder ist die Monatsreihe, keine separate Neuberechnung.",
-  "scope": "lik_plus_premium_correction_only",
+  "scope": "lik_plus_premium_plus_rent_correction",
   "derivedFrom": "trueflation-index-monthly.json",
   "startYear": 2010,
   "methodology": {
@@ -49,7 +49,17 @@
         "weight": 0.11667333385222742
       }
     },
-    "note2025": "2025 und spaeter: 2020er-Gewicht wird fortgeschrieben, bis HABE-Publikation ein neues Fixierungsjahr-Gewicht liefert. Reihe selbst endet aber beim letzten Jahr mit vollstaendigen BAG-Praemiendaten (aktuell 2024) - keine Extrapolation der Praemienkomponente."
+    "note2025": "2025 und spaeter: 2020er-Gewicht wird fortgeschrieben, bis HABE-Publikation ein neues Fixierungsjahr-Gewicht liefert. Reihe selbst endet aber beim letzten Jahr mit vollstaendigen BAG-Praemiendaten (aktuell 2024) - keine Extrapolation der Praemienkomponente.",
+    "rentCorrection": {
+      "formula": "rentMonthlyFactor = (1 + correctionDeltaPpPerYear/100)^(1/12); ab RENT_CORRECTION_START_YEAR wird likGrowthFactor MULTIPLIKATIV mit rentMonthlyFactor korrigiert, BEVOR die Praemien-Gewichtsformel (w) greift (Requirements 2.2b, Formel-Reihenfolge).",
+      "variant": "weightedVsLongestActual (Bevoelkerungsanteil, Betreiber-Entscheid dritte Runde)",
+      "correctionDeltaPpPerYear": 0.0608,
+      "startYear": 2020,
+      "sourceCoverage": "2020-2024",
+      "sourceFile": "data/rent-correction/rent-correction-longtenure-check.json -> weightedVsLongestActual",
+      "appliedAsConstantAnnualFactor": true,
+      "note": "Konstanter jaehrlicher Korrekturfaktor ab 2020, keine monatliche Aufloesung erfunden (Requirements-Regel 3) - die Datengrundlage selbst ist nur als 5-Jahres-Fenster (2020-2024) verfuegbar. Vor 2020 laeuft die LIK-Komponente unveraendert (kein rueckwirkendes Glaetten)."
+    }
   },
   "knownGaps": [
     {
@@ -62,12 +72,14 @@
     },
     {
       "component": "mietkorrektur",
-      "status": "geprüft, Ergebnis dokumentiert (28.08.2026)",
-      "reason": "Zwei Vergleichsgruppen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr; gegen längste Bezugsdauer-Klasse 21J+: +0.253 pp/Jahr — Vorzeichen dreht sich je nach Vergleichsgruppe). Betrag erfüllt in beiden Varianten die Schwelle (>= 0.10 pp/Jahr), aber Abdeckungsprüfung (BFS-DAM-API, timeboxed) fand keine älteren Rohdaten-Jahrgänge — Abdeckung bleibt 5 von 15 Jahren (2020-2024), Kriterium (>= 10/15) NICHT erfüllt. Zusätzlich meldepflichtiger Widerspruchsbefund: Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp).",
+      "status": "INTEGRIERT in die Hauptlinie (Betreiber-Entscheid, dritte Runde, 28.08.2026)",
+      "reason": "Drei Vergleichsgruppen/Gewichtungen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr, verworfen; gegen längste Bezugsdauer-Klasse 21J+ voll/ungewichtet: +0.253 pp/Jahr, verworfen, unterstellt \"alle wohnen zu Neuvermietungspreisen\"; gewichtet mit Umzugsquote: +0.024 pp/Jahr, verworfen, erfasst nur Jahresumzuege statt kumulierter Exposition). GEWÄHLT: gewichtet mit dem TATSÄCHLICHEN Bevölkerungsanteil der Neubezug-Klasse (+0.0608 pp/Jahr) — dieselbe Logik wie bei der Prämienkorrektur, tatsächliche statt hypothetische Exposition. Abdeckung bleibt 5 von 15 Jahren (2020-2024, Datengrundlage) — GREIFT DAHER NUR AB 2020, davor läuft die LIK-Komponente unverändert, der Bruch ist über rentCorrectionNote gekennzeichnet, nicht rückwirkend geglättet. Betreiber-Begründung für die Integration trotz kleinem Effekt: entscheidend ist nicht die Grösse der Bewegung, sondern dass die Zahl faktisch korrekt ist. Meldepflichtiger Widerspruchsbefund bleibt bestehen und wird auf der Methodik-Seite dokumentiert: Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp) — mutmasslich weil Neumieter im Schnitt kleinere Wohnungen beziehen (nicht verifiziert).",
       "measuredEffectPpPerYearVsTotal": -0.156,
-      "measuredEffectPpPerYearVsLongestTenure": 0.253,
-      "criterionMet": false,
-      "decision": "als Befund dokumentiert, kein Overlay"
+      "measuredEffectPpPerYearVsLongestTenureFull": 0.253,
+      "measuredEffectPpPerYearVsLongestTenureRelocationRateWeighted": 0.0236,
+      "measuredEffectPpPerYearVsLongestTenurePopulationWeighted": 0.0608,
+      "criterionMet": true,
+      "decision": "integriert in Hauptlinie, Variante Bevölkerungsanteil, ab 2020 (Betreiber-Entscheid dritte Runde)"
     },
     {
       "component": "strom",
@@ -158,7 +170,7 @@
     },
     {
       "year": 2020,
-      "trueflationIndex": 1077.1783,
+      "trueflationIndex": 1077.2265,
       "likIndex": 1036.1,
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
@@ -166,7 +178,7 @@
     },
     {
       "year": 2021,
-      "trueflationIndex": 1072.1227,
+      "trueflationIndex": 1072.7465,
       "likIndex": 1030.4,
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
@@ -174,7 +186,7 @@
     },
     {
       "year": 2022,
-      "trueflationIndex": 1088.0033,
+      "trueflationIndex": 1089.2209,
       "likIndex": 1047.4,
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
@@ -182,7 +194,7 @@
     },
     {
       "year": 2023,
-      "trueflationIndex": 1119.3788,
+      "trueflationIndex": 1121.2334,
       "likIndex": 1081.8,
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
@@ -190,7 +202,7 @@
     },
     {
       "year": 2024,
-      "trueflationIndex": 1139.0157,
+      "trueflationIndex": 1141.5155,
       "likIndex": 1095.6,
       "premiumWeight": 0.116673,
       "fixationYear": 2020,
@@ -260,31 +272,31 @@
     },
     {
       "year": 2020,
-      "trueflationIndexAvg": 1075.5316,
+      "trueflationIndexAvg": 1075.8442,
       "likIndexAvg": 1034.225,
       "monthsIncluded": 12
     },
     {
       "year": 2021,
-      "trueflationIndexAvg": 1081.3115,
+      "trueflationIndexAvg": 1082.2077,
       "likIndexAvg": 1040.225,
       "monthsIncluded": 12
     },
     {
       "year": 2022,
-      "trueflationIndexAvg": 1108.1099,
+      "trueflationIndexAvg": 1109.6243,
       "likIndexAvg": 1069.7167,
       "monthsIncluded": 12
     },
     {
       "year": 2023,
-      "trueflationIndexAvg": 1132.2926,
+      "trueflationIndexAvg": 1134.4484,
       "likIndexAvg": 1092.5583,
       "monthsIncluded": 12
     },
     {
       "year": 2024,
-      "trueflationIndexAvg": 1151.576,
+      "trueflationIndexAvg": 1154.388,
       "likIndexAvg": 1104.1583,
       "monthsIncluded": 12
     }

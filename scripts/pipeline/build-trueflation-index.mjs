@@ -9,14 +9,43 @@
  * LIK-Monatsreihe im selben Chart wäre keine Designentscheidung, sondern
  * sähe wie ein Fehler aus.
  *
- * SCOPE v1 (final, Betreiber-Entscheid 28.08.2026 nach Messung beider offener
- * Komponenten): Trueflation = LIK + Prämienkorrektur. Fixer Warenkorb (Effekt
- * -0.035 pp/Jahr, Kriterium nicht erfüllt) und Mietkorrektur (Effekt je nach
- * Vergleichsgruppe -0.156/+0.253 pp/Jahr, aber Abdeckung nur 5/15 Jahre,
- * Kriterium nicht erfüllt) sind GEPRÜFT UND ALS BEFUND DOKUMENTIERT, bewusst
- * NICHT in diese Kernberechnung integriert (siehe knownGaps unten und
- * Requirements 2.2d). Das ist kein Zwischenstand mehr, sondern der
- * abschliessende v1-Scope.
+ * SCOPE v1 (FINAL, Betreiber-Entscheid 28.08.2026, DRITTE Korrekturrunde):
+ * Trueflation = LIK (ab 2020 miet-korrigiert) + Prämienkorrektur.
+ *
+ * MIET-KORREKTUR JETZT IN DER HAUPTLINIE (Betreiber-Entscheid, dritte Runde):
+ * Variante "Bevölkerungsanteil" (gewichtet mit dem tatsächlichen
+ * Bevölkerungsanteil der Neubezug-Klasse, +0.0608 pp/Jahr, siehe
+ * data/rent-correction/rent-correction-longtenure-check.json ->
+ * weightedVsLongestActual) — NICHT die volle/ungewichtete Variante (+0.253
+ * pp/Jahr, unterstellt "alle wohnen zu Neuvermietungspreisen", verworfen)
+ * und NICHT die mit einer Umzugsquote gewichtete Variante (+0.024 pp/Jahr,
+ * erfasst nur Jahresumzüge statt des kumulierten Anteils kurz Eingezogener,
+ * verworfen). Begründung des Betreibers: entscheidend ist nicht, wie stark
+ * Trueflation bewegt wird, sondern dass die Zahl die TATSÄCHLICHE Exposition
+ * der Bevölkerung widerspiegelt — dieselbe Logik wie bei den Prämien.
+ *
+ * FORMEL-REIHENFOLGE (Requirements 2.2b, verbindlich): ERST Preisreihen
+ * korrigieren (Miete), DANN Gewichte reskalieren (Prämien). Umgesetzt: die
+ * Miet-Korrektur wird MULTIPLIKATIV auf den LIK-Wachstumsfaktor angewendet
+ * (Preiskorrektur), BEVOR dieser korrigierte Wachstumsfaktor mit der
+ * Prämienrate über das Gewicht w kombiniert wird (Gewichte-Reskalierung) —
+ * siehe combinedGrowthFactor in buildTrueflationMonthlySeries.
+ *
+ * GREIFT NUR AB 2020 (Datengrundlage, siehe rent-correction-longtenure-check.json
+ * coverage 2020-2024) — DAVOR läuft die Linie OHNE Korrektur. Der Bruch wird
+ * GEKENNZEICHNET, nicht versteckt (rentCorrectionNote-Feld am 1.1.2020,
+ * analog zu den transitionNote-Feldern der jährlichen Prämien-Aktualisierung).
+ * NICHT gewählt: Trueflation erst ab 2020 starten (zehn Jahre Historie für
+ * einen Effekt dieser Grösse aufzugeben wäre ein schlechter Tausch).
+ *
+ * Fixer Warenkorb (Effekt -0.035 pp/Jahr, Paasche-artige Konstruktion,
+ * Kriterium nicht erfüllt) bleibt GEPRÜFT UND ALS BEFUND DOKUMENTIERT, NICHT
+ * integriert (siehe knownGaps unten und Requirements 2.2d) — daran ändert
+ * die Miet-Entscheidung nichts. Die VOLLE Miet-Variante (+0.253 pp/Jahr)
+ * bleibt EBENFALLS ein eigenständiger, dokumentierter Befund auf der
+ * Methodik-Seite (beantwortet eine andere Frage: "Was kostet ein Neubezug
+ * gegenüber Langzeitmiete?") — NICHT als zweite Trueflation-Variante zu
+ * verwechseln mit der hier integrierten Bevölkerungsanteil-Variante.
  *
  * ═══ KERNFORMEL (geometrisch, NICHT arithmetisch — kritischer Unterschied
  * zur vorherigen Jahresversion) ═══
@@ -87,13 +116,14 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const LIK_MONTHLY_PATH = path.join(REPO_ROOT, 'data', 'lik', 'total-index-monthly.json');
 const PREMIUM_PATH = path.join(REPO_ROOT, 'data', 'kvpi-premium-index', 'premium-index-ch.json');
+const RENT_CORRECTION_PATH = path.join(REPO_ROOT, 'data', 'rent-correction', 'rent-correction-longtenure-check.json');
 const OUTPUT_DIR = path.join(REPO_ROOT, 'data', 'trueflation');
 const OUTPUT_MONTHLY_PATH = path.join(OUTPUT_DIR, 'trueflation-index-monthly.json');
 const OUTPUT_YEARLY_PATH = path.join(OUTPUT_DIR, 'trueflation-index-yearly.json');
@@ -225,6 +255,57 @@ function loadPremiumYearly() {
   return { byYear, lastAvailableYear: Math.max(...years) };
 }
 
+/**
+ * Miet-Korrektur laden (Betreiber-Entscheid, dritte Runde): Variante
+ * "Bevölkerungsanteil" (weightedVsLongestActual) aus dem bereits
+ * berechneten Vergleichsgruppen-Test. Liefert EINEN einzigen jährlichen
+ * Korrekturfaktor (2020-2024 Gesamtwachstumsdifferenz, annualisiert) — die
+ * Datengrundlage selbst ist nur als 5-Jahres-Fenster verfügbar (siehe
+ * Requirements 2.2d Abdeckungsprüfung), keine monatliche Auflösung möglich.
+ * Angewendet als KONSTANTER jährlicher Korrekturfaktor ab 2020 (siehe
+ * buildTrueflationMonthlySeries) — keine Erfindung feinerer Auflösung, als
+ * die Quelle hergibt (Requirements-Regel 3).
+ */
+function loadRentCorrection() {
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(RENT_CORRECTION_PATH, 'utf-8'));
+  } catch (err) {
+    throw new Error(`Miet-Korrekturdaten nicht lesbar/parsebar (${RENT_CORRECTION_PATH}): ${err.message}`);
+  }
+  const variant = raw.weightedVsLongestActual;
+  if (!variant || typeof variant.correctionDeltaPpPerYear !== 'number' || !Number.isFinite(variant.correctionDeltaPpPerYear)) {
+    throw new Error(
+      `Miet-Korrekturdaten (${RENT_CORRECTION_PATH}) enthalten kein gültiges ` +
+      `'weightedVsLongestActual.correctionDeltaPpPerYear' — Abbruch, keine Annahme über den Wert.`
+    );
+  }
+  if (typeof variant.fromYear !== 'number' || typeof variant.toYear !== 'number') {
+    throw new Error(`Miet-Korrekturdaten (${RENT_CORRECTION_PATH}): fromYear/toYear fehlen — Abbruch.`);
+  }
+  // Nice-to-have-Fix (Code-Review 29.08.2026): RENT_CORRECTION_START_YEAR ist
+  // bewusst eine unabhängige Konstante (siehe dortiger Kommentar), aber ohne
+  // Laufzeitprüfung würde eine künftige Datenaktualisierung mit anderem
+  // fromYear lautlos vom Code-Startpunkt abweichen — inkonsistent mit dem
+  // sonst gelebten Fail-fast-Prinzip dieser Funktion.
+  if (variant.fromYear !== RENT_CORRECTION_START_YEAR) {
+    throw new Error(
+      `Miet-Korrekturdaten (${RENT_CORRECTION_PATH}): fromYear=${variant.fromYear} weicht von ` +
+      `RENT_CORRECTION_START_YEAR=${RENT_CORRECTION_START_YEAR} ab — Abbruch statt stiller Drift. ` +
+      `Falls die Datengrundlage sich verschoben hat, muss RENT_CORRECTION_START_YEAR bewusst angepasst werden.`
+    );
+  }
+  // annualFactor: (1 + correctionDeltaPpPerYear/100) als multiplikativer
+  // JÄHRLICHER Korrekturfaktor auf die Preisreihe (Formel-Reihenfolge:
+  // ERST Preise korrigieren, siehe Requirements 2.2b) — wird unten in eine
+  // monatlich-äquivalente Rate umgerechnet, analog zur Prämienrate pm_y.
+  return {
+    correctionDeltaPpPerYear: variant.correctionDeltaPpPerYear,
+    sourceFromYear: variant.fromYear,
+    sourceToYear: variant.toYear,
+  };
+}
+
 /** pm_y je Kalenderjahr: monatlich-äquivalente Prämienrate, exakt so dass
  * (1+pm_y)^12 = 1+p_y gilt (keine Näherung). Nur für Jahre berechenbar, für
  * die sowohl premium[y] als auch premium[y-1] vorliegen. */
@@ -257,9 +338,24 @@ function monthOf(yyyymm01) { return Math.floor((yyyymm01 % 10000) / 100); }
 
 // ─── Kernberechnung, monatlich ───
 
-function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvailableYear, weightTable }) {
+// Betreiber-Entscheid (dritte Runde): Miet-Korrektur greift AB 2020 (Datengrundlage
+// beginnt dort, siehe rent-correction-longtenure-check.json coverage). Als eigene
+// Konstante deklariert statt aus der Datenquelle abgeleitet, damit der Startpunkt
+// des Bruchs im Code explizit sichtbar ist, nicht implizit aus einem Datenfeld folgt.
+const RENT_CORRECTION_START_YEAR = 2020;
+
+// Miet-Korrektur als monatlich-äquivalenter multiplikativer Faktor: dieselbe
+// (1+x)^(1/12)-Transformation wie bei der Prämienrate (pm_y), damit zwölf
+// verkettete Monatsschritte exakt den Jahreseffekt ergeben — keine Näherung.
+function rentCorrectionMonthlyFactor(rentCorrection) {
+  const annual = rentCorrection.correctionDeltaPpPerYear / 100;
+  return Math.pow(1 + annual, 1 / 12);
+}
+
+function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvailableYear, weightTable, rentCorrection }) {
   const endYear = premiumLastAvailableYear; // keine Extrapolation über letztes BAG-Jahr hinaus
   const endMonth = endYear * 10000 + 1201;
+  const rentMonthlyFactor = rentCorrectionMonthlyFactor(rentCorrection);
 
   if (likByMonth[TRUEFLATION_START_MONTH] == null) {
     throw new Error(`LIK-Wert für Startmonat ${TRUEFLATION_START_MONTH} fehlt — Abbruch.`);
@@ -299,6 +395,12 @@ function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvaila
     isJanuaryTransition: false,
     dataStatus: 'anchor',
     transitionNote: null,
+    // Miet-Korrektur-Felder (dritte Runde) — auch am Anker mitgeführt, aus
+    // demselben Fail-fast-Grund wie die drei Felder oben: alle Einträge
+    // brauchen dieselbe Feldmenge, sonst bricht ein struktureller Test am
+    // ersten Element, obwohl 2010 schlicht vor dem Korrektur-Startjahr liegt.
+    rentCorrectionApplied: false,
+    rentCorrectionNote: null,
   });
 
   for (let i = 1; i < months.length; i++) {
@@ -307,7 +409,25 @@ function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvaila
     const y = yearOf(m);
     const isJanuary = monthOf(m) === 1;
 
-    const likGrowthFactor = likByMonth[m] / likByMonth[prevM];
+    const rawLikGrowthFactor = likByMonth[m] / likByMonth[prevM];
+
+    // Miet-Korrektur (Betreiber-Entscheid, dritte Runde): MULTIPLIKATIV auf
+    // den LIK-Wachstumsfaktor angewendet, BEVOR die Prämien-Gewichtsformel
+    // greift (Requirements 2.2b, Formel-Reihenfolge: erst Preise korrigieren,
+    // dann Gewichte reskalieren). Greift ausschliesslich ab dem Kalenderjahr
+    // RENT_CORRECTION_START_YEAR (2020) — davor bleibt likGrowthFactor
+    // unverändert, der Bruch wird über rentCorrectionApplied/rentCorrectionNote
+    // sichtbar gemacht, nicht rückwirkend geglättet.
+    // Nice-to-have-Fix (Code-Review 29.08.2026): Obergrenze bei
+    // sourceToYear statt unbegrenzter Fortschreibung — aktuell harmlos, da
+    // endYear zufaellig ebenfalls bei sourceToYear (2024) endet, aber sobald
+    // neue BAG-Praemiendaten (z.B. 2025) verfuegbar sind, wuerde derselbe
+    // konstante 5-Jahres-Effekt sonst stillschweigend ueber die validierte
+    // Datengrundlage hinaus extrapoliert (Requirements-Regel 3 verletzt).
+    const rentCorrectionAppliedThisMonth = y >= RENT_CORRECTION_START_YEAR && y <= rentCorrection.sourceToYear;
+    const likGrowthFactor = rentCorrectionAppliedThisMonth
+      ? rawLikGrowthFactor * rentMonthlyFactor
+      : rawLikGrowthFactor;
 
     const { weight, fixationYear } = weightForYear(y, weightTable);
 
@@ -338,7 +458,15 @@ function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvaila
       month: m,
       trueflationIndex: round4(trueflationLevel),
       likIndex: likByMonth[m],
-      likGrowthRatePercent: round4((likGrowthFactor - 1) * 100),
+      // WICHTIG (Transparenz): likGrowthRatePercent zeigt die REINE,
+      // unkorrigierte LIK-Wachstumsrate — identisch mit der amtlichen Zahl,
+      // gegen die Nutzer plausibilisieren könnten. Die miet-korrigierte Rate,
+      // die TATSÄCHLICH in combinedGrowthFactor einfliesst, bekommt ein
+      // eigenes Feld (likGrowthRatePercentRentCorrected), damit beide Zahlen
+      // nebeneinander nachvollziehbar bleiben — kein stilles Überschreiben
+      // der amtlich vergleichbaren Grösse.
+      likGrowthRatePercent: round4((rawLikGrowthFactor - 1) * 100),
+      likGrowthRatePercentRentCorrected: rentCorrectionAppliedThisMonth ? round4((likGrowthFactor - 1) * 100) : null,
       premiumMonthlyEquivalentRatePercent: round4(pm_y * 100),
       premiumAnnualRatePercent: round4(p_y * 100),
       premiumWeight: round6(weight),
@@ -350,6 +478,13 @@ function buildTrueflationMonthlySeries({ likByMonth, pmByYear, premiumLastAvaila
         ? `Prämienkomponente zum 1.1.${y} aktualisiert, Basis: BAG-Jahreswert ${y} ggü. ${y - 1} (${round4(p_y * 100)}%). ` +
           `Kein künstlicher Sprung durch Verkettung, aber die Prämienrate wechselt an jedem Jahresanfang — bewusst deklariert, nicht geglättet (siehe Methodik).`
         : null,
+      rentCorrectionApplied: rentCorrectionAppliedThisMonth,
+      rentCorrectionNote:
+        m === RENT_CORRECTION_START_YEAR * 10000 + 101
+          ? `Miet-Korrektur (Variante "Bevölkerungsanteil", ${round4(rentCorrection.correctionDeltaPpPerYear)} pp/Jahr) greift ab diesem Monat — ` +
+            `davor läuft die LIK-Komponente OHNE Korrektur (Datengrundlage beginnt ${rentCorrection.sourceFromYear}, siehe rent-correction-longtenure-check.json). ` +
+            `Bewusst als Bruch gekennzeichnet, nicht rückwirkend geglättet (siehe Methodik).`
+          : null,
     });
   }
 
@@ -380,16 +515,19 @@ function deriveYearlySnapshotFromMonthly(monthlySeries) {
  * werden aufgenommen — ein Teiljahr würde einen verzerrten Durchschnitt
  * liefern und stillschweigend wie ein Vollwert aussehen.
  *
- * VERIFIZIERT (Betreiber-Review 26.08.2026): Trueflation-Jahresdurchschnitt
- * 2010→2024 = 9.66% (arithmetisches Mittel der 12 Indexstände je Jahr,
- * identisch zur BFS-Methodik) — weicht PLAUSIBEL von der alten rein
- * jahresbasierten V1-Rechnung (9.81%) ab, weil dort die Gewichtung jährlich
- * statt monatlich griff. Ist NICHT identisch mit 9.81% (das wäre ein Zeichen,
- * dass hier fälschlich die alte Jahresreihe statt echter Monatsmittelung
- * verwendet würde) und NICHT identisch mit dem internen Jan-zu-Jan-Wert
- * (9.23%, geometrisch) — drei unterschiedliche, je nach Verwendungszweck
- * richtige Zahlen. Siehe Test 1e/1g für die automatisierte Absicherung
- * dieser Unterscheidung. */
+ * VERIFIZIERT (Betreiber-Review 26.08.2026, NEU ABGELEITET nach Integration
+ * der Miet-Korrektur 29.08.2026): Trueflation-Jahresdurchschnitt 2010→2024
+ * = 9.93% (arithmetisches Mittel der 12 Indexstände je Jahr, identisch zur
+ * BFS-Methodik; vor der Miet-Korrektur-Integration war dieser Wert 9.66%) —
+ * weicht PLAUSIBEL von der alten rein jahresbasierten V1-Rechnung (9.81%) ab,
+ * weil dort die Gewichtung jährlich statt monatlich griff. Ist NICHT
+ * identisch mit dem internen Jan-zu-Jan-Wert (9.47%, geometrisch, ebenfalls
+ * NEU nach Miet-Korrektur, vorher 9.23%) — unterschiedliche, je nach
+ * Verwendungszweck richtige Zahlen. Siehe Test 1e/1g/1g-neg für die
+ * automatisierte Absicherung dieser Unterscheidung und des
+ * Miet-Korrektur-Wirkungsnachweises. VERBINDLICHE PRÜFZAHL AB SOFORT: 9.93%
+ * (Jahresdurchschnitt) / 9.47% (Jan-zu-Jan) — 9.66%/9.81%/9.23% sind
+ * historische Werte VOR der Miet-Korrektur, NICHT mehr aktuell verwenden. */
 function computeCalendarYearAverages(monthlySeries) {
   const byYear = {};
   for (const v of monthlySeries) {
@@ -423,13 +561,56 @@ function main() {
   const likByMonth = loadLikMonthly();
   const { byYear: premiumByYear, lastAvailableYear: premiumLastAvailableYear } = loadPremiumYearly();
   const pmByYear = buildMonthlyEquivalentPremiumRates(premiumByYear, premiumLastAvailableYear);
+  const rentCorrection = loadRentCorrection();
 
   const monthlySeries = buildTrueflationMonthlySeries({
     likByMonth,
     pmByYear,
     premiumLastAvailableYear,
     weightTable,
+    rentCorrection,
   });
+
+  // WIRKUNGS-NACHWEIS (Betreiber-Vorgabe 28.08.2026, "Test gegen stilles
+  // Durchfallen"): Reihe zusätzlich OHNE Miet-Korrektur berechnen (Faktor 1
+  // statt rentMonthlyFactor, via correctionDeltaPpPerYear=0), damit ein
+  // Regressionstest die Differenz nachweisen kann. Diese zweite Reihe wird
+  // NICHT als eigenständiges Produkt ausgegeben, sondern nur zur Ableitung
+  // der Kennzahl rentCorrectionEffectVerification unten verwendet —
+  // Produktionsoutput (monthlySeries) bleibt ausschliesslich die korrigierte
+  // Reihe.
+  const monthlySeriesWithoutRentCorrection = buildTrueflationMonthlySeries({
+    likByMonth,
+    pmByYear,
+    premiumLastAvailableYear,
+    weightTable,
+    rentCorrection: { ...rentCorrection, correctionDeltaPpPerYear: 0 },
+  });
+
+  // Realisierten annualisierten Effekt MESSEN (nicht nur den Eingabeparameter
+  // zurückgeben) — Vergleich der Jahresdurchschnitts-Wachstumsrate
+  // 2020→2024 zwischen korrigierter und unkorrigierter Reihe. Das ist der
+  // eigentliche Wirkungsnachweis: er bestätigt, dass die Korrektur durch die
+  // GEOMETRISCHE Verkettung tatsächlich ankommt, nicht nur, dass der
+  // Parameter ungleich null im Code steht.
+  const avgsWith = computeCalendarYearAverages(monthlySeries);
+  const avgsWithout = computeCalendarYearAverages(monthlySeriesWithoutRentCorrection);
+  const rentVerifyFrom = avgsWith.find((a) => a.year === RENT_CORRECTION_START_YEAR);
+  const rentVerifyTo = avgsWith.find((a) => a.year === rentCorrection.sourceToYear);
+  const rentVerifyFromWithout = avgsWithout.find((a) => a.year === RENT_CORRECTION_START_YEAR);
+  const rentVerifyToWithout = avgsWithout.find((a) => a.year === rentCorrection.sourceToYear);
+  let rentCorrectionEffectVerification = null;
+  if (rentVerifyFrom && rentVerifyTo && rentVerifyFromWithout && rentVerifyToWithout) {
+    const yearsSpan = rentCorrection.sourceToYear - RENT_CORRECTION_START_YEAR;
+    const growthWith = Math.pow(rentVerifyTo.trueflationIndexAvg / rentVerifyFrom.trueflationIndexAvg, 1 / yearsSpan) - 1;
+    const growthWithout = Math.pow(rentVerifyToWithout.trueflationIndexAvg / rentVerifyFromWithout.trueflationIndexAvg, 1 / yearsSpan) - 1;
+    rentCorrectionEffectVerification = {
+      method: `Jahresdurchschnitts-Wachstumsrate ${RENT_CORRECTION_START_YEAR}→${rentCorrection.sourceToYear}, annualisiert, korrigierte vs. unkorrigierte Reihe (correctionDeltaPpPerYear=0)`,
+      measuredEffectPpPerYear: round4((growthWith - growthWithout) * 100),
+      expectedEffectPpPerYear: rentCorrection.correctionDeltaPpPerYear,
+      effectIsPositive: (growthWith - growthWithout) > 0,
+    };
+  }
 
   const methodology = {
     formula: 'pm_y = (1+p_y)^(1/12) - 1 (monatlich-aequivalente Praemienrate); ' +
@@ -456,6 +637,20 @@ function main() {
     note2025: '2025 und spaeter: 2020er-Gewicht wird fortgeschrieben, bis HABE-Publikation ein neues ' +
       'Fixierungsjahr-Gewicht liefert. Reihe selbst endet aber beim letzten Jahr mit vollstaendigen ' +
       'BAG-Praemiendaten (aktuell 2024) - keine Extrapolation der Praemienkomponente.',
+    rentCorrection: {
+      formula: 'rentMonthlyFactor = (1 + correctionDeltaPpPerYear/100)^(1/12); ' +
+        'ab RENT_CORRECTION_START_YEAR wird likGrowthFactor MULTIPLIKATIV mit rentMonthlyFactor ' +
+        'korrigiert, BEVOR die Praemien-Gewichtsformel (w) greift (Requirements 2.2b, Formel-Reihenfolge).',
+      variant: 'weightedVsLongestActual (Bevoelkerungsanteil, Betreiber-Entscheid dritte Runde)',
+      correctionDeltaPpPerYear: rentCorrection.correctionDeltaPpPerYear,
+      startYear: RENT_CORRECTION_START_YEAR,
+      sourceCoverage: `${rentCorrection.sourceFromYear}-${rentCorrection.sourceToYear}`,
+      sourceFile: 'data/rent-correction/rent-correction-longtenure-check.json -> weightedVsLongestActual',
+      appliedAsConstantAnnualFactor: true,
+      note: 'Konstanter jaehrlicher Korrekturfaktor ab 2020, keine monatliche Aufloesung erfunden ' +
+        '(Requirements-Regel 3) - die Datengrundlage selbst ist nur als 5-Jahres-Fenster (2020-2024) ' +
+        'verfuegbar. Vor 2020 laeuft die LIK-Komponente unveraendert (kein rueckwirkendes Glaetten).',
+    },
   };
 
   const knownGaps = [
@@ -474,17 +669,26 @@ function main() {
     },
     {
       component: 'mietkorrektur',
-      status: 'geprüft, Ergebnis dokumentiert (28.08.2026)',
-      reason: 'Zwei Vergleichsgruppen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr; gegen längste ' +
-        'Bezugsdauer-Klasse 21J+: +0.253 pp/Jahr — Vorzeichen dreht sich je nach Vergleichsgruppe). ' +
-        'Betrag erfüllt in beiden Varianten die Schwelle (>= 0.10 pp/Jahr), aber Abdeckungsprüfung ' +
-        '(BFS-DAM-API, timeboxed) fand keine älteren Rohdaten-Jahrgänge — Abdeckung bleibt 5 von 15 ' +
-        'Jahren (2020-2024), Kriterium (>= 10/15) NICHT erfüllt. Zusätzlich meldepflichtiger ' +
-        'Widerspruchsbefund: Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp).',
+      status: 'INTEGRIERT in die Hauptlinie (Betreiber-Entscheid, dritte Runde, 28.08.2026)',
+      reason: 'Drei Vergleichsgruppen/Gewichtungen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr, ' +
+        'verworfen; gegen längste Bezugsdauer-Klasse 21J+ voll/ungewichtet: +0.253 pp/Jahr, verworfen, ' +
+        'unterstellt "alle wohnen zu Neuvermietungspreisen"; gewichtet mit Umzugsquote: +0.024 pp/Jahr, ' +
+        'verworfen, erfasst nur Jahresumzuege statt kumulierter Exposition). GEWÄHLT: gewichtet mit dem ' +
+        'TATSÄCHLICHEN Bevölkerungsanteil der Neubezug-Klasse (+0.0608 pp/Jahr) — dieselbe Logik wie bei ' +
+        'der Prämienkorrektur, tatsächliche statt hypothetische Exposition. Abdeckung bleibt 5 von 15 ' +
+        'Jahren (2020-2024, Datengrundlage) — GREIFT DAHER NUR AB 2020, davor läuft die LIK-Komponente ' +
+        'unverändert, der Bruch ist über rentCorrectionNote gekennzeichnet, nicht rückwirkend geglättet. ' +
+        'Betreiber-Begründung für die Integration trotz kleinem Effekt: entscheidend ist nicht die ' +
+        'Grösse der Bewegung, sondern dass die Zahl faktisch korrekt ist. Meldepflichtiger ' +
+        'Widerspruchsbefund bleibt bestehen und wird auf der Methodik-Seite dokumentiert: ' +
+        'Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp) — mutmasslich weil Neumieter im ' +
+        'Schnitt kleinere Wohnungen beziehen (nicht verifiziert).',
       measuredEffectPpPerYearVsTotal: -0.156,
-      measuredEffectPpPerYearVsLongestTenure: 0.253,
-      criterionMet: false,
-      decision: 'als Befund dokumentiert, kein Overlay',
+      measuredEffectPpPerYearVsLongestTenureFull: 0.253,
+      measuredEffectPpPerYearVsLongestTenureRelocationRateWeighted: 0.0236,
+      measuredEffectPpPerYearVsLongestTenurePopulationWeighted: 0.0608,
+      criterionMet: true,
+      decision: 'integriert in Hauptlinie, Variante Bevölkerungsanteil, ab 2020 (Betreiber-Entscheid dritte Runde)',
     },
     {
       component: 'strom',
@@ -494,17 +698,20 @@ function main() {
   ];
 
   const monthlyOutput = {
-    _comment: 'Automatisch generiert durch build-trueflation-index.mjs (V2, monatlich). ' +
-      'SCOPE v1: Trueflation = LIK + Prämienkorrektur. Fixer Warenkorb und Mietkorrektur sind ' +
-      'GEPRÜFT UND ALS BEFUND DOKUMENTIERT (siehe knownGaps), bewusst nicht integriert. Dieser Wert ' +
-      'ist der abschliessende v1-Scope (LIK + Prämienkorrektur), nicht das vollständige ' +
-      'Ergebnis. Geometrische Gewichtung (siehe methodology.formula) — Wechsel von der ' +
-      'arithmetischen V1-Formel ist eine bewusste, mathematisch begründete Änderung, kein Fehler.',
-    scope: 'lik_plus_premium_correction_only',
+    _comment: 'Automatisch generiert durch build-trueflation-index.mjs (V2, monatlich, DRITTE ' +
+      'Korrekturrunde 28.08.2026). SCOPE v1 FINAL: Trueflation = LIK (ab 2020 miet-korrigiert, Variante ' +
+      'Bevölkerungsanteil) + Prämienkorrektur. Fixer Warenkorb bleibt GEPRÜFT UND ALS BEFUND ' +
+      'DOKUMENTIERT (siehe knownGaps), bewusst nicht integriert — Gewichte werden ab 2026 jährlich ' +
+      'archiviert (siehe scripts/pipeline/archive-warenkorb-weights.mjs), damit die Frage in ' +
+      'einigen Jahren mit echten Basisjahr-Gewichten neu beantwortbar ist. Geometrische Gewichtung ' +
+      '(siehe methodology.formula) — Wechsel von der arithmetischen V1-Formel ist eine bewusste, ' +
+      'mathematisch begründete Änderung, kein Fehler.',
+    scope: 'lik_plus_premium_plus_rent_correction',
     granularity: 'monthly',
     startMonth: TRUEFLATION_START_MONTH,
     methodology,
     knownGaps,
+    rentCorrectionEffectVerification,
     values: monthlySeries,
   };
 
@@ -520,7 +727,7 @@ function main() {
       'wäre gegen Presse-/BFS-Meldungen nicht vergleichbar und zusätzlich durch die Saisonalität des ' +
       'Monats Januar (Winterschlussverkauf etc., siehe Test 3) verzerrt. Einzige Quelle der ' +
       'Wahrheit für BEIDE Felder ist die Monatsreihe, keine separate Neuberechnung.',
-    scope: 'lik_plus_premium_correction_only',
+    scope: 'lik_plus_premium_plus_rent_correction',
     derivedFrom: 'trueflation-index-monthly.json',
     startYear: TRUEFLATION_START_YEAR,
     methodology,
@@ -551,4 +758,35 @@ function main() {
   }
 }
 
-main();
+// Guard (Blocker-Fix, Code-Review 29.08.2026): main() darf NICHT automatisch
+// laufen, wenn dieses Modul importiert wird (z.B. von
+// test-trueflation-index.mjs, um die reale Pipeline mit deaktivierter
+// Miet-Korrektur fuer einen echten Negativtest nachzurechnen) — sonst wuerde
+// jeder Import die Output-Dateien erneut ueberschreiben. Nur beim direkten
+// Aufruf `node build-trueflation-index.mjs` laeuft main() automatisch.
+// Robustheits-Fix (Security-Review LOW-Finding, 29.08.2026): String-Interpolation
+// `file://${process.argv[1]}` scheitert still bei Symlinks, relativen Pfaden oder
+// Pfaden mit Sonderzeichen (Leerzeichen etc.) — kein Sicherheitsproblem (Repo bleibt
+// die einzige Datenquelle), aber genau die Art "stiller" Fehler, die dieses Projekt
+// explizit vermeiden will. pathToFileURL() normalisiert korrekt, unabhaengig vom
+// Aufrufpfad-Format.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}
+
+// Exporte AUSSCHLIESSLICH fuer Testzwecke (Blocker-Fix, Code-Review
+// 29.08.2026): erlauben test-trueflation-index.mjs, die reale
+// Kernberechnung mit deaktivierter Miet-Korrektur (correctionDeltaPpPerYear=0)
+// erneut auszufuehren, statt den Wirkungsnachweis mit einem hartcodierten
+// Literal vorzutaeuschen — genau das war der Blocker-Befund (Test 1g-neg
+// pruefte bisher nur JS-Boolean-Logik auf einem Literal, nie echten Code).
+export {
+  buildWeightTable,
+  loadLikMonthly,
+  loadPremiumYearly,
+  buildMonthlyEquivalentPremiumRates,
+  loadRentCorrection,
+  buildTrueflationMonthlySeries,
+  computeCalendarYearAverages,
+  RENT_CORRECTION_START_YEAR,
+};

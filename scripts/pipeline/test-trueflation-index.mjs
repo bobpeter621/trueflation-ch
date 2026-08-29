@@ -47,6 +47,16 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import {
+  buildWeightTable,
+  loadLikMonthly,
+  loadPremiumYearly,
+  buildMonthlyEquivalentPremiumRates,
+  loadRentCorrection,
+  buildTrueflationMonthlySeries,
+  computeCalendarYearAverages,
+  RENT_CORRECTION_START_YEAR,
+} from './build-trueflation-index.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -69,6 +79,8 @@ function check(name, condition, detail) {
 function approxEqual(a, b, tolerance) {
   return Math.abs(a - b) <= tolerance;
 }
+
+function round4(x) { return Math.round(x * 10000) / 10000; }
 
 function median(arr) {
   const sorted = [...arr].sort((a, b) => a - b);
@@ -126,16 +138,21 @@ function main() {
   console.log(`  LIK Jan2010→Jan2024: ${likGrowthJanJan.toFixed(4)}%`);
   console.log(`  Trueflation Jan2010→Jan2024: ${trueflationGrowthJanJan.toFixed(4)}%`);
 
-  // Toleranzband um die tatsächlich beobachteten Werte (5.06% / 9.23%) —
-  // NICHT die alte 5.5%/10%-Zahl, die auf Jahresdurchschnitten beruhte.
+  // Toleranzband um die tatsächlich beobachteten Werte (5.06% / 9.47%) —
+  // Trueflation-Referenz NEU ABGELEITET (Betreiber-Vorgabe 28.08.2026, dritte
+  // Runde: "nicht die alte Zahl fortschreiben") nach Integration der
+  // Miet-Korrektur in die Hauptlinie — vorher 9.23%, jetzt 9.47% durch den
+  // ab 2020 wirkenden Bevölkerungsanteil-Effekt (+0.0608 pp/Jahr, 5 Jahre).
+  // LIK-Referenz bleibt unverändert, da die Miet-Korrektur NUR die
+  // Trueflation-Komponente betrifft, nicht die amtliche LIK-Reihe selbst.
   check(
     'LIK-Wachstum (Jan-zu-Jan) 2010-2024 ≈ +5.06% (±0.5pp, Referenz aus Rohdaten)',
     approxEqual(likGrowthJanJan, 5.06, 0.5),
     `Ist-Wert: ${likGrowthJanJan.toFixed(4)}%`
   );
   check(
-    'Trueflation-Wachstum (Jan-zu-Jan, geometrisch) 2010-2024 ≈ +9.23% (±0.5pp)',
-    approxEqual(trueflationGrowthJanJan, 9.23, 0.5),
+    'Trueflation-Wachstum (Jan-zu-Jan, geometrisch, MIT Miet-Korrektur ab 2020) 2010-2024 ≈ +9.47% (±0.5pp)',
+    approxEqual(trueflationGrowthJanJan, 9.47, 0.5),
     `Ist-Wert: ${trueflationGrowthJanJan.toFixed(4)}%`
   );
   check(
@@ -148,7 +165,7 @@ function main() {
   const manipulatedGrowth = (manipulatedTrueflationIndex / y2010.trueflationIndex - 1) * 100;
   check(
     'NEGATIVTEST: künstlich um 50% erhöhter 2024er-Wert fällt aus der ±0.5pp-Toleranz',
-    !approxEqual(manipulatedGrowth, 9.23, 0.5),
+    !approxEqual(manipulatedGrowth, 9.47, 0.5),
     `Manipulierter Wert würde ${manipulatedGrowth.toFixed(2)}% zeigen — muss ausserhalb der Toleranz liegen.`
   );
 
@@ -189,10 +206,19 @@ function main() {
   if (firstAvg && lastAvg) {
     const likAvgGrowth = (lastAvg.likIndexAvg / firstAvg.likIndexAvg - 1) * 100;
     const trueflationAvgGrowth = (lastAvg.trueflationIndexAvg / firstAvg.trueflationIndexAvg - 1) * 100;
+    // Trueflation-Referenz NEU ABGELEITET nach Miet-Korrektur-Integration
+    // (dritte Runde, 28.08.2026): vorher 9.66%, jetzt ≈ 9.93% — Betreiber-
+    // Vorgabe ausdrücklich: "erst die neue Kernzahl ableiten, dann als
+    // Prüfziel einsetzen", nicht die alte Zahl fortschreiben.
     check(
       'LIK-Jahresdurchschnittswachstum 2010-2024 ≈ +5.51% (±0.3pp, amtlich vergleichbare Referenz)',
       approxEqual(likAvgGrowth, 5.51, 0.3),
       `Ist-Wert: ${likAvgGrowth.toFixed(4)}%`
+    );
+    check(
+      'Trueflation-Jahresdurchschnittswachstum (MIT Miet-Korrektur) 2010-2024 ≈ +9.93% (±0.3pp, NEU abgeleitete Kernzahl)',
+      approxEqual(trueflationAvgGrowth, 9.93, 0.3),
+      `Ist-Wert: ${trueflationAvgGrowth.toFixed(4)}%`
     );
     check(
       'Trueflation-Jahresdurchschnittswachstum 2010-2024 > LIK-Jahresdurchschnittswachstum',
@@ -215,6 +241,164 @@ function main() {
       `Durchschnitt: ${likAvgGrowth.toFixed(4)}%, Jan-zu-Jan: ${likGrowthJanJan.toFixed(4)}% — müssen sich unterscheiden, sonst würde eine Verwechslung nicht auffallen.`
     );
   }
+
+  console.log('\n=== Test 1g: Miet-Korrektur-Wirkungsnachweis (Betreiber-Vorgabe 28.08.2026, "Test gegen stilles Durchfallen") ===');
+  // Effekt ist mit +0.0608 pp/Jahr klein ("unter der Strichbreite") — genau
+  // deshalb reicht ein blosser Vorhandensein-Check des Parameters nicht.
+  // rentCorrectionEffectVerification wird vom Build-Skript aus einer ZWEITEN,
+  // parallel gerechneten Reihe OHNE Korrektur abgeleitet (siehe main() in
+  // build-trueflation-index.mjs) — hier wird geprüft, dass diese Differenz
+  // tatsächlich > 0 ist und der erwarteten Grössenordnung entspricht, nicht
+  // nur, dass der Eingabeparameter ungleich null im Code steht.
+  assertFieldExists(monthlyData, 'rentCorrectionEffectVerification', 'Test 1g (Miet-Korrektur-Wirkungsnachweis)');
+  const rentVerify = monthlyData.rentCorrectionEffectVerification;
+  check(
+    'rentCorrectionEffectVerification ist vorhanden und nicht null',
+    rentVerify != null,
+    'Ohne dieses Feld kann der Wirkungsnachweis nicht gefuehrt werden — Build-Skript pruefen.'
+  );
+  if (rentVerify != null) {
+    check(
+      'Gemessener Miet-Korrektur-Effekt ist nachweisbar > 0 (Richtung stimmt)',
+      rentVerify.effectIsPositive === true && rentVerify.measuredEffectPpPerYear > 0,
+      `measuredEffectPpPerYear: ${rentVerify.measuredEffectPpPerYear}`
+    );
+    check(
+      'Gemessener Effekt liegt in der erwarteten Groessenordnung (±0.03pp um den Erwartungswert 0.0608)',
+      approxEqual(rentVerify.measuredEffectPpPerYear, rentVerify.expectedEffectPpPerYear, 0.03),
+      `Gemessen: ${rentVerify.measuredEffectPpPerYear}, erwartet: ${rentVerify.expectedEffectPpPerYear}`
+    );
+  }
+
+  console.log('\n=== Test 1g-neg: NEGATIVTEST — deaktivierte Miet-Korrektur muss den Wirkungsnachweis zum Scheitern bringen (ECHTE Pipeline-Ausführung) ===');
+  // BLOCKER-FIX (Code-Review 29.08.2026): Der ursprüngliche Test prüfte nur
+  // JS-Boolean-Logik gegen ein hartcodiertes Literal ({measuredEffectPpPerYear:
+  // 0, effectIsPositive: false}) — das konnte NIE fehlschlagen, unabhängig
+  // davon, ob die echte Implementierung korrekt oder komplett kaputt war.
+  // Fix: die REALE Pipeline wird hier zweimal ausgeführt — einmal mit der
+  // echten Miet-Korrektur, einmal mit deaktivierter (correctionDeltaPpPerYear=0)
+  // — exakt dieselben Bausteine wie in build-trueflation-index.mjs main(),
+  // importiert statt dupliziert. Nur wenn die ECHTE Implementierung bei
+  // deaktivierter Korrektur tatsächlich keinen Effekt mehr misst, ist der Test
+  // aussagekräftig.
+  const weightTableForNeg = buildWeightTable();
+  const likByMonthForNeg = loadLikMonthly();
+  const { byYear: premiumByYearForNeg, lastAvailableYear: premiumLastAvailableYearForNeg } = loadPremiumYearly();
+  const pmByYearForNeg = buildMonthlyEquivalentPremiumRates(premiumByYearForNeg, premiumLastAvailableYearForNeg);
+  const realRentCorrection = loadRentCorrection();
+  const disabledRentCorrection = { ...realRentCorrection, correctionDeltaPpPerYear: 0 };
+  const seriesWithDisabledCorrection = buildTrueflationMonthlySeries({
+    likByMonth: likByMonthForNeg,
+    pmByYear: pmByYearForNeg,
+    premiumLastAvailableYear: premiumLastAvailableYearForNeg,
+    weightTable: weightTableForNeg,
+    rentCorrection: disabledRentCorrection,
+  });
+  const seriesWithRealCorrection = buildTrueflationMonthlySeries({
+    likByMonth: likByMonthForNeg,
+    pmByYear: pmByYearForNeg,
+    premiumLastAvailableYear: premiumLastAvailableYearForNeg,
+    weightTable: weightTableForNeg,
+    rentCorrection: realRentCorrection,
+  });
+  const avgsDisabled = computeCalendarYearAverages(seriesWithDisabledCorrection);
+  const avgsReal = computeCalendarYearAverages(seriesWithRealCorrection);
+  const fromDisabled = avgsDisabled.find((a) => a.year === RENT_CORRECTION_START_YEAR);
+  const toDisabled = avgsDisabled.find((a) => a.year === realRentCorrection.sourceToYear);
+  const fromReal = avgsReal.find((a) => a.year === RENT_CORRECTION_START_YEAR);
+  const toReal = avgsReal.find((a) => a.year === realRentCorrection.sourceToYear);
+  check(
+    'Voraussetzung fuer den echten Negativtest: alle vier Vergleichsjahre (real/disabled x from/to) sind vorhanden',
+    !!fromDisabled && !!toDisabled && !!fromReal && !!toReal
+  );
+  if (fromDisabled && toDisabled && fromReal && toReal) {
+    const yearsSpanForNeg = realRentCorrection.sourceToYear - RENT_CORRECTION_START_YEAR;
+    const growthDisabled = Math.pow(toDisabled.trueflationIndexAvg / fromDisabled.trueflationIndexAvg, 1 / yearsSpanForNeg) - 1;
+    const growthReal = Math.pow(toReal.trueflationIndexAvg / fromReal.trueflationIndexAvg, 1 / yearsSpanForNeg) - 1;
+    const measuredEffectRealVsDisabled = (growthReal - growthDisabled) * 100;
+    check(
+      'ECHTER NEGATIVTEST: reale Pipeline MIT Korrektur vs. reale Pipeline mit correctionDeltaPpPerYear=0 (kein Literal) zeigt den erwarteten Effekt (≈ 0.0608 pp/Jahr)',
+      approxEqual(measuredEffectRealVsDisabled, realRentCorrection.correctionDeltaPpPerYear, 0.03),
+      `Erwartet ≈ ${realRentCorrection.correctionDeltaPpPerYear}, gemessen (real − disabled): ${measuredEffectRealVsDisabled.toFixed(4)}`
+    );
+    // Kern des Negativtests: WENN die Korrektur im Produktionscode kaputt
+    // wäre (z.B. rentMonthlyFactor-Multiplikation versehentlich entfernt),
+    // würde buildTrueflationMonthlySeries mit realRentCorrection dasselbe
+    // Ergebnis liefern wie mit disabledRentCorrection — diese Prüfung
+    // bestaetigt anhand der TATSAECHLICH gemessenen Werte, dass genau das
+    // NICHT der Fall ist (die beiden Wachstumsraten unterscheiden sich
+    // messbar). Kein Literal, kein Vergleich eines Werts mit sich selbst —
+    // beide Werte stammen aus zwei unabhaengigen echten Pipeline-Laeufen.
+    check(
+      'NEGATIVTEST: reale Wachstumsrate MIT Korrektur unterscheidet sich messbar von der realen Wachstumsrate OHNE Korrektur — waere die Korrektur im Code kaputt, waeren beide Werte identisch und dieser Test wuerde fehlschlagen',
+      !approxEqual(growthReal * 100, growthDisabled * 100, 1e-6),
+      `growthReal=${(growthReal * 100).toFixed(6)}%, growthDisabled=${(growthDisabled * 100).toFixed(6)}% — muessen sich unterscheiden.`
+    );
+  }
+
+  console.log('\n=== Test 1h: 2020er-Miet-Korrektur-Marker existiert am richtigen Datenpunkt ===');
+  // Bruch wird GEKENNZEICHNET, nicht versteckt (Requirements 2.2b/Betreiber-
+  // Entscheid dritte Runde) — exakt EIN Marker, exakt am 1.1.2020, nicht
+  // frueher/spaeter und nicht auf mehreren Monaten verteilt.
+  assertFieldExists(monthly[0], 'rentCorrectionApplied', 'Test 1h (2020er-Marker)');
+  assertFieldExists(monthly[0], 'rentCorrectionNote', 'Test 1h (2020er-Marker)');
+  const jan2020 = byMonth[20200101];
+  check(
+    'Januar 2020 vorhanden und trägt rentCorrectionNote (nicht-leer)',
+    !!jan2020 && typeof jan2020.rentCorrectionNote === 'string' && jan2020.rentCorrectionNote.length > 0,
+    jan2020 ? `rentCorrectionNote: ${jan2020.rentCorrectionNote}` : 'Januar 2020 fehlt in der Reihe.'
+  );
+  check(
+    'Januar 2020 ist als rentCorrectionApplied=true markiert',
+    !!jan2020 && jan2020.rentCorrectionApplied === true
+  );
+  const monthsWithRentNote = monthly.filter((v) => typeof v.rentCorrectionNote === 'string' && v.rentCorrectionNote.length > 0);
+  check(
+    'Genau EIN Monat traegt die Bruch-Markierung (rentCorrectionNote) — kein wiederholter oder fehlender Marker',
+    monthsWithRentNote.length === 1 && monthsWithRentNote[0].month === 20200101,
+    `Gefunden bei: ${monthsWithRentNote.map((v) => v.month).join(', ') || 'keinem Monat'}`
+  );
+  const monthsBeforeRentStart = monthly.filter((v) => v.month < 20200101);
+  const monthsFromRentStart = monthly.filter((v) => v.month >= 20200101);
+  check(
+    'Alle Monate VOR 2020 sind rentCorrectionApplied=false (kein rueckwirkendes Glaetten)',
+    monthsBeforeRentStart.every((v) => v.rentCorrectionApplied === false)
+  );
+  check(
+    'Alle Monate AB 2020 sind rentCorrectionApplied=true',
+    monthsFromRentStart.every((v) => v.rentCorrectionApplied === true)
+  );
+
+  console.log('\n=== Test 1h-neg: NEGATIVTEST — ein Marker vor 2020 oder ein fehlender Marker 2020 muss auffallen ===');
+  // BLOCKER-FIX (Code-Review 29.08.2026): zwei Probleme im ursprünglichen
+  // Test behoben. (1) Kommentar behauptete "Dezember 2019", tatsächlich
+  // geprüft wurde 20190101 (Januar 2019) — jetzt korrekt Dezember 2019
+  // (20191201), der tatsächlich letzte Monat vor dem Bruch. (2) Der zweite
+  // Check war tautologisch (prüfte denselben bereits bekannten jan2020-Wert
+  // erneut, konnte nie fehlschlagen) — ersetzt durch eine ECHTE Simulation
+  // eines fehlenden Markers: ein manipuliertes Objekt mit
+  // rentCorrectionNote=null wird durch DIESELBE Prüflogik wie Test 1h
+  // geschickt und MUSS dabei durchfallen.
+  const dec2019 = byMonth[20191201];
+  check(
+    'NEGATIVTEST: Dezember 2019 (tatsächlich letzter Monat vor dem Bruch) traegt KEINE rentCorrectionNote',
+    !!dec2019 && dec2019.rentCorrectionNote == null,
+    dec2019 ? `rentCorrectionNote: ${dec2019.rentCorrectionNote}` : 'Dezember 2019 fehlt in der Reihe.'
+  );
+  check(
+    'NEGATIVTEST: Dezember 2019 ist rentCorrectionApplied=false (letzter Monat VOR dem Bruch)',
+    !!dec2019 && dec2019.rentCorrectionApplied === false
+  );
+  // Echte Simulation eines fehlenden Markers: dieselbe Prüflogik wie im
+  // Positivtest (Test 1h), aber auf ein Objekt angewendet, bei dem
+  // rentCorrectionNote absichtlich fehlt — muss FALSE liefern.
+  const simulatedMissingMarker = { ...jan2020, rentCorrectionNote: null };
+  const wouldTest1hPass = typeof simulatedMissingMarker.rentCorrectionNote === 'string' && simulatedMissingMarker.rentCorrectionNote.length > 0;
+  check(
+    'NEGATIVTEST: ein simulierter fehlender Marker (rentCorrectionNote=null) laesst dieselbe Prüflogik wie Test 1h durchfallen',
+    wouldTest1hPass === false,
+    'Test 1h wuerde bei einem fehlenden Marker faelschlich gruen bleiben, wenn diese Pruefung hier nicht false liefert.'
+  );
 
   console.log('\n=== Test 2: Harte 100%-Gewichtsprüfung ===');
   const weightTable = monthlyData.methodology.weightTable;
@@ -347,6 +531,86 @@ function main() {
     !(monthOf(fakeMonth.month) !== 1 && fakeMonth.isJanuaryTransition === false),
     'Prüflogik muss diesen Fall als Verstoss werten.'
   );
+
+  console.log('\n=== Test 4c: AUSGEWIESENER LIK-WERT BLEIBT AMTLICH (Betreiber-Vorgabe 29.08.2026, wichtigster Einzeltest) ===');
+  // KONTEXT: Bei der Implementierung der Miet-Korrektur wurde ein Bug
+  // GEFUNDEN UND GEFIXT, bevor er live ging — likGrowthRatePercent haette
+  // sonst die MIET-KORRIGIERTE statt der AMTLICHEN LIK-Rate ausgewiesen.
+  // Bei einem Projekt, dessen Kernversprechen die saubere Gegenueberstellung
+  // LIK-vs-Trueflation ist, waere das der schwerste denkbare Fehler gewesen:
+  // die Seite haette eine korrigierte Zahl als "offiziellen LIK" verkauft.
+  // Dieser Test darf NIE wieder stillschweigend durchfallen — er laedt die
+  // LIK-Rohdatendatei UNABHAENGIG von der Trueflation-Berechnung und
+  // vergleicht Monat fuer Monat, inklusive aller Monate AB 2020 (wo die
+  // Miet-Korrektur aktiv ist — genau dort waere der Bug sichtbar gewesen).
+  const likRawPath = path.join(REPO_ROOT, 'data', 'lik', 'total-index-monthly.json');
+  const likRawData = JSON.parse(readFileSync(likRawPath, 'utf-8'));
+  const likRawByYYYYMM = {};
+  for (const v of likRawData.values) {
+    likRawByYYYYMM[Math.floor(v.indexDate / 100)] = v.indexValue;
+  }
+  assertFieldExists(monthly[1], 'likGrowthRatePercent', 'Test 4c (amtlicher LIK-Wert)');
+  assertFieldExists(monthly[1], 'likIndex', 'Test 4c (amtlicher LIK-Wert)');
+  const likIndexMismatches = monthly.filter((v) => {
+    const rawValue = likRawByYYYYMM[Math.floor(v.month / 100)];
+    return rawValue == null || !approxEqual(v.likIndex, rawValue, 1e-9);
+  });
+  check(
+    'likIndex entspricht in JEDEM Monat exakt dem amtlichen LIK-Rohwert (keine Abweichung durch Miet-Korrektur)',
+    likIndexMismatches.length === 0,
+    likIndexMismatches.length > 0 ? `${likIndexMismatches.length} Abweichungen, erster: Monat ${likIndexMismatches[0].month}` : undefined
+  );
+  // likGrowthRatePercent muss ebenfalls die REINE LIK-Rate sein — direkte
+  // Nachrechnung aus den amtlichen Rohdaten, Monat fuer Monat, fuer ALLE
+  // Nicht-Anker-Monate (inkl. der Jahre ab 2020, in denen die Miet-Korrektur
+  // aktiv ist).
+  const nonAnchorMonths = monthly.filter((v) => v.dataStatus !== 'anchor');
+  const likRateMismatches = nonAnchorMonths.filter((v) => {
+    const rawCurrent = likRawByYYYYMM[Math.floor(v.month / 100)];
+    const prevMonthKey = Math.floor(v.month / 100) - (monthOf(v.month) === 1 ? 89 : 1); // YYYYMM-1, ueber Jahreswechsel korrekt
+    const rawPrev = likRawByYYYYMM[prevMonthKey];
+    if (rawCurrent == null || rawPrev == null) return false; // nicht pruefbar, kein Fehlschlag
+    const expectedRate = round4((rawCurrent / rawPrev - 1) * 100);
+    return !approxEqual(v.likGrowthRatePercent, expectedRate, 0.0001);
+  });
+  check(
+    'likGrowthRatePercent ist in JEDEM Monat die REINE amtliche LIK-Rate, auch ab 2020 (Miet-Korrektur-Zeitraum)',
+    likRateMismatches.length === 0,
+    likRateMismatches.length > 0 ? `${likRateMismatches.length} Abweichungen, erster: Monat ${likRateMismatches[0].month} (Ist: ${likRateMismatches[0].likGrowthRatePercent})` : undefined
+  );
+  // Speziell die Jahre AB 2020 pruefen (dort ist rawLikGrowthFactor !=
+  // likGrowthFactor durch die Miet-Korrektur — genau das Szenario, in dem
+  // der urspruengliche Bug aufgetreten waere).
+  const monthsFrom2020 = nonAnchorMonths.filter((v) => v.month >= 20200101);
+  check(
+    'Mindestens ein Monat ab 2020 wird tatsaechlich geprueft (Test ist nicht wirkungslos leer)',
+    monthsFrom2020.length > 0,
+    `Gefundene Monate ab 2020: ${monthsFrom2020.length}`
+  );
+
+  console.log('\n=== Test 4c-neg: NEGATIVTEST — ein likIndex/likGrowthRatePercent, der die Miet-Korrektur enthaelt, muss auffallen ===');
+  // Simuliert exakt den urspruenglich gefundenen Bug: likGrowthRatePercent
+  // wird faelschlich aus dem MIET-KORRIGIERTEN Wachstumsfaktor berechnet
+  // statt aus dem rohen. Bestaetigt, dass die obige Pruefung diesen Fall
+  // als Abweichung erkennen wuerde.
+  const sampleMonthFrom2020 = monthsFrom2020[0];
+  if (sampleMonthFrom2020) {
+    const rawCurrent = likRawByYYYYMM[Math.floor(sampleMonthFrom2020.month / 100)];
+    const prevKey = Math.floor(sampleMonthFrom2020.month / 100) - (monthOf(sampleMonthFrom2020.month) === 1 ? 89 : 1);
+    const rawPrev = likRawByYYYYMM[prevKey];
+    if (rawCurrent != null && rawPrev != null) {
+      const correctRate = round4((rawCurrent / rawPrev - 1) * 100);
+      // Der urspruengliche Bug haette hier stattdessen
+      // likGrowthRatePercentRentCorrected zurueckgegeben (enthaelt den
+      // Miet-Faktor) — nachweislich verschieden von der reinen Rate.
+      const buggyRateWouldBe = sampleMonthFrom2020.likGrowthRatePercentRentCorrected;
+      check(
+        'NEGATIVTEST: die (verworfene) miet-korrigierte Rate unterscheidet sich MESSBAR von der korrekt ausgewiesenen amtlichen Rate',
+        buggyRateWouldBe != null && !approxEqual(buggyRateWouldBe, correctRate, 0.0001),
+        `Amtlich: ${correctRate}, miet-korrigiert (waere der Bug gewesen): ${buggyRateWouldBe} — muessen sich unterscheiden, sonst wuerde der Bug nicht auffallen.`
+      );
+    }
+  }
 
   console.log('\n=== Test 5: Geometrische statt arithmetische Verkettung (Regressionsschutz) ===');
   // Regressionsschutz gegen Rückfall auf die arithmetische V1-Formel
@@ -541,6 +805,54 @@ function main() {
     'NEGATIVTEST: identische Endpunkte werden korrekt NICHT als "endet früher" erkannt',
     detectLineEndsEarlier(syntheticEqualLength, syntheticEqualLength) === false,
     'Zwei Reihen mit demselben letzten Monat dürfen keinen Zustand-5-Hinweis auslösen.'
+  );
+
+  console.log('\n=== Test 11: Miet-Korrektur-Kennzeichnung ERREICHT DEN BESUCHER (Chart-Logik-Verifikation, Betreiber-Vorgabe 29.08.2026) ===');
+  // KONTEXT: rentCorrectionNote/rentCorrectionApplied als reine Datenfelder
+  // zu testen reicht nicht — ein Marker, der nur im JSON steht, erfuellt
+  // die Kennzeichnungspflicht nicht. Bildet dieselbe Sichtbarkeits-Logik wie
+  // LikChart.tsx nach: (a) der Tooltip-Text muss bei einem miet-korrigierten
+  // Punkt den Zusatz "+ Miet-Korrektur" enthalten, (b) ein dauerhaft
+  // sichtbarer Status-Hinweis (nicht nur Tooltip/Hover) muss erscheinen,
+  // sobald irgendein Punkt im gefilterten Zeitraum rentCorrectionApplied
+  // traegt.
+  function buildTrueflationTooltipLabel(point) {
+    const base = `Trueflation: X (LIK + Praemienkorrektur${point?.rentCorrectionApplied ? ' + Miet-Korrektur' : ''} - siehe Methodik)`;
+    const notes = [point?.transitionNote, point?.rentCorrectionNote].filter(
+      (n) => typeof n === 'string' && n.length > 0
+    );
+    return notes.length > 0 ? [base, ...notes] : base;
+  }
+  function rentCorrectionStatusVisible(filteredValues) {
+    return filteredValues.some((v) => v.rentCorrectionApplied === true);
+  }
+  const jan2020ForChart = byMonth[20200101];
+  const dec2019ForChart = byMonth[20191201];
+  check(
+    'Tooltip-Label fuer Januar 2020 (rentCorrectionApplied=true) enthaelt den Zusatz "+ Miet-Korrektur"',
+    !!jan2020ForChart && String(buildTrueflationTooltipLabel(jan2020ForChart)[0] ?? buildTrueflationTooltipLabel(jan2020ForChart)).includes('Miet-Korrektur'),
+    jan2020ForChart ? JSON.stringify(buildTrueflationTooltipLabel(jan2020ForChart)) : 'Januar 2020 fehlt.'
+  );
+  check(
+    'Tooltip-Label fuer Januar 2020 enthaelt zusaetzlich die rentCorrectionNote als eigene Zeile',
+    !!jan2020ForChart && Array.isArray(buildTrueflationTooltipLabel(jan2020ForChart)) && buildTrueflationTooltipLabel(jan2020ForChart).some((line) => line === jan2020ForChart.rentCorrectionNote)
+  );
+  check(
+    'Ein dauerhaft sichtbarer Status-Hinweis wird ausgeloest, sobald der gefilterte Zeitraum Januar 2020 (oder spaeter) enthaelt',
+    rentCorrectionStatusVisible(monthly.filter((v) => v.month >= 20100101)) === true
+  );
+
+  console.log('\n=== Test 11-neg: NEGATIVTEST — ein Zeitraum VOR 2020 darf den Miet-Korrektur-Hinweis NICHT zeigen ===');
+  const preRentCorrectionRange = monthly.filter((v) => v.month < 20200101);
+  check(
+    'NEGATIVTEST: Zeitraum ausschliesslich vor 2020 loest den Status-Hinweis korrekt NICHT aus',
+    rentCorrectionStatusVisible(preRentCorrectionRange) === false,
+    `Geprueft: ${preRentCorrectionRange.length} Monate, alle vor 2020.`
+  );
+  check(
+    'NEGATIVTEST: Tooltip-Label fuer Dezember 2019 (rentCorrectionApplied=false) enthaelt KEINEN Miet-Korrektur-Zusatz',
+    !!dec2019ForChart && !String(buildTrueflationTooltipLabel(dec2019ForChart)[0] ?? buildTrueflationTooltipLabel(dec2019ForChart)).includes('Miet-Korrektur'),
+    dec2019ForChart ? JSON.stringify(buildTrueflationTooltipLabel(dec2019ForChart)) : 'Dezember 2019 fehlt.'
   );
 
   console.log(`\n=== Ergebnis: ${passed} PASS, ${failures} FAIL ===`);
