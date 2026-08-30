@@ -82,8 +82,32 @@ jobs:
         # Läufe auf die Datei zurück (siehe loadApiKey() dort).
         env:
           TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+        id: twelvedata_overlays
         run: node scripts/pipeline/bulk-import-twelvedata-overlays.mjs
         continue-on-error: true
+
+      - name: Twelve-Data-Ausfall eskalieren (Betreiber-Vorgabe 29.08.2026)
+        # "Optional" heisst nicht "unbemerkt" (Betreiber-Vorgabe): continue-on-error
+        # oben unterdrueckt den Job-Fail-Status, wodurch der spaetere
+        # "Fehler-Eskalation"-Schritt (if: failure()) NIE fuer einen fehlgeschlagenen
+        # Twelve-Data-Abruf greift -- ein dauerhafter Gold/BTC-Ausfall (US 1.4/US 3.16)
+        # waere sonst unbegrenzt lange unsichtbar, obwohl das UI selbst pro Overlay
+        # korrekt einen Ausfall-Hinweis zeigt (siehe LikChart.tsx overlayErrors), sobald
+        # ein Nutzer das Overlay aktiviert -- der Betreiber wuerde davon aber nie separat
+        # per Telegram erfahren. Eigener, expliziter Eskalationsschritt unabhaengig vom
+        # Job-Gesamtstatus, analog zur bestehenden Fehler-Eskalation unten.
+        if: steps.twelvedata_overlays.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              --data-urlencode text="[trueflation.ch] ⚠️ Twelve-Data-Overlay-Import (Gold/BTC) fehlgeschlagen -- Kernpipeline laeuft unbeeinflusst weiter (continue-on-error), aber Overlay-Daten bleiben auf altem Stand. Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht gesetzt -- Twelve-Data-Ausfall NICHT eskaliert. Betreiber-TODO: Secrets hinterlegen."
+          fi
 
       - name: Trueflation — public/-Kopien synchronisieren
         # Next.js liest Client-seitig aus public/data/, die Pipeline schreibt
@@ -95,8 +119,26 @@ jobs:
         # public/data/snb-m2-Stand im Actions-Log sichtbar, statt dass er
         # unbemerkt bleibt.
         run: |
+          # Fix 29.08.2026 (Code-Review-Fund P4): total-index-monthly.json (LIK-Kernreihe,
+          # von LikChart.tsx UND KaufkraftRechner.tsx client-seitig gefetcht) fehlte im
+          # Sync komplett -- die Datei existierte in public/ nur, weil sie einmalig am
+          # 25.08.2026 (P1) manuell committed wurde, seither nie aktualisiert. Kein
+          # sichtbarer Fehler (Datei war ja da), sondern eine STILLE, unbemerkte
+          # Divergenz zwischen data/ (taeglich fortgeschrieben) und public/data/
+          # (eingefroren) -- exakt die Fehlerklasse, die dieser Kommentarblock oben
+          # beschreibt, hier aber die wichtigste Datei des ganzen Projekts betraf.
+          mkdir -p public/data/lik
+          cp data/lik/total-index-monthly.json public/data/lik/
           mkdir -p public/data/trueflation
           cp data/trueflation/trueflation-index-monthly.json public/data/trueflation/
+          # Fix 29.08.2026 (Council-Vorabpruefung P4): yearly-Datei fehlte im
+          # Sync komplett — Kaufkraft-Rechner (liest ausschliesslich die
+          # yearly-Datei) schlug dadurch mit HTTP 404 fehl, obwohl die
+          # monthly-Kopie vorhanden war. Exakt dieselbe Fehlerklasse wie beim
+          # Leitzins-Fund oben ("Sync-Schritt vergisst eine von mehreren
+          # Dateien") — deshalb hart (kein continue-on-error), da die
+          # yearly-Datei fuer den Rechner nicht optional ist.
+          cp data/trueflation/trueflation-index-yearly.json public/data/trueflation/
           mkdir -p public/data/snb-m2
           if ! cp data/snb-m2/m2-monthly.json public/data/snb-m2/ 2>/dev/null; then
             echo "::warning::M2-Sync uebersprungen — data/snb-m2/m2-monthly.json fehlt oder nicht lesbar. public/data/snb-m2/ koennte veraltet sein."
@@ -107,6 +149,16 @@ jobs:
           fi
           if ! cp data/overlays/gold-chf-daily-derived.json public/data/overlays/ 2>/dev/null; then
             echo "::warning::Gold-Overlay-Sync uebersprungen — data/overlays/gold-chf-daily-derived.json fehlt (Twelve-Data-Schritt evtl. fehlgeschlagen). Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          # Fix 29.08.2026: Leitzins-Sync fehlte komplett (US 3.5) — beim
+          # P4-Smoke-Test entdeckt (404 auf /data/snb-leitzins/*.json trotz
+          # vorhandener Quelldateien unter data/). Analog zu den Overlays.
+          mkdir -p public/data/snb-leitzins
+          if ! cp data/snb-leitzins/leitzins-current.json public/data/snb-leitzins/ 2>/dev/null; then
+            echo "::warning::Leitzins-Sync (current) uebersprungen — data/snb-leitzins/leitzins-current.json fehlt. Leitzins-Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          if ! cp data/snb-leitzins/leitzins-historical.json public/data/snb-leitzins/ 2>/dev/null; then
+            echo "::warning::Leitzins-Sync (historical) uebersprungen — data/snb-leitzins/leitzins-historical.json fehlt. Leitzins-Overlay bleibt auf altem Stand oder inaktiv."
           fi
 
       - name: Prüfsummen aktualisieren (US 5.5)

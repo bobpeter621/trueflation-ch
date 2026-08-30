@@ -855,6 +855,55 @@ function main() {
     dec2019ForChart ? JSON.stringify(buildTrueflationTooltipLabel(dec2019ForChart)) : 'Dezember 2019 fehlt.'
   );
 
+  console.log('\n=== Test 12: knownGaps-Struktur — umbenannte Miet-Varianten-Felder abgesichert (Betreiber-Vorgabe, Schritt 1 der Session-Wiederaufnahme 29.08.2026) ===');
+  // KONTEXT: Die drei Miet-Korrektur-Varianten wurden im Zuge der dritten
+  // Korrekturrunde umbenannt (u.a. "...Full", "...RelocationRateWeighted",
+  // "...PopulationWeighted"), OHNE dass bisher ein Test darauf existierte —
+  // exakt die Fehlerklasse aus dem Datei-Header (premiumDataStatus-Rename,
+  // 8pp-Schwellwert, Security-Stub). assertFieldExists() wirft hier VOR jedem
+  // Zugriff, damit ein künftiger Rename sofort sichtbar auffällt statt still
+  // durchzufallen.
+  assertFieldExists(monthlyData, 'knownGaps', 'Test 12 (knownGaps-Struktur)');
+  const mietkorrekturGap = monthlyData.knownGaps.find((g) => g.component === 'mietkorrektur');
+  check(
+    'knownGaps enthält einen Eintrag component="mietkorrektur"',
+    !!mietkorrekturGap,
+    mietkorrekturGap ? undefined : `Vorhandene components: ${monthlyData.knownGaps.map((g) => g.component).join(', ')}`
+  );
+  assertFieldExists(mietkorrekturGap, 'measuredEffectPpPerYearVsLongestTenureFull', 'Test 12 (Variante „voll/ungewichtet“)');
+  assertFieldExists(mietkorrekturGap, 'measuredEffectPpPerYearVsLongestTenureRelocationRateWeighted', 'Test 12 (Variante „Umzugsquote-gewichtet“)');
+  assertFieldExists(mietkorrekturGap, 'measuredEffectPpPerYearVsLongestTenurePopulationWeighted', 'Test 12 (Variante „Bevölkerungsanteil-gewichtet“, PRODUKTIV integriert)');
+  check(
+    'measuredEffectPpPerYearVsLongestTenureFull ist die grösste der drei Varianten (unges. "volle" Variante, +0.253 pp/Jahr erwartet)',
+    approxEqual(mietkorrekturGap.measuredEffectPpPerYearVsLongestTenureFull, 0.253, 0.01),
+    `Tatsächlich: ${mietkorrekturGap.measuredEffectPpPerYearVsLongestTenureFull}`
+  );
+  check(
+    'measuredEffectPpPerYearVsLongestTenurePopulationWeighted ist die produktiv integrierte Variante (+0.0608 pp/Jahr erwartet, identisch zu rentCorrectionEffectVerification)',
+    approxEqual(mietkorrekturGap.measuredEffectPpPerYearVsLongestTenurePopulationWeighted, 0.0608, 0.001),
+    `Tatsächlich: ${mietkorrekturGap.measuredEffectPpPerYearVsLongestTenurePopulationWeighted}`
+  );
+  check(
+    'decision-Feld benennt explizit die integrierte Variante "Bevölkerungsanteil"',
+    typeof mietkorrekturGap.decision === 'string' && mietkorrekturGap.decision.includes('Bevölkerungsanteil'),
+    mietkorrekturGap.decision
+  );
+
+  console.log('\n=== Test 12-neg: NEGATIVTEST — ein Rename der Varianten-Felder muss assertFieldExists zum Scheitern bringen ===');
+  const renamedGap = { ...mietkorrekturGap };
+  delete renamedGap.measuredEffectPpPerYearVsLongestTenureFull;
+  renamedGap.measuredEffectVariantFullRenamed = mietkorrekturGap.measuredEffectPpPerYearVsLongestTenureFull;
+  let renameDetected = false;
+  try {
+    assertFieldExists(renamedGap, 'measuredEffectPpPerYearVsLongestTenureFull', 'Test 12-neg (simulierter Rename)');
+  } catch (err) {
+    renameDetected = err instanceof Error && err.message.includes('existiert nicht');
+  }
+  check(
+    'NEGATIVTEST: simulierter Rename von measuredEffectPpPerYearVsLongestTenureFull wird von assertFieldExists erkannt (wirft), statt still durchzufallen',
+    renameDetected === true
+  );
+
   console.log(`\n=== Ergebnis: ${passed} PASS, ${failures} FAIL ===`);
   if (failures > 0) {
     process.exit(1);

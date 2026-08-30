@@ -1,4 +1,5 @@
 import LikChart from "./components/LikChartLoader";
+import KaufkraftRechner from "./components/KaufkraftRechnerLoader";
 
 export default function Home() {
   return (
@@ -7,11 +8,16 @@ export default function Home() {
         <header>
           <h1 className="text-2xl font-semibold tracking-tight">trueflation.ch</h1>
           <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            Offizielle Inflation und Trueflation (LIK + Prämienkorrektur) für die Schweiz —
-            transparent gegenübergestellt. Geldmengenausweitung folgt als eigene Linie in einem
-            späteren Schritt.
+            Offizielle Inflation und Trueflation (LIK, ab 2020 miet-korrigiert, + Prämienkorrektur)
+            für die Schweiz — transparent gegenübergestellt. Geldmengenausweitung folgt als eigene
+            Linie im Chart.
           </p>
         </header>
+
+        {/* Kaufkraft-Rechner (US 3.8) prominent auf der Startseite — "emotionalstes,
+            teilbarstes Feature", gehört in die erste Interaktionsebene, nicht als
+            separater, weggeklickter Screen. */}
+        <KaufkraftRechner />
 
         <LikChart />
 

@@ -95,6 +95,23 @@ type M2MonthlyFile = {
   values: M2DataPoint[];
 };
 
+// Leitzins (US 3.5) — eigene Sekundaerachse, IMMER Prozentwert, unabhaengig
+// vom Niveau/Rate-Umschalter (US 3.4 AC: "Umschalter Darstellungsart" gilt
+// fuer die indexierten Linien, der Leitzins ist bereits eine Rate und hat
+// keine sinnvolle "Niveau"-Variante). Zwei Quelldateien zusammengefuehrt,
+// LUECKENLOS ANEINANDER ANSCHLIESSEND, verifiziert gegen die Rohdaten
+// (Code-Review-Fix 29.08.2026 — der urspruengliche Kommentar sprach
+// ungenau von "aktuell ab Juni 2019" und suggerierte damit einen Overlap
+// mit der historischen Reihe bis Mai 2019; real gibt es KEINEN Overlap:
+// historisch endet exakt 2019-05, aktuell beginnt exakt 2019-06-13):
+// historisch (UG0, monatlich, 2000-01 bis 2019-05, Libor-Zielband-
+// Untergrenze als Proxy) + aktuell (LZ, taeglich, ab 2019-06-13,
+// tatsaechlicher Leitzins). Defensive Dedup-Logik unten (filteredLeitzinsValues)
+// schuetzt zusaetzlich vor einem kuenftigen Overlap, falls sich die
+// Datengrundlage aendert — nicht nur gegen den aktuellen Datenstand verlassen.
+type LeitzinsPoint = { date: string; value: number };
+type LeitzinsFile = { values: LeitzinsPoint[] };
+
 // ═══ GENERISCHES OVERLAY-MODUL (Requirements 2.5, Betreiber-Direktive
 // 28.08.2026: "so bauen, dass eine weitere Trueflation-Variante später ohne
 // Umbau eingehängt werden kann") ═══
@@ -204,6 +221,13 @@ export default function LikChart() {
   const [preset, setPreset] = useState<PresetKey>("since-2010");
   const [error, setError] = useState<string | null>(null);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
+  // US 3.4 AC: Umschalter Darstellungsart zwischen indexierten Niveaus
+  // (Default) und Jahreswachstumsraten.
+  const [displayMode, setDisplayMode] = useState<"niveau" | "rate">("niveau");
+  const [leitzinsHistorical, setLeitzinsHistorical] = useState<LeitzinsFile | null>(null);
+  const [leitzinsCurrent, setLeitzinsCurrent] = useState<LeitzinsFile | null>(null);
+  const [leitzinsEnabled, setLeitzinsEnabled] = useState(false);
+  const [leitzinsError, setLeitzinsError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/data/lik/total-index-monthly.json")
@@ -234,6 +258,29 @@ export default function LikChart() {
       .then(setM2Data)
       .catch((err) => setM2Error(err.message));
   }, []);
+
+  // Leitzins (US 3.5): lazy load erst bei Aktivierung, analog zu den
+  // Overlay-Checkboxen (Security-Review-Fix 28.08.2026, siehe unten) —
+  // unnoetiger Traffic bei jedem Seitenaufruf, falls niemand den Leitzins
+  // je einschaltet.
+  useEffect(() => {
+    if (!leitzinsEnabled || leitzinsHistorical || leitzinsCurrent || leitzinsError) return;
+    Promise.all([
+      fetch("/data/snb-leitzins/leitzins-historical.json").then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      }),
+      fetch("/data/snb-leitzins/leitzins-current.json").then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      }),
+    ])
+      .then(([hist, cur]) => {
+        setLeitzinsHistorical(hist);
+        setLeitzinsCurrent(cur);
+      })
+      .catch((err) => setLeitzinsError(err.message));
+  }, [leitzinsEnabled, leitzinsHistorical, leitzinsCurrent, leitzinsError]);
 
   // SECURITY/EFFIZIENZ-FIX (Security-Review Durchgang 2/3, 28.08.2026,
   // Finding F2-2 — LOW): Overlays wurden bisher IMMER beim Mount geladen,
@@ -328,6 +375,35 @@ export default function LikChart() {
 
   const m2ExistsInRange = filteredM2Values.length > 0;
 
+  // Leitzins (US 3.5): historische + aktuelle Reihe zusammenfuehren, nach
+  // Datum sortiert. IMMER Prozentwert (keine Indexierung, siehe Typ-Kommentar
+  // oben) — unabhaengig vom Niveau/Rate-Umschalter, eigene Sekundaerachse.
+  const filteredLeitzinsValues = useMemo(() => {
+    if (!leitzinsHistorical && !leitzinsCurrent) return [];
+    const historical = (leitzinsHistorical?.values ?? []).map((v) => ({
+      date: v.date.length === 7 ? `${v.date}-01` : v.date, // "YYYY-MM" -> "YYYY-MM-01"
+      value: v.value,
+    }));
+    const current = (leitzinsCurrent?.values ?? []).map((v) => ({ date: v.date, value: v.value }));
+    // Blocker-Fix (Code-Review 29.08.2026): explizite Dedup-Grenze statt
+    // implizit auf einen luecken- und overlapfreien Datenstand zu vertrauen.
+    // Bei einem Monatsuebergang, in dem BEIDE Quellen Werte liefern, gewinnt
+    // die AKTUELLE (LZ, taeglich, praeziser) Quelle — historische Punkte fuer
+    // denselben Kalendermonat werden verworfen. Aktuell (Datenstand 29.08.2026)
+    // real wirkungslos, da kein Overlap vorliegt (historisch endet 2019-05,
+    // aktuell beginnt 2019-06-13) — schuetzt aber vor einem stillen Zickzack-
+    // Fehler im Chart, falls sich die Datengrundlage kuenftig aendert.
+    const currentMonths = new Set(current.map((v) => v.date.slice(0, 7)));
+    const historicalDeduped = historical.filter((v) => !currentMonths.has(v.date.slice(0, 7)));
+    const combined = [...historicalDeduped, ...current].filter(
+      (v) => typeof v.date === "string" && typeof v.value === "number" && Number.isFinite(v.value)
+    );
+    combined.sort((a, b) => a.date.localeCompare(b.date));
+    return filterByPreset(combined, preset, (v) => parseInt(v.date.slice(0, 4), 10));
+  }, [leitzinsHistorical, leitzinsCurrent, preset]);
+
+  const leitzinsExistsInRange = filteredLeitzinsValues.length > 0;
+
   // Overlays: gefiltert nach Preset UND auf indexierte Niveaus umgerechnet
   // (Basis 100 am Start des jeweils gefilterten Zeitraums, konsistent mit
   // der M2-Behandlung oben) — Requirements 2.5: "dargestellt als indexierte
@@ -354,6 +430,37 @@ export default function LikChart() {
     return new Date(y, (m ?? 1) - 1, d ?? 1);
   }
 
+  // US 3.4 AC (Umschalter Darstellungsart): wandelt eine Niveau-Reihe in
+  // Jahreswachstumsraten um — fuer jeden Punkt wird der zeitlich naechste
+  // Punkt ~1 Jahr zuvor gesucht (Toleranz 45 Tage, deckt sowohl monatliche
+  // als auch taegliche Quellen ab) und die Rate ggu. diesem Referenzpunkt
+  // berechnet. Punkte ohne passenden Vorjahreswert (z.B. die ersten 12
+  // Monate einer Reihe) liefern null statt eines erfundenen Wertes
+  // (Requirements-Regel 3: keine Interpolation/Erfindung).
+  function toYoyRate(points: { x: number; y: number }[]): { x: number; y: number | null }[] {
+    const toleranceMs = 45 * 24 * 3600 * 1000;
+    const oneYearMs = 365.25 * 24 * 3600 * 1000;
+    return points.map((p, i) => {
+      const targetTime = p.x - oneYearMs;
+      let closestIdx = -1;
+      let closestDiff = Infinity;
+      for (let j = i - 1; j >= 0; j--) {
+        const diff = Math.abs(points[j].x - targetTime);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestIdx = j;
+        }
+        // Punkte sind aufsteigend sortiert -> sobald wir uns wieder vom
+        // Zielzeitpunkt entfernen, kann kein besserer Treffer mehr folgen.
+        if (points[j].x < targetTime && diff > closestDiff) break;
+      }
+      if (closestIdx === -1 || closestDiff > toleranceMs) return { x: p.x, y: null };
+      const prevValue = points[closestIdx].y;
+      if (prevValue === 0) return { x: p.x, y: null };
+      return { x: p.x, y: (p.y / prevValue - 1) * 100 };
+    });
+  }
+
   function parseYearMonth(ym: string): Date {
     // F3-Fix: filteredM2Values enthält nach obigem Filter nur noch valide
     // "YYYY-MM"-Strings, split() ist hier sicher. Defensive Absicherung
@@ -374,30 +481,57 @@ export default function LikChart() {
   // NICHT ueber normale Preset-Interaktion, das ist erwartetes Verhalten,
   // kein Bug. Dokumentiert statt stillschweigend belassen.
 
+  // US 3.4 AC: im Rate-Modus werden ALLE indexierten Vergleichslinien (LIK,
+  // Trueflation, M2, Gold, BTC) auf Jahreswachstumsraten umgestellt. Der
+  // Leitzins ist davon AUSGENOMMEN (Betreiber-Vorgabe 29.08.2026) — er ist
+  // bereits eine Rate und bleibt in beiden Modi ein Prozentwert auf der
+  // Sekundärachse, keine zweite Transformation.
+  const likPoints = useMemo(
+    () => filteredValues.map((v) => ({ x: parseIndexDate(v.indexDate).getTime(), y: v.indexValue })),
+    [filteredValues]
+  );
+  const trueflationPoints = useMemo(
+    () => filteredTrueflationValues.map((v) => ({ x: parseIndexDate(v.month).getTime(), y: v.trueflationIndex })),
+    [filteredTrueflationValues]
+  );
+  const m2Points = useMemo(
+    () => filteredM2Values.map((v) => ({ x: parseYearMonth(v.date).getTime(), y: v.indexValue })),
+    [filteredM2Values]
+  );
+
+  const likDisplayPoints = useMemo(
+    () => (displayMode === "rate" ? toYoyRate(likPoints) : likPoints),
+    [displayMode, likPoints]
+  );
+  const trueflationDisplayPoints = useMemo(
+    () => (displayMode === "rate" ? toYoyRate(trueflationPoints) : trueflationPoints),
+    [displayMode, trueflationPoints]
+  );
+  const m2DisplayPoints = useMemo(
+    () => (displayMode === "rate" ? toYoyRate(m2Points) : m2Points),
+    [displayMode, m2Points]
+  );
+
   const chartData: ChartData<"line"> = useMemo(
     () => ({
       datasets: [
         {
           label: "Offizielle Inflation (LIK)",
-          data: filteredValues.map((v) => ({
-            x: parseIndexDate(v.indexDate).getTime(),
-            y: v.indexValue,
-          })),
+          data: likDisplayPoints,
           borderColor: "var(--color-line-lik, #4b5f7a)",
           backgroundColor: "transparent",
           borderWidth: 2,
           pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0,
+          yAxisID: "y",
+          spanGaps: false,
         },
         ...(trueflationExistsInRange
           ? [
               {
                 label: "Trueflation (LIK + Prämienkorrektur)",
-                data: filteredTrueflationValues.map((v) => ({
-                  x: parseIndexDate(v.month).getTime(),
-                  y: v.trueflationIndex,
-                })),
+                data: trueflationDisplayPoints,
                 borderColor: "var(--color-line-trueflation, #c1440e)",
                 backgroundColor: "transparent",
                 borderWidth: 2,
@@ -407,10 +541,12 @@ export default function LikChart() {
                 // NICHT wie ein abgeschnittener Fehler aussieht, sondern als
                 // bewusst markierter Endpunkt erkennbar ist.
                 pointRadius: (ctx: { dataIndex: number }) =>
-                  trueflationEndsEarlierThanLik && ctx.dataIndex === filteredTrueflationValues.length - 1 ? 5 : 0,
+                  trueflationEndsEarlierThanLik && ctx.dataIndex === trueflationDisplayPoints.length - 1 ? 5 : 0,
                 pointBackgroundColor: "var(--color-line-trueflation, #c1440e)",
                 pointHoverRadius: 5,
                 tension: 0,
+                yAxisID: "y",
+                spanGaps: false,
               },
             ]
           : []),
@@ -418,10 +554,7 @@ export default function LikChart() {
           ? [
               {
                 label: "Geldmengenausweitung (M2)",
-                data: filteredM2Values.map((v) => ({
-                  x: parseYearMonth(v.date).getTime(),
-                  y: v.indexValue,
-                })),
+                data: m2DisplayPoints,
                 borderColor: "var(--color-line-m2, #4a7c59)",
                 backgroundColor: "transparent",
                 borderWidth: 2,
@@ -429,26 +562,61 @@ export default function LikChart() {
                 pointRadius: 0,
                 pointHoverRadius: 4,
                 tension: 0,
+                yAxisID: "y",
+                spanGaps: false,
               },
             ]
           : []),
-        ...OVERLAY_CONFIGS.filter((o) => overlaysEnabled[o.key] && filteredOverlays[o.key]?.length).map((overlay) => ({
-          label: overlay.label,
-          data: filteredOverlays[overlay.key].map((v) => ({
-            x: parseIsoDate(v.date).getTime(),
-            y: v.indexValue,
-          })),
-          borderColor: overlay.color,
-          backgroundColor: "transparent",
-          borderWidth: 1.5,
-          borderDash: overlay.dash,
-          pointRadius: 0,
-          pointHoverRadius: 3,
-          tension: 0,
-        })),
+        ...OVERLAY_CONFIGS.filter((o) => overlaysEnabled[o.key] && filteredOverlays[o.key]?.length).map((overlay) => {
+          const points = filteredOverlays[overlay.key].map((v) => ({ x: parseIsoDate(v.date).getTime(), y: v.indexValue }));
+          return {
+            label: overlay.label,
+            data: displayMode === "rate" ? toYoyRate(points) : points,
+            borderColor: overlay.color,
+            backgroundColor: "transparent",
+            borderWidth: 1.5,
+            borderDash: overlay.dash,
+            pointRadius: 0,
+            pointHoverRadius: 3,
+            tension: 0,
+            yAxisID: "y",
+            spanGaps: false,
+          };
+        }),
+        // Leitzins (US 3.5): eigene Sekundärachse ("y1"), IMMER Prozentwert,
+        // unabhängig vom displayMode — keine Transformation, keine Indexierung.
+        ...(leitzinsEnabled && leitzinsExistsInRange
+          ? [
+              {
+                label: "SNB-Leitzins",
+                data: filteredLeitzinsValues.map((v) => ({ x: parseIsoDate(v.date).getTime(), y: v.value })),
+                borderColor: "var(--color-line-rate, #b08900)",
+                backgroundColor: "transparent",
+                borderWidth: 1.5,
+                borderDash: [8, 2], // viertes, eigenständiges Muster (US 3.11)
+                pointRadius: 0,
+                pointHoverRadius: 3,
+                tension: 0,
+                yAxisID: "y1",
+              },
+            ]
+          : []),
       ],
     }),
-    [filteredValues, filteredTrueflationValues, trueflationExistsInRange, filteredM2Values, m2ExistsInRange, trueflationEndsEarlierThanLik, filteredOverlays, overlaysEnabled]
+    [
+      likDisplayPoints,
+      trueflationDisplayPoints,
+      trueflationExistsInRange,
+      m2DisplayPoints,
+      m2ExistsInRange,
+      trueflationEndsEarlierThanLik,
+      filteredOverlays,
+      overlaysEnabled,
+      displayMode,
+      leitzinsEnabled,
+      leitzinsExistsInRange,
+      filteredLeitzinsValues,
+    ]
   );
 
   const options: ChartOptions<"line"> = useMemo(
@@ -470,8 +638,20 @@ export default function LikChart() {
           title: { display: false },
         },
         y: {
-          title: { display: true, text: "Index (indexierte Niveaus)" },
+          title: {
+            display: true,
+            text: displayMode === "rate" ? "Jahreswachstumsrate (%)" : "Index (indexierte Niveaus)",
+          },
           grid: { color: "var(--color-border, #e2e5e9)" },
+        },
+        // Leitzins-Sekundärachse (US 3.5): eigene Achse rechts, damit die
+        // Prozentwerte (typischerweise -1 bis +2%) nicht in der Index-Skala
+        // (100+) untergehen. Nur eingeblendet, wenn der Leitzins aktiv ist.
+        y1: {
+          position: "right" as const,
+          title: { display: true, text: "Leitzins (%)" },
+          grid: { display: false },
+          display: leitzinsEnabled && leitzinsExistsInRange,
         },
       },
       plugins: {
@@ -481,9 +661,15 @@ export default function LikChart() {
             label: (ctx) => {
               const v = ctx.parsed.y ?? null;
               if (v === null) return "";
+              const rateSuffix = displayMode === "rate" ? "%/Jahr" : "";
+              if (ctx.dataset.label === "SNB-Leitzins") {
+                return `SNB-Leitzins: ${v.toFixed(2)}% (Quelle: SNB, historisch UG0/aktuell LZ)`;
+              }
               if (ctx.dataset.label?.startsWith("Trueflation")) {
                 const point = filteredTrueflationValues[ctx.dataIndex];
-                const base = `Trueflation: ${v.toFixed(1)} (LIK + Prämienkorrektur${point?.rentCorrectionApplied ? " + Miet-Korrektur" : ""} — siehe Methodik)`;
+                const base = displayMode === "rate"
+                  ? `Trueflation: ${v.toFixed(2)}${rateSuffix} (LIK + Prämienkorrektur${point?.rentCorrectionApplied ? " + Miet-Korrektur" : ""} — siehe Methodik)`
+                  : `Trueflation: ${v.toFixed(1)} (LIK + Prämienkorrektur${point?.rentCorrectionApplied ? " + Miet-Korrektur" : ""} — siehe Methodik)`;
                 const notes = [point?.transitionNote, point?.rentCorrectionNote].filter(
                   (n): n is string => typeof n === "string" && n.length > 0
                 );
@@ -493,7 +679,9 @@ export default function LikChart() {
                 // US 3.7: zentraler Denkfehler direkt am Chart abfangen, nicht
                 // nur auf der Methodik-Seite, die kaum jemand liest.
                 return [
-                  `Geldmenge M2: ${v.toFixed(1)} (indexiert, Quelle: SNB)`,
+                  displayMode === "rate"
+                    ? `Geldmenge M2: ${v.toFixed(2)}${rateSuffix} (Quelle: SNB)`
+                    : `Geldmenge M2: ${v.toFixed(1)} (indexiert, Quelle: SNB)`,
                   "Misst Verwässerung der Geldmenge, NICHT Preisentwicklung — keine direkte Vergleichsgrösse zu LIK/Trueflation.",
                 ];
               }
@@ -501,7 +689,9 @@ export default function LikChart() {
               if (matchingOverlay) {
                 return matchingOverlay.tooltipLabel(v);
               }
-              return `LIK: ${v.toFixed(1)} (Quelle: BFS, Basis: Ewige Reihe)`;
+              return displayMode === "rate"
+                ? `LIK: ${v.toFixed(2)}${rateSuffix} (Quelle: BFS, Basis: Ewige Reihe)`
+                : `LIK: ${v.toFixed(1)} (Quelle: BFS, Basis: Ewige Reihe)`;
             },
           },
         },
@@ -515,12 +705,51 @@ export default function LikChart() {
         },
       },
     }),
-    [preset, filteredTrueflationValues]
+    [preset, filteredTrueflationValues, displayMode, leitzinsEnabled, leitzinsExistsInRange]
   );
 
   const resetZoom = () => {
     chartRef.current?.resetZoom();
   };
+
+  // PNG-Export (US 3.13b): "Bild herunterladen" — Nice-to-have-Fix
+  // (Code-Review 29.08.2026): Kommentar behauptete faelschlich die Nutzung
+  // von Chart.js' toBase64Image(); tatsaechlich arbeitet der Code manuell
+  // mit einer Canvas-Kopie (drawImage/fillText/toDataURL), damit die
+  // eingebrannte Quellenangabe/CC-BY-Hinweis (US 3.13 AC) als zusaetzliche
+  // Zeile VOR dem Export gezeichnet werden kann — toBase64Image() alleine
+  // koennte das nicht leisten, da es nur den bestehenden Chart-Inhalt ohne
+  // Erweiterungsmoeglichkeit serialisiert. Kommentar jetzt korrekt.
+  function downloadChartImage() {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const canvas = chart.canvas;
+
+    // Footer-Zeile mit Quellenangabe direkt auf eine Kopie des Canvas
+    // zeichnen, damit der Original-Chart nicht dauerhaft verändert wird.
+    const exportCanvas = document.createElement("canvas");
+    const footerHeight = 32;
+    exportCanvas.width = canvas.width;
+    exportCanvas.height = canvas.height + footerHeight * (window.devicePixelRatio || 1);
+    const exportCtx = exportCanvas.getContext("2d");
+    if (!exportCtx) return;
+    exportCtx.fillStyle = "#ffffff";
+    exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+    exportCtx.drawImage(canvas, 0, 0);
+    const scale = window.devicePixelRatio || 1;
+    exportCtx.fillStyle = "#6b7280";
+    exportCtx.font = `${12 * scale}px sans-serif`;
+    exportCtx.fillText(
+      "Quelle: trueflation.ch — CC BY 4.0 (Namensnennung erforderlich)",
+      8 * scale,
+      canvas.height + 20 * scale
+    );
+
+    const link = document.createElement("a");
+    link.download = `trueflation-chart-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = exportCanvas.toDataURL("image/png");
+    link.click();
+  }
 
   if (error) {
     return (
@@ -554,7 +783,53 @@ export default function LikChart() {
         <button onClick={resetZoom} className="tf-preset-button" aria-label="Zoom zurücksetzen">
           Zoom zurücksetzen
         </button>
+        {/* US 3.13b: PNG-Export mit eingebrannter Quellenangabe/CC-BY-Hinweis,
+            zur Verwendung in Präsentationen/Artikeln. */}
+        <button onClick={downloadChartImage} className="tf-preset-button" aria-label="Chart als Bild herunterladen">
+          Bild herunterladen
+        </button>
       </div>
+
+      {/* US 3.4 AC: Umschalter Darstellungsart — gilt für LIK, Trueflation,
+          M2 und alle Referenz-Overlays. Der Leitzins ist bewusst ausgenommen
+          (siehe Kommentar bei der Dataset-Erzeugung oben) und bleibt in
+          beiden Modi ein Prozentwert. */}
+      <div role="group" aria-label="Darstellungsart wählen" className="tf-chart-toolbar">
+        <button
+          onClick={() => setDisplayMode("niveau")}
+          aria-pressed={displayMode === "niveau"}
+          className={`tf-preset-button${displayMode === "niveau" ? " tf-preset-button--active" : ""}`}
+        >
+          Indexierte Niveaus
+        </button>
+        <button
+          onClick={() => setDisplayMode("rate")}
+          aria-pressed={displayMode === "rate"}
+          className={`tf-preset-button${displayMode === "rate" ? " tf-preset-button--active" : ""}`}
+        >
+          Jahreswachstumsraten
+        </button>
+      </div>
+
+      {/* Leitzins-Overlay (US 3.5): eigene Toolbar-Zeile, da methodisch
+          anders als die Referenz-Overlays (keine Wertaufbewahrung, sondern
+          geldpolitisches Instrument, eigene Sekundärachse). */}
+      <div className="tf-chart-toolbar" role="group" aria-label="SNB-Leitzins">
+        <label className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+          <input
+            type="checkbox"
+            checked={leitzinsEnabled}
+            onChange={(e) => setLeitzinsEnabled(e.target.checked)}
+            aria-label="SNB-Leitzins ein-/ausblenden"
+          />
+          SNB-Leitzins
+        </label>
+      </div>
+      {leitzinsEnabled && leitzinsError && (
+        <div className="tf-chart-status" role="status">
+          <span>Leitzins-Daten derzeit nicht verfügbar (Ausfall) — Kernlinien bleiben unberührt.</span>
+        </div>
+      )}
 
       {/* Overlay-Checkboxen (Requirements 2.5): Standardzustand alle AUS
           (opt-in), eigene Kategorisierung "Wertaufbewahrung/Rendite" statt
