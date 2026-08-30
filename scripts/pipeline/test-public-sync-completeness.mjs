@@ -93,12 +93,20 @@ function extractFetchedDataPaths() {
  *  (b) Eine legitime Shell-Zeilenfortsetzung ("cp data/x \\\n  public/y/")
  *      wurde NICHT erkannt — False-Positive-FAIL bei harmlosem Refactoring.
  * Fix: `js-yaml` parst die Datei zu einer echten Struktur, wir extrahieren
- * NUR den `run:`-Block-Skalar der Sync-Stufe (erkannt am Schritt-Namen,
- * enthält "synchronisieren") — das ist der einzige Ort, an dem Sync-cp-
- * Befehle stehen dürfen. Innerhalb dieses Blocks werden Shell-
+ * NUR den `run:`-Block-Skalar der Sync-Stufe — das ist der einzige Ort, an
+ * dem Sync-cp-Befehle stehen dürfen. Innerhalb dieses Blocks werden Shell-
  * Kommentarzeilen (beginnend mit optionalem Whitespace + "#") entfernt und
  * Backslash-Zeilenfortsetzungen zu einer Zeile zusammengeführt, BEVOR der
- * cp-Regex angewendet wird. */
+ * cp-Regex angewendet wird.
+ *
+ * ERKENNUNG DER SYNC-STUFE (Betreiber-Vorgabe 30.08.2026, Punkt i/k):
+ * PRIMÄR über `step.id === 'sync_public_data'` — stabil gegen eine
+ * harmlose Umbenennung des `name`-Feldes (das vorherige alleinige
+ * Namens-Matching war zwar "fail closed" bei Rename, hätte aber die CI
+ * unerwartet fuer den nächsten Bearbeiter gebrochen). FALLBACK auf den
+ * Namens-Regex (enthält "synchronisieren"), falls die id fehlt — deckt
+ * alte/manuelle Kopien der Datei ohne id ab und bleibt damit weiterhin
+ * fail-closed, nicht fail-open. */
 function extractSyncEntries(pipelineYmlContent) {
   const doc = yaml.load(pipelineYmlContent);
   const jobs = doc?.jobs ?? {};
@@ -106,7 +114,9 @@ function extractSyncEntries(pipelineYmlContent) {
   for (const jobName of Object.keys(jobs)) {
     const steps = jobs[jobName]?.steps ?? [];
     for (const step of steps) {
-      if (typeof step?.run === 'string' && /synchronisieren/i.test(step?.name ?? '')) {
+      if (typeof step?.run !== 'string') continue;
+      const isSyncStep = step?.id === 'sync_public_data' || /synchronisieren/i.test(step?.name ?? '');
+      if (isSyncStep) {
         runBlocks.push(step.run);
       }
     }
@@ -155,6 +165,31 @@ function main() {
     'NEGATIVTEST: eine auskommentierte cp-Zeile wird korrekt NICHT als aktiver Sync-Eintrag gezählt',
     likStillCountedAfterCommentOut === false,
     `nach Auskommentieren noch gezählt: ${likStillCountedAfterCommentOut}`
+  );
+
+  console.log('\n=== Test 0c: id-basierte Erkennung überlebt eine harmlose Umbenennung des Schritt-Namens (Betreiber-Vorgabe 30.08.2026, Punkt i/k) ===');
+  const renamedStepYml = pipelineYmlContent.replace(
+    'Trueflation — public/-Kopien synchronisieren',
+    'Trueflation — public-Kopien aktualisieren (harmlos umbenannt)'
+  );
+  const entriesAfterRename = extractSyncEntries(renamedStepYml);
+  const likStillCoveredAfterRename = entriesAfterRename.some((e) => e.source === 'data/lik/total-index-monthly.json');
+  check(
+    'Nach Umbenennung des Schritt-Namens wird der Sync-Schritt weiterhin über die id "sync_public_data" erkannt (kein CI-Bruch durch harmloses Refactoring)',
+    likStillCoveredAfterRename === true,
+    `nach Rename noch abgedeckt: ${likStillCoveredAfterRename}`
+  );
+
+  console.log('\n=== Test 0d: NEGATIVTEST — fehlen id UND passender Name gleichzeitig, bleibt die Prüfung weiterhin fail-closed ===');
+  const noIdNoNameYml = pipelineYmlContent
+    .replace('id: sync_public_data', 'id: irrelevant_step_id')
+    .replace('Trueflation — public/-Kopien synchronisieren', 'Trueflation — Dateien aktualisieren');
+  const entriesWithNeither = extractSyncEntries(noIdNoNameYml);
+  const likCoveredWithNeither = entriesWithNeither.some((e) => e.source === 'data/lik/total-index-monthly.json');
+  check(
+    'NEGATIVTEST: fehlen sowohl die erwartete id als auch der Namens-Treffer, wird der Sync-Schritt korrekt NICHT erkannt (fail closed, kein stiller Blindflug)',
+    likCoveredWithNeither === false,
+    `ohne id und ohne Namens-Match noch abgedeckt: ${likCoveredWithNeither}`
   );
 
   console.log('\n=== Test 0b: eine legitime Backslash-Zeilenfortsetzung wird weiterhin korrekt erkannt ===');

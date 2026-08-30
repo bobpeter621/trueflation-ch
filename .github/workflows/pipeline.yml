@@ -110,6 +110,12 @@ jobs:
           fi
 
       - name: Trueflation — public/-Kopien synchronisieren
+        # id (30.08.2026, Betreiber-Vorgabe i/k): test-public-sync-completeness.mjs
+        # erkennt diesen Schritt primär ueber diese id, der Namens-Regex bleibt
+        # nur als Fallback fuer alte/manuelle Aufrufe. Eine harmlose Umbenennung
+        # des "name"-Feldes bricht damit nicht mehr die CI (vorher: fail-closed,
+        # aber ueberraschend fuer den naechsten Bearbeiter).
+        id: sync_public_data
         # Next.js liest Client-seitig aus public/data/, die Pipeline schreibt
         # aber nach data/ — ohne diesen Schritt divergieren beide Kopien
         # (bereits einmal manuell aufgefallen, siehe Session-Log 26.08.2026).
