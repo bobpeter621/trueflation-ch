@@ -487,7 +487,7 @@ export default function KaufkraftRechner() {
             </span>
             <span>
               Bitcoin:{" "}
-              <span className="tf-numeric" style={{ color: "var(--color-overlay-btc, #f7931a)" }}>
+              <span className="tf-numeric" style={{ color: "var(--color-overlay-btc, #c26a00)" }}>
                 {btcResult.result != null
                   ? formatChf(btcResult.result)
                   : btcResult.availableFrom != null

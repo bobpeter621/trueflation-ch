@@ -21,7 +21,7 @@
 
 
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -50,6 +50,93 @@ ChartJS.register(
   Legend,
   zoomPlugin
 );
+
+// ═══ K1-FIX (Frontend-Review 30.08.2026, KRITISCH): Chart.js-Datasets geben
+// ihre Farben an die Canvas-2D-API — das sind reine JavaScript-Strings, KEINE
+// CSS-Eigenschaften. Ein String wie "var(--color-line-lik, #4b5f7a)" wird von
+// Canvas NICHT aufgelöst: die Zuweisung an strokeStyle/fillStyle mit einem
+// ungültigen Farbstring wird stillschweigend ignoriert, es bleibt der
+// vorherige/Default-Wert (faktisch Schwarz) — im Dark Mode zusätzlich falsch,
+// weil die Fallback-Hexwerte die LIGHT-Mode-Varianten waren. JavaScript MUSS
+// die aktuell berechneten Token-Werte via getComputedStyle auslesen und als
+// echte Hex/RGB-Strings an Chart.js übergeben.
+//
+// Live-Wechsel: matchMedia-Listener (System-Präferenz) + MutationObserver auf
+// documentElement-Attribute (manuelle Theme-Umschaltung via data-theme,
+// US 3.18) — bei jedem Wechsel werden die Farben neu gelesen und der Chart
+// rendert über die useMemo-Dependencies (K2-Fix) neu.
+type ThemeColors = {
+  lineLik: string;
+  lineTrueflation: string;
+  lineMoney: string;
+  lineRate: string;
+  overlayGold: string;
+  overlayBtc: string;
+  border: string;
+  textSecondary: string;
+};
+
+function readThemeColors(): ThemeColors {
+  // SSR/First-Paint-Fallback: Light-Mode-Tokenwerte aus tokens.css.
+  const fallbacks: ThemeColors = {
+    lineLik: "#4b5f7a",
+    lineTrueflation: "#d1495b",
+    lineMoney: "#2f9e6f",
+    lineRate: "#b08900",
+    overlayGold: "#b8860b",
+    overlayBtc: "#c26a00",
+    border: "#e2e5e9",
+    textSecondary: "#4b5563",
+  };
+  if (typeof window === "undefined" || typeof document === "undefined") return fallbacks;
+  const cs = getComputedStyle(document.documentElement);
+  const get = (token: string, fallback: string): string => {
+    const v = cs.getPropertyValue(token).trim();
+    return v.length > 0 ? v : fallback;
+  };
+  // W1-Fix: Token-Namen exakt wie in tokens.css definiert (--color-line-money,
+  // NICHT --color-line-m2; --color-overlay-gold/-btc, NICHT
+  // --color-line-overlay-*) — ein falscher Name würde hier still auf den
+  // Fallback zurückfallen und Chart/Rechner-Farbinkonsistenz erzeugen.
+  return {
+    lineLik: get("--color-line-lik", fallbacks.lineLik),
+    lineTrueflation: get("--color-line-trueflation", fallbacks.lineTrueflation),
+    lineMoney: get("--color-line-money", fallbacks.lineMoney),
+    lineRate: get("--color-line-rate", fallbacks.lineRate),
+    overlayGold: get("--color-overlay-gold", fallbacks.overlayGold),
+    overlayBtc: get("--color-overlay-btc", fallbacks.overlayBtc),
+    border: get("--color-border", fallbacks.border),
+    // W4-Fix (Barrierefreiheit-Nachprüfung 30.08.2026): Chart.js-Achsenticks/
+    // Legende/Titel nutzten den Library-Default #666666 — im Dark Mode nur
+    // 3.3:1 Kontrast auf --color-bg #0d1117 (unter WCAG-AA 4.5:1 für
+    // Normaltext). Jetzt Theme-Token: #4b5563 (7.6:1 hell) / #a8b0bb
+    // (8.2:1 dunkel).
+    textSecondary: get("--color-text-secondary", fallbacks.textSecondary),
+  };
+}
+
+function useThemeColors(): ThemeColors {
+  const [colors, setColors] = useState<ThemeColors>(readThemeColors);
+  useEffect(() => {
+    const update = () => setColors(readThemeColors());
+    update(); // SSR-Hydration: Fallbacks durch echte Werte ersetzen
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", update);
+    // Manuelle Umschaltung (US 3.18, data-theme-Attribut) — tokens.css
+    // definiert [data-theme]-Overrides, die NICHT über prefers-color-scheme
+    // feuern, deshalb zusätzlich Attribute beobachten.
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class", "style"],
+    });
+    return () => {
+      mq.removeEventListener("change", update);
+      observer.disconnect();
+    };
+  }, []);
+  return colors;
+}
 
 type LikDataPoint = {
   indexDate: number; // YYYYMMDD
@@ -130,7 +217,11 @@ type OverlayConfig = {
   key: string;
   label: string;
   fetchUrl: string;
-  color: string;
+  /** K1/W1-Fix: KEIN Farbstring mehr in der Config (Canvas kann keine
+   * var(--...)-Strings auflösen). Stattdessen Schlüssel in die vom
+   * useThemeColors-Hook live gelesenen Theme-Farben — der tatsächliche
+   * Hex-Wert wird beim Dataset-Aufbau aus colors[colorKey] geholt. */
+  colorKey: "overlayGold" | "overlayBtc";
   dash: number[];
   category: OverlayCategory;
   /** Extrahiert {date, close}-Paare aus der rohen JSON-Antwort — die einzige
@@ -138,7 +229,11 @@ type OverlayConfig = {
    * Quellschemas: Twelve-Data-values[], abgeleitete goldChf-Reihe, künftig
    * evtl. eine Trueflation-Variante mit eigenem Schema). */
   extractPoints: (raw: unknown) => OverlayRawPoint[];
-  tooltipLabel: (value: number) => string[];
+  /** K3-Fix: displayMode-Parameter — im Rate-Modus zeigt die Linie eine
+   * Jahreswachstumsrate, KEINEN indexierten Niveauwert; der Tooltip muss
+   * das korrekt benennen (analog zur LIK/Trueflation/M2-Logik im
+   * Tooltip-Callback), statt immer "(indexiert, ...)" zu behaupten. */
+  tooltipLabel: (value: number, displayMode: "niveau" | "rate") => string[];
 };
 
 const OVERLAY_CONFIGS: OverlayConfig[] = [
@@ -146,15 +241,17 @@ const OVERLAY_CONFIGS: OverlayConfig[] = [
     key: "btc-chf",
     label: "Bitcoin (CHF)",
     fetchUrl: "/data/overlays/btc-chf-daily.json",
-    color: "var(--color-line-overlay-btc, #d4a017)",
+    colorKey: "overlayBtc",
     dash: [1, 3],
     category: "wertaufbewahrung",
     extractPoints: (raw) => {
       const file = raw as { values?: Array<{ date: string; close: number }> };
       return (file.values ?? []).map((v) => ({ date: v.date, close: v.close }));
     },
-    tooltipLabel: (v) => [
-      `Bitcoin: ${v.toFixed(1)} (indexiert, Quelle: Twelve Data/Kraken)`,
+    tooltipLabel: (v, displayMode) => [
+      displayMode === "rate"
+        ? `Bitcoin: ${v.toFixed(2)}%/Jahr (Jahreswachstumsrate, Quelle: Twelve Data/Kraken)`
+        : `Bitcoin: ${v.toFixed(1)} (indexiert, Quelle: Twelve Data/Kraken)`,
       "Marktdaten, keine amtliche Quelle — Wertaufbewahrung/Rendite, keine Inflationsmessung.",
     ],
   },
@@ -162,15 +259,17 @@ const OVERLAY_CONFIGS: OverlayConfig[] = [
     key: "gold-chf",
     label: "Gold (CHF, abgeleitet)",
     fetchUrl: "/data/overlays/gold-chf-daily-derived.json",
-    color: "var(--color-line-overlay-gold, #b8860b)",
+    colorKey: "overlayGold",
     dash: [4, 2],
     category: "wertaufbewahrung",
     extractPoints: (raw) => {
       const file = raw as { values?: Array<{ date: string; goldChf: number }> };
       return (file.values ?? []).map((v) => ({ date: v.date, close: v.goldChf }));
     },
-    tooltipLabel: (v) => [
-      `Gold: ${v.toFixed(1)} (indexiert, ABGELEITET: XAU/USD × USD/CHF, Quelle: Twelve Data)`,
+    tooltipLabel: (v, displayMode) => [
+      displayMode === "rate"
+        ? `Gold: ${v.toFixed(2)}%/Jahr (Jahreswachstumsrate, ABGELEITET: XAU/USD × USD/CHF, Quelle: Twelve Data)`
+        : `Gold: ${v.toFixed(1)} (indexiert, ABGELEITET: XAU/USD × USD/CHF, Quelle: Twelve Data)`,
       "Keine direkte/amtliche CHF-Notierung verfügbar — abgeleitete Grösse, siehe Methodik. Marktdaten, keine Inflationsmessung.",
     ],
   },
@@ -228,6 +327,9 @@ export default function LikChart() {
   const [leitzinsCurrent, setLeitzinsCurrent] = useState<LeitzinsFile | null>(null);
   const [leitzinsEnabled, setLeitzinsEnabled] = useState(false);
   const [leitzinsError, setLeitzinsError] = useState<string | null>(null);
+  // K1-Fix: live aufgelöste Theme-Farben (echte Hex-Werte, KEINE
+  // var(--...)-Strings) für ALLE Chart.js-Dataset-/Grid-Farbdefinitionen.
+  const colors = useThemeColors();
 
   useEffect(() => {
     fetch("/data/lik/total-index-monthly.json")
@@ -518,7 +620,7 @@ export default function LikChart() {
         {
           label: "Offizielle Inflation (LIK)",
           data: likDisplayPoints,
-          borderColor: "var(--color-line-lik, #4b5f7a)",
+          borderColor: colors.lineLik,
           backgroundColor: "transparent",
           borderWidth: 2,
           pointRadius: 0,
@@ -532,7 +634,7 @@ export default function LikChart() {
               {
                 label: "Trueflation (LIK + Prämienkorrektur)",
                 data: trueflationDisplayPoints,
-                borderColor: "var(--color-line-trueflation, #c1440e)",
+                borderColor: colors.lineTrueflation,
                 backgroundColor: "transparent",
                 borderWidth: 2,
                 borderDash: [6, 3], // zusätzlich zur Farbe unterscheidbar (US 3.11, Farbfehlsichtigkeit)
@@ -542,7 +644,7 @@ export default function LikChart() {
                 // bewusst markierter Endpunkt erkennbar ist.
                 pointRadius: (ctx: { dataIndex: number }) =>
                   trueflationEndsEarlierThanLik && ctx.dataIndex === trueflationDisplayPoints.length - 1 ? 5 : 0,
-                pointBackgroundColor: "var(--color-line-trueflation, #c1440e)",
+                pointBackgroundColor: colors.lineTrueflation,
                 pointHoverRadius: 5,
                 tension: 0,
                 yAxisID: "y",
@@ -555,7 +657,7 @@ export default function LikChart() {
               {
                 label: "Geldmengenausweitung (M2)",
                 data: m2DisplayPoints,
-                borderColor: "var(--color-line-m2, #4a7c59)",
+                borderColor: colors.lineMoney,
                 backgroundColor: "transparent",
                 borderWidth: 2,
                 borderDash: [2, 3], // drittes, von LIK (durchgezogen) und Trueflation (6,3) unterscheidbares Muster (US 3.11)
@@ -572,7 +674,7 @@ export default function LikChart() {
           return {
             label: overlay.label,
             data: displayMode === "rate" ? toYoyRate(points) : points,
-            borderColor: overlay.color,
+            borderColor: colors[overlay.colorKey],
             backgroundColor: "transparent",
             borderWidth: 1.5,
             borderDash: overlay.dash,
@@ -590,7 +692,7 @@ export default function LikChart() {
               {
                 label: "SNB-Leitzins",
                 data: filteredLeitzinsValues.map((v) => ({ x: parseIsoDate(v.date).getTime(), y: v.value })),
-                borderColor: "var(--color-line-rate, #b08900)",
+                borderColor: colors.lineRate,
                 backgroundColor: "transparent",
                 borderWidth: 1.5,
                 borderDash: [8, 2], // viertes, eigenständiges Muster (US 3.11)
@@ -616,6 +718,10 @@ export default function LikChart() {
       leitzinsEnabled,
       leitzinsExistsInRange,
       filteredLeitzinsValues,
+      // K2-Fix: Farben als Dependency — bei Theme-Wechsel (Light/Dark,
+      // manuell oder System) muss chartData neu aufgebaut werden, sonst
+      // behalten die Datasets die Farbwerte des alten Themes.
+      colors,
     ]
   );
 
@@ -636,26 +742,30 @@ export default function LikChart() {
           time: { unit: preset === "since-2010" ? "month" : "year" },
           grid: { display: false },
           title: { display: false },
+          ticks: { color: colors.textSecondary },
         },
         y: {
           title: {
             display: true,
             text: displayMode === "rate" ? "Jahreswachstumsrate (%)" : "Index (indexierte Niveaus)",
+            color: colors.textSecondary,
           },
-          grid: { color: "var(--color-border, #e2e5e9)" },
+          grid: { color: colors.border },
+          ticks: { color: colors.textSecondary },
         },
         // Leitzins-Sekundärachse (US 3.5): eigene Achse rechts, damit die
         // Prozentwerte (typischerweise -1 bis +2%) nicht in der Index-Skala
         // (100+) untergehen. Nur eingeblendet, wenn der Leitzins aktiv ist.
         y1: {
           position: "right" as const,
-          title: { display: true, text: "Leitzins (%)" },
+          title: { display: true, text: "Leitzins (%)", color: colors.textSecondary },
           grid: { display: false },
+          ticks: { color: colors.textSecondary },
           display: leitzinsEnabled && leitzinsExistsInRange,
         },
       },
       plugins: {
-        legend: { display: true, position: "top" as const },
+        legend: { display: true, position: "top" as const, labels: { color: colors.textSecondary } },
         tooltip: {
           callbacks: {
             label: (ctx) => {
@@ -687,7 +797,9 @@ export default function LikChart() {
               }
               const matchingOverlay = OVERLAY_CONFIGS.find((o) => o.label === ctx.dataset.label);
               if (matchingOverlay) {
-                return matchingOverlay.tooltipLabel(v);
+                // K3-Fix: displayMode mitgeben — im Rate-Modus kein
+                // "(indexiert, ...)" mehr im Overlay-Tooltip.
+                return matchingOverlay.tooltipLabel(v, displayMode);
               }
               return displayMode === "rate"
                 ? `LIK: ${v.toFixed(2)}${rateSuffix} (Quelle: BFS, Basis: Ewige Reihe)`
@@ -705,12 +817,21 @@ export default function LikChart() {
         },
       },
     }),
-    [preset, filteredTrueflationValues, displayMode, leitzinsEnabled, leitzinsExistsInRange]
+    [preset, filteredTrueflationValues, displayMode, leitzinsEnabled, leitzinsExistsInRange, colors]
   );
 
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     chartRef.current?.resetZoom();
-  };
+  }, []);
+
+  // W2-Fix (Frontend-Review 30.08.2026): beim Preset-Wechsel den Zoom
+  // zurücksetzen — sonst bleibt ein gesetzter Zoom-Ausschnitt aktiv und
+  // zeigt im neuen Zeitraum-Preset möglicherweise einen falschen/leeren
+  // Bereich. useEffect statt onClick-Erweiterung: feuert nach dem
+  // Re-Render mit den neuen gefilterten Daten, nicht davor.
+  useEffect(() => {
+    resetZoom();
+  }, [preset, resetZoom]);
 
   // PNG-Export (US 3.13b): "Bild herunterladen" — Nice-to-have-Fix
   // (Code-Review 29.08.2026): Kommentar behauptete faelschlich die Nutzung

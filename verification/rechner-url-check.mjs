@@ -50,8 +50,6 @@ async function main() {
   // Infinity/absurd grosse Zahl durchschlagen.
   const d1 = await checkScenario(browser, '/?betrag=999999999999999&jahr=2015&modus=niveau', 'Betrag weit ueber MAX_BETRAG (Clamp-Test)');
 
-  await browser.close();
-
   const identical = a1.text === a2.text;
   console.log(identical
     ? 'PASS: Zwei unabhängige Page-Loads derselben Rechner-URL liefern IDENTISCHEN Ergebnistext.'
@@ -67,6 +65,12 @@ async function main() {
   // muss eine EIGENE Meldung zeigen ("Prämiendaten reichen bis..."), NICHT den
   // Dauer-Ladezustand "Daten werden geladen…" (US 3.16: "lädt" != "existiert
   // strukturell nicht").
+  // Bugfix (Frontend-Review 30.08.2026): browser.close() lag zuvor VOR den
+  // Szenarien c1/c2 (Jahr 2026/2024) -- jeder weitere checkScenario()-Aufruf
+  // scheiterte danach mit "Target page, context or browser has been closed".
+  // Kein Befund am Produktcode, reiner Test-Bug (Datei-History bestätigt:
+  // browser.close() stand direkt nach Szenario 3). Jetzt ans Ende von main()
+  // verschoben, EIN Browser-Objekt für den gesamten Lauf.
   const c1 = await checkScenario(browser, '/?betrag=1000&jahr=2026&modus=niveau', 'Jahr 2026 (nach letztem BAG-Jahr)');
   const showsLoadingForever = /Daten werden geladen/.test(c1.text);
   const showsUpperBoundMessage = /Prämiendaten reichen bis/.test(c1.text);
@@ -86,6 +90,8 @@ async function main() {
   console.log(!showsInfinity
     ? 'PASS: Betrag weit über MAX_BETRAG wird geclampt, kein "∞"/Infinity im Ergebnistext.'
     : 'FAIL: Betrag-Obergrenze greift nicht — Infinity/∞ im Ergebnistext gefunden.');
+
+  await browser.close();
 
   if (!identical || (showsLoadingForever || !showsUpperBoundMessage) || wronglyShowsUpperBound || showsInfinity) process.exit(1);
 }

@@ -33,7 +33,14 @@
 
   /* --- Overlay-Farben (Requirements 2.5 — "Wertaufbewahrung/Rendite", eigene Codierung) --- */
   --color-overlay-gold: #b8860b;
-  --color-overlay-btc: #f7931a;
+  /* WCAG-AA-Fix (Frontend-Review 30.08.2026): der ursprüngliche Wert #f7931a
+     (BTC-Brand-Orange) erreicht auf --color-bg #ffffff nur 2.30:1 Kontrast —
+     unter der 3:1-Anforderung für nicht-textuelle Grafik-Elemente
+     (WCAG 1.4.11). #c26a00 erreicht 3.92:1 und bleibt klar von Gold
+     (#b8860b) unterscheidbar (zusätzlich eigenes Linienmuster, US 3.11 —
+     Farbe ist nicht die alleinige Unterscheidung). Chart UND Rechner
+     nutzen denselben Token (Design-Prinzip 6a). */
+  --color-overlay-btc: #c26a00;
   --color-overlay-smi: #64748b;
 
   /* --- Statusfarben (US 3.16) --- */
