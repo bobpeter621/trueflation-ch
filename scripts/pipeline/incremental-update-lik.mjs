@@ -20,7 +20,7 @@
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fetchWhitelisted } from './lib/fetch-whitelisted.mjs';
@@ -243,7 +243,9 @@ async function main() {
 // Nur ausführen, wenn direkt als Skript gestartet — nicht bei Import durch
 // einen Test (z.B. test-incremental-plausibility.mjs, der processSeries()
 // isoliert mit einer temporären Fixture und Mock-notifyFn aufruft).
-if (import.meta.url === `file://${process.argv[1]}`) {
+// `file://${process.argv[1]}` scheitert still bei Symlinks/relativen Pfaden
+// (Konsistenz-Fix 30.08.2026, analog build-trueflation-index.mjs).
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((err) => {
     console.error(`FEHLER: ${err.message}`);
     process.exit(1);

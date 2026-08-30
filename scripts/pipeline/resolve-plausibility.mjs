@@ -28,6 +28,7 @@
  */
 
 import { resolvePending, loadPendingState } from './lib/plausibility-state.mjs';
+import { pathToFileURL } from 'node:url';
 
 const args = process.argv.slice(2);
 function argVal(flag) {
