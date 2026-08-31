@@ -1,0 +1,56 @@
+name: Deploy (GitHub Pages)
+
+# Baut den statischen Export (next.config.ts: output:"export") und
+# veröffentlicht ihn auf GitHub Pages. Läuft bei jedem Push auf main
+# (inkl. der automatisierten Daten-Commits aus pipeline.yml) sowie manuell.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+
+      - name: Build (statischer Export)
+        run: npm run build
+
+      - name: Pages konfigurieren
+        uses: actions/configure-pages@v5
+
+      - name: Artefakt hochladen
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy auf GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
