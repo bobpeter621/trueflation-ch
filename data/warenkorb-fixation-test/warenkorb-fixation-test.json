@@ -1,0 +1,933 @@
+{
+  "_comment": "Automatisch generiert durch scripts/pipeline/build-warenkorb-fixation-test.mjs. Testet den Warenkorb-Fixierungseffekt OHNE 12<->13-Zuordnungsproblem: aktuellste Gewichte (config/lik-warenkorb-gewichte-2026.json, 13 Hauptgruppen) werden rückwärts über 2010-2024 fixiert und gegen dieselbe 13er-posId-Struktur verrechnet, die auch die verkettete Reihe (mainIndex) speist. Der verkettete Index enthält die Gewichtsverschiebungen der letzten 15 Jahre, der fixierte nicht — die Differenz ist der gemessene Effekt.",
+  "methodology": "fixedIndex(t) = Σ_i weight_i(2026) * posIndex_i(t); chainedIndex(t) = mainIndex(t); Effekt (pp/Jahr) = annualizedGrowth(fixedIndex) - annualizedGrowth(chainedIndex), geometrisches Mittel über den Gesamtzeitraum.",
+  "weightsSource": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/warenkorb.html",
+  "weightsTableTitle": "LIK-Warenkorb und Gewichte 2026",
+  "weightsExtractedAt": "2026-08-28",
+  "basisYearNote": "Fixierungsjahr 2026 (aktuellste verfügbare Gewichtstabelle), rückwärts angewendet auf 2010-2024. Andere Fixierungsjahre (2010/2015/2020) würden das Ergebnis leicht verschieben, nicht die Grössenordnung — nicht separat berechnet (Zeitbudget), aber als Sensitivitätsvorbehalt hier dokumentiert.",
+  "methodologicalSignExplanation": "AKTUELLE Gewichte rückwärts angewendet ist KEIN Laspeyres-Index (Basisjahr-Gewichte vorwärts), sondern eine Paasche-artige Konstruktion — diese zeigt methodisch bedingt systematisch WENIGER Teuerung als ein verketteter Index (Substitutionseffekt: aktuelle Gewichte gewichten bereits günstiger gewordene Posten stärker). Verbindliche Formulierung für die Methodik-Seite: \"Mit aktuellen Gewichten rückwärts gerechnet liegt der Effekt bei -0.035 pp/Jahr. Ein Index mit historischen Basisjahr-Gewichten würde tendenziell in die andere Richtung weisen; solche Gewichte sind für die 13-Gruppen-Struktur nicht verfügbar.\" NICHT: \"der fixe Warenkorb dämpft die Teuerung\" — das Vorzeichen folgt aus der Berechnungsrichtung (Paasche vs. Laspeyres), nicht aus einer Widerlegung der Ausgangshypothese. Die Entscheidung (Befund statt Overlay) ändert sich dadurch nicht.",
+  "window": {
+    "start": 20100101,
+    "end": 20241201,
+    "months": 180,
+    "years": 14.9167
+  },
+  "result": {
+    "chainedTotalGrowthPercent": 5.55,
+    "fixedTotalGrowthPercent": 5,
+    "chainedAnnualPercent": 0.3626,
+    "fixedAnnualPercent": 0.3276,
+    "effectPpPerYear": -0.035
+  },
+  "criterion": {
+    "absoluteThresholdPpPerYear": 0.1,
+    "coverageThresholdYears": 10,
+    "totalYears": 15,
+    "actualCoverageYears": 15,
+    "actualAbsEffectPpPerYear": 0.035,
+    "meetsThreshold": false,
+    "decision": "als Befund dokumentieren"
+  },
+  "series": [
+    {
+      "indexDate": 20100101,
+      "chainedIndex": 94.6843,
+      "fixedIndex": 95.1699
+    },
+    {
+      "indexDate": 20100201,
+      "chainedIndex": 94.8221,
+      "fixedIndex": 95.3083
+    },
+    {
+      "indexDate": 20100301,
+      "chainedIndex": 94.9521,
+      "fixedIndex": 95.3775
+    },
+    {
+      "indexDate": 20100401,
+      "chainedIndex": 95.7637,
+      "fixedIndex": 96.0145
+    },
+    {
+      "indexDate": 20100501,
+      "chainedIndex": 95.6647,
+      "fixedIndex": 95.8361
+    },
+    {
+      "indexDate": 20100601,
+      "chainedIndex": 95.2483,
+      "fixedIndex": 95.4917
+    },
+    {
+      "indexDate": 20100701,
+      "chainedIndex": 94.5523,
+      "fixedIndex": 94.9937
+    },
+    {
+      "indexDate": 20100801,
+      "chainedIndex": 94.5392,
+      "fixedIndex": 94.9755
+    },
+    {
+      "indexDate": 20100901,
+      "chainedIndex": 94.5173,
+      "fixedIndex": 94.9616
+    },
+    {
+      "indexDate": 20101001,
+      "chainedIndex": 95.0203,
+      "fixedIndex": 95.2422
+    },
+    {
+      "indexDate": 20101101,
+      "chainedIndex": 95.2484,
+      "fixedIndex": 95.4352
+    },
+    {
+      "indexDate": 20101201,
+      "chainedIndex": 95.2822,
+      "fixedIndex": 95.4753
+    },
+    {
+      "indexDate": 20110101,
+      "chainedIndex": 94.9481,
+      "fixedIndex": 95.3044
+    },
+    {
+      "indexDate": 20110201,
+      "chainedIndex": 95.3059,
+      "fixedIndex": 95.5884
+    },
+    {
+      "indexDate": 20110301,
+      "chainedIndex": 95.9057,
+      "fixedIndex": 96.0932
+    },
+    {
+      "indexDate": 20110401,
+      "chainedIndex": 96.0115,
+      "fixedIndex": 96.1873
+    },
+    {
+      "indexDate": 20110501,
+      "chainedIndex": 96.0178,
+      "fixedIndex": 96.2056
+    },
+    {
+      "indexDate": 20110601,
+      "chainedIndex": 95.7857,
+      "fixedIndex": 96.0086
+    },
+    {
+      "indexDate": 20110701,
+      "chainedIndex": 94.9987,
+      "fixedIndex": 95.3861
+    },
+    {
+      "indexDate": 20110801,
+      "chainedIndex": 94.7209,
+      "fixedIndex": 95.1395
+    },
+    {
+      "indexDate": 20110901,
+      "chainedIndex": 94.9764,
+      "fixedIndex": 95.2079
+    },
+    {
+      "indexDate": 20111001,
+      "chainedIndex": 94.9134,
+      "fixedIndex": 95.1673
+    },
+    {
+      "indexDate": 20111101,
+      "chainedIndex": 94.7477,
+      "fixedIndex": 94.9671
+    },
+    {
+      "indexDate": 20111201,
+      "chainedIndex": 94.6012,
+      "fixedIndex": 94.8509
+    },
+    {
+      "indexDate": 20120101,
+      "chainedIndex": 94.1984,
+      "fixedIndex": 94.6224
+    },
+    {
+      "indexDate": 20120201,
+      "chainedIndex": 94.4639,
+      "fixedIndex": 94.8593
+    },
+    {
+      "indexDate": 20120301,
+      "chainedIndex": 94.9905,
+      "fixedIndex": 95.3012
+    },
+    {
+      "indexDate": 20120401,
+      "chainedIndex": 95.0615,
+      "fixedIndex": 95.3299
+    },
+    {
+      "indexDate": 20120501,
+      "chainedIndex": 95.0446,
+      "fixedIndex": 95.3054
+    },
+    {
+      "indexDate": 20120601,
+      "chainedIndex": 94.7764,
+      "fixedIndex": 95.091
+    },
+    {
+      "indexDate": 20120701,
+      "chainedIndex": 94.3203,
+      "fixedIndex": 94.7594
+    },
+    {
+      "indexDate": 20120801,
+      "chainedIndex": 94.2918,
+      "fixedIndex": 94.7171
+    },
+    {
+      "indexDate": 20120901,
+      "chainedIndex": 94.5857,
+      "fixedIndex": 94.9414
+    },
+    {
+      "indexDate": 20121001,
+      "chainedIndex": 94.7025,
+      "fixedIndex": 94.9949
+    },
+    {
+      "indexDate": 20121101,
+      "chainedIndex": 94.392,
+      "fixedIndex": 94.7118
+    },
+    {
+      "indexDate": 20121201,
+      "chainedIndex": 94.1902,
+      "fixedIndex": 94.517
+    },
+    {
+      "indexDate": 20130101,
+      "chainedIndex": 93.9444,
+      "fixedIndex": 94.416
+    },
+    {
+      "indexDate": 20130201,
+      "chainedIndex": 94.2219,
+      "fixedIndex": 94.647
+    },
+    {
+      "indexDate": 20130301,
+      "chainedIndex": 94.4266,
+      "fixedIndex": 94.7959
+    },
+    {
+      "indexDate": 20130401,
+      "chainedIndex": 94.4584,
+      "fixedIndex": 94.811
+    },
+    {
+      "indexDate": 20130501,
+      "chainedIndex": 94.5623,
+      "fixedIndex": 94.8856
+    },
+    {
+      "indexDate": 20130601,
+      "chainedIndex": 94.6552,
+      "fixedIndex": 94.9983
+    },
+    {
+      "indexDate": 20130701,
+      "chainedIndex": 94.3177,
+      "fixedIndex": 94.7646
+    },
+    {
+      "indexDate": 20130801,
+      "chainedIndex": 94.2498,
+      "fixedIndex": 94.7078
+    },
+    {
+      "indexDate": 20130901,
+      "chainedIndex": 94.5333,
+      "fixedIndex": 94.9367
+    },
+    {
+      "indexDate": 20131001,
+      "chainedIndex": 94.4608,
+      "fixedIndex": 94.8126
+    },
+    {
+      "indexDate": 20131101,
+      "chainedIndex": 94.4673,
+      "fixedIndex": 94.8236
+    },
+    {
+      "indexDate": 20131201,
+      "chainedIndex": 94.2534,
+      "fixedIndex": 94.5791
+    },
+    {
+      "indexDate": 20140101,
+      "chainedIndex": 93.9955,
+      "fixedIndex": 94.4498
+    },
+    {
+      "indexDate": 20140201,
+      "chainedIndex": 94.0889,
+      "fixedIndex": 94.5206
+    },
+    {
+      "indexDate": 20140301,
+      "chainedIndex": 94.4293,
+      "fixedIndex": 94.779
+    },
+    {
+      "indexDate": 20140401,
+      "chainedIndex": 94.4943,
+      "fixedIndex": 94.8216
+    },
+    {
+      "indexDate": 20140501,
+      "chainedIndex": 94.7711,
+      "fixedIndex": 95.0707
+    },
+    {
+      "indexDate": 20140601,
+      "chainedIndex": 94.7022,
+      "fixedIndex": 95.0318
+    },
+    {
+      "indexDate": 20140701,
+      "chainedIndex": 94.3477,
+      "fixedIndex": 94.7801
+    },
+    {
+      "indexDate": 20140801,
+      "chainedIndex": 94.3173,
+      "fixedIndex": 94.7283
+    },
+    {
+      "indexDate": 20140901,
+      "chainedIndex": 94.4505,
+      "fixedIndex": 94.8163
+    },
+    {
+      "indexDate": 20141001,
+      "chainedIndex": 94.4488,
+      "fixedIndex": 94.7505
+    },
+    {
+      "indexDate": 20141101,
+      "chainedIndex": 94.412,
+      "fixedIndex": 94.7351
+    },
+    {
+      "indexDate": 20141201,
+      "chainedIndex": 93.9439,
+      "fixedIndex": 94.2948
+    },
+    {
+      "indexDate": 20150101,
+      "chainedIndex": 93.5394,
+      "fixedIndex": 94.0159
+    },
+    {
+      "indexDate": 20150201,
+      "chainedIndex": 93.2989,
+      "fixedIndex": 93.7631
+    },
+    {
+      "indexDate": 20150301,
+      "chainedIndex": 93.6033,
+      "fixedIndex": 94.0023
+    },
+    {
+      "indexDate": 20150401,
+      "chainedIndex": 93.4335,
+      "fixedIndex": 93.7902
+    },
+    {
+      "indexDate": 20150501,
+      "chainedIndex": 93.651,
+      "fixedIndex": 94.002
+    },
+    {
+      "indexDate": 20150601,
+      "chainedIndex": 93.7198,
+      "fixedIndex": 94.0756
+    },
+    {
+      "indexDate": 20150701,
+      "chainedIndex": 93.1439,
+      "fixedIndex": 93.627
+    },
+    {
+      "indexDate": 20150801,
+      "chainedIndex": 92.9946,
+      "fixedIndex": 93.4721
+    },
+    {
+      "indexDate": 20150901,
+      "chainedIndex": 93.0869,
+      "fixedIndex": 93.5108
+    },
+    {
+      "indexDate": 20151001,
+      "chainedIndex": 93.1644,
+      "fixedIndex": 93.5305
+    },
+    {
+      "indexDate": 20151101,
+      "chainedIndex": 93.0973,
+      "fixedIndex": 93.4653
+    },
+    {
+      "indexDate": 20151201,
+      "chainedIndex": 92.7147,
+      "fixedIndex": 93.0957
+    },
+    {
+      "indexDate": 20160101,
+      "chainedIndex": 92.3546,
+      "fixedIndex": 92.8282
+    },
+    {
+      "indexDate": 20160201,
+      "chainedIndex": 92.5259,
+      "fixedIndex": 92.9794
+    },
+    {
+      "indexDate": 20160301,
+      "chainedIndex": 92.7976,
+      "fixedIndex": 93.1958
+    },
+    {
+      "indexDate": 20160401,
+      "chainedIndex": 93.1047,
+      "fixedIndex": 93.4525
+    },
+    {
+      "indexDate": 20160501,
+      "chainedIndex": 93.239,
+      "fixedIndex": 93.5892
+    },
+    {
+      "indexDate": 20160601,
+      "chainedIndex": 93.3692,
+      "fixedIndex": 93.738
+    },
+    {
+      "indexDate": 20160701,
+      "chainedIndex": 92.9549,
+      "fixedIndex": 93.4272
+    },
+    {
+      "indexDate": 20160801,
+      "chainedIndex": 92.8615,
+      "fixedIndex": 93.2986
+    },
+    {
+      "indexDate": 20160901,
+      "chainedIndex": 92.918,
+      "fixedIndex": 93.3071
+    },
+    {
+      "indexDate": 20161001,
+      "chainedIndex": 92.9662,
+      "fixedIndex": 93.3191
+    },
+    {
+      "indexDate": 20161101,
+      "chainedIndex": 92.7823,
+      "fixedIndex": 93.1534
+    },
+    {
+      "indexDate": 20161201,
+      "chainedIndex": 92.7085,
+      "fixedIndex": 93.1009
+    },
+    {
+      "indexDate": 20170101,
+      "chainedIndex": 92.6768,
+      "fixedIndex": 93.1468
+    },
+    {
+      "indexDate": 20170201,
+      "chainedIndex": 93.1237,
+      "fixedIndex": 93.5525
+    },
+    {
+      "indexDate": 20170301,
+      "chainedIndex": 93.3246,
+      "fixedIndex": 93.6676
+    },
+    {
+      "indexDate": 20170401,
+      "chainedIndex": 93.5123,
+      "fixedIndex": 93.8049
+    },
+    {
+      "indexDate": 20170501,
+      "chainedIndex": 93.686,
+      "fixedIndex": 93.9764
+    },
+    {
+      "indexDate": 20170601,
+      "chainedIndex": 93.5534,
+      "fixedIndex": 93.8717
+    },
+    {
+      "indexDate": 20170701,
+      "chainedIndex": 93.261,
+      "fixedIndex": 93.6856
+    },
+    {
+      "indexDate": 20170801,
+      "chainedIndex": 93.2912,
+      "fixedIndex": 93.6909
+    },
+    {
+      "indexDate": 20170901,
+      "chainedIndex": 93.5238,
+      "fixedIndex": 93.8347
+    },
+    {
+      "indexDate": 20171001,
+      "chainedIndex": 93.5806,
+      "fixedIndex": 93.8629
+    },
+    {
+      "indexDate": 20171101,
+      "chainedIndex": 93.5126,
+      "fixedIndex": 93.8026
+    },
+    {
+      "indexDate": 20171201,
+      "chainedIndex": 93.486,
+      "fixedIndex": 93.7682
+    },
+    {
+      "indexDate": 20180101,
+      "chainedIndex": 93.3628,
+      "fixedIndex": 93.7019
+    },
+    {
+      "indexDate": 20180201,
+      "chainedIndex": 93.7086,
+      "fixedIndex": 94.0074
+    },
+    {
+      "indexDate": 20180301,
+      "chainedIndex": 94.0669,
+      "fixedIndex": 94.288
+    },
+    {
+      "indexDate": 20180401,
+      "chainedIndex": 94.2633,
+      "fixedIndex": 94.4653
+    },
+    {
+      "indexDate": 20180501,
+      "chainedIndex": 94.6221,
+      "fixedIndex": 94.806
+    },
+    {
+      "indexDate": 20180601,
+      "chainedIndex": 94.626,
+      "fixedIndex": 94.8396
+    },
+    {
+      "indexDate": 20180701,
+      "chainedIndex": 94.4084,
+      "fixedIndex": 94.7326
+    },
+    {
+      "indexDate": 20180801,
+      "chainedIndex": 94.393,
+      "fixedIndex": 94.6854
+    },
+    {
+      "indexDate": 20180901,
+      "chainedIndex": 94.4493,
+      "fixedIndex": 94.7009
+    },
+    {
+      "indexDate": 20181001,
+      "chainedIndex": 94.6161,
+      "fixedIndex": 94.8412
+    },
+    {
+      "indexDate": 20181101,
+      "chainedIndex": 94.3748,
+      "fixedIndex": 94.599
+    },
+    {
+      "indexDate": 20181201,
+      "chainedIndex": 94.1325,
+      "fixedIndex": 94.3539
+    },
+    {
+      "indexDate": 20190101,
+      "chainedIndex": 93.8857,
+      "fixedIndex": 94.1662
+    },
+    {
+      "indexDate": 20190201,
+      "chainedIndex": 94.2508,
+      "fixedIndex": 94.5002
+    },
+    {
+      "indexDate": 20190301,
+      "chainedIndex": 94.7526,
+      "fixedIndex": 94.9355
+    },
+    {
+      "indexDate": 20190401,
+      "chainedIndex": 94.9308,
+      "fixedIndex": 95.0847
+    },
+    {
+      "indexDate": 20190501,
+      "chainedIndex": 95.2223,
+      "fixedIndex": 95.3659
+    },
+    {
+      "indexDate": 20190601,
+      "chainedIndex": 95.1941,
+      "fixedIndex": 95.3436
+    },
+    {
+      "indexDate": 20190701,
+      "chainedIndex": 94.7027,
+      "fixedIndex": 94.9419
+    },
+    {
+      "indexDate": 20190801,
+      "chainedIndex": 94.6931,
+      "fixedIndex": 94.8987
+    },
+    {
+      "indexDate": 20190901,
+      "chainedIndex": 94.5893,
+      "fixedIndex": 94.7769
+    },
+    {
+      "indexDate": 20191001,
+      "chainedIndex": 94.3766,
+      "fixedIndex": 94.5578
+    },
+    {
+      "indexDate": 20191101,
+      "chainedIndex": 94.251,
+      "fixedIndex": 94.4288
+    },
+    {
+      "indexDate": 20191201,
+      "chainedIndex": 94.2791,
+      "fixedIndex": 94.458
+    },
+    {
+      "indexDate": 20200101,
+      "chainedIndex": 94.0756,
+      "fixedIndex": 94.2826
+    },
+    {
+      "indexDate": 20200201,
+      "chainedIndex": 94.1922,
+      "fixedIndex": 94.3822
+    },
+    {
+      "indexDate": 20200301,
+      "chainedIndex": 94.2645,
+      "fixedIndex": 94.4349
+    },
+    {
+      "indexDate": 20200401,
+      "chainedIndex": 93.9216,
+      "fixedIndex": 94.1013
+    },
+    {
+      "indexDate": 20200501,
+      "chainedIndex": 93.961,
+      "fixedIndex": 94.1409
+    },
+    {
+      "indexDate": 20200601,
+      "chainedIndex": 93.9806,
+      "fixedIndex": 94.1733
+    },
+    {
+      "indexDate": 20200701,
+      "chainedIndex": 93.8316,
+      "fixedIndex": 94.0645
+    },
+    {
+      "indexDate": 20200801,
+      "chainedIndex": 93.8729,
+      "fixedIndex": 94.0836
+    },
+    {
+      "indexDate": 20200901,
+      "chainedIndex": 93.8327,
+      "fixedIndex": 94.022
+    },
+    {
+      "indexDate": 20201001,
+      "chainedIndex": 93.8384,
+      "fixedIndex": 94.021
+    },
+    {
+      "indexDate": 20201101,
+      "chainedIndex": 93.6056,
+      "fixedIndex": 93.7946
+    },
+    {
+      "indexDate": 20201201,
+      "chainedIndex": 93.5119,
+      "fixedIndex": 93.6987
+    },
+    {
+      "indexDate": 20210101,
+      "chainedIndex": 93.5636,
+      "fixedIndex": 93.7767
+    },
+    {
+      "indexDate": 20210201,
+      "chainedIndex": 93.7174,
+      "fixedIndex": 93.9258
+    },
+    {
+      "indexDate": 20210301,
+      "chainedIndex": 94.0334,
+      "fixedIndex": 94.2533
+    },
+    {
+      "indexDate": 20210401,
+      "chainedIndex": 94.2295,
+      "fixedIndex": 94.4519
+    },
+    {
+      "indexDate": 20210501,
+      "chainedIndex": 94.4787,
+      "fixedIndex": 94.6916
+    },
+    {
+      "indexDate": 20210601,
+      "chainedIndex": 94.5487,
+      "fixedIndex": 94.7563
+    },
+    {
+      "indexDate": 20210701,
+      "chainedIndex": 94.4685,
+      "fixedIndex": 94.6689
+    },
+    {
+      "indexDate": 20210801,
+      "chainedIndex": 94.7005,
+      "fixedIndex": 94.9066
+    },
+    {
+      "indexDate": 20210901,
+      "chainedIndex": 94.717,
+      "fixedIndex": 94.9114
+    },
+    {
+      "indexDate": 20211001,
+      "chainedIndex": 95.0037,
+      "fixedIndex": 95.1981
+    },
+    {
+      "indexDate": 20211101,
+      "chainedIndex": 95.0404,
+      "fixedIndex": 95.2215
+    },
+    {
+      "indexDate": 20211201,
+      "chainedIndex": 94.9436,
+      "fixedIndex": 95.1365
+    },
+    {
+      "indexDate": 20220101,
+      "chainedIndex": 95.1062,
+      "fixedIndex": 95.3528
+    },
+    {
+      "indexDate": 20220201,
+      "chainedIndex": 95.7331,
+      "fixedIndex": 95.9711
+    },
+    {
+      "indexDate": 20220301,
+      "chainedIndex": 96.2772,
+      "fixedIndex": 96.4626
+    },
+    {
+      "indexDate": 20220401,
+      "chainedIndex": 96.6306,
+      "fixedIndex": 96.7717
+    },
+    {
+      "indexDate": 20220501,
+      "chainedIndex": 97.2587,
+      "fixedIndex": 97.3555
+    },
+    {
+      "indexDate": 20220601,
+      "chainedIndex": 97.7491,
+      "fixedIndex": 97.8383
+    },
+    {
+      "indexDate": 20220701,
+      "chainedIndex": 97.712,
+      "fixedIndex": 97.8405
+    },
+    {
+      "indexDate": 20220801,
+      "chainedIndex": 97.9697,
+      "fixedIndex": 98.0503
+    },
+    {
+      "indexDate": 20220901,
+      "chainedIndex": 97.7976,
+      "fixedIndex": 97.8491
+    },
+    {
+      "indexDate": 20221001,
+      "chainedIndex": 97.85,
+      "fixedIndex": 97.882
+    },
+    {
+      "indexDate": 20221101,
+      "chainedIndex": 97.8538,
+      "fixedIndex": 97.8573
+    },
+    {
+      "indexDate": 20221201,
+      "chainedIndex": 97.6404,
+      "fixedIndex": 97.7193
+    },
+    {
+      "indexDate": 20230101,
+      "chainedIndex": 98.2281,
+      "fixedIndex": 98.3085
+    },
+    {
+      "indexDate": 20230201,
+      "chainedIndex": 98.9611,
+      "fixedIndex": 99.0142
+    },
+    {
+      "indexDate": 20230301,
+      "chainedIndex": 99.1128,
+      "fixedIndex": 99.1443
+    },
+    {
+      "indexDate": 20230401,
+      "chainedIndex": 99.1095,
+      "fixedIndex": 99.141
+    },
+    {
+      "indexDate": 20230501,
+      "chainedIndex": 99.3583,
+      "fixedIndex": 99.3817
+    },
+    {
+      "indexDate": 20230601,
+      "chainedIndex": 99.4214,
+      "fixedIndex": 99.4426
+    },
+    {
+      "indexDate": 20230701,
+      "chainedIndex": 99.2804,
+      "fixedIndex": 99.3186
+    },
+    {
+      "indexDate": 20230801,
+      "chainedIndex": 99.4924,
+      "fixedIndex": 99.5216
+    },
+    {
+      "indexDate": 20230901,
+      "chainedIndex": 99.4159,
+      "fixedIndex": 99.4349
+    },
+    {
+      "indexDate": 20231001,
+      "chainedIndex": 99.5071,
+      "fixedIndex": 99.5286
+    },
+    {
+      "indexDate": 20231101,
+      "chainedIndex": 99.2665,
+      "fixedIndex": 99.2895
+    },
+    {
+      "indexDate": 20231201,
+      "chainedIndex": 99.3147,
+      "fixedIndex": 99.3347
+    },
+    {
+      "indexDate": 20240101,
+      "chainedIndex": 99.4841,
+      "fixedIndex": 99.5272
+    },
+    {
+      "indexDate": 20240201,
+      "chainedIndex": 100.1174,
+      "fixedIndex": 100.1262
+    },
+    {
+      "indexDate": 20240301,
+      "chainedIndex": 100.1485,
+      "fixedIndex": 100.1432
+    },
+    {
+      "indexDate": 20240401,
+      "chainedIndex": 100.4651,
+      "fixedIndex": 100.4565
+    },
+    {
+      "indexDate": 20240501,
+      "chainedIndex": 100.7394,
+      "fixedIndex": 100.7166
+    },
+    {
+      "indexDate": 20240601,
+      "chainedIndex": 100.7418,
+      "fixedIndex": 100.7216
+    },
+    {
+      "indexDate": 20240701,
+      "chainedIndex": 100.5617,
+      "fixedIndex": 100.5679
+    },
+    {
+      "indexDate": 20240801,
+      "chainedIndex": 100.5474,
+      "fixedIndex": 100.5501
+    },
+    {
+      "indexDate": 20240901,
+      "chainedIndex": 100.2539,
+      "fixedIndex": 100.253
+    },
+    {
+      "indexDate": 20241001,
+      "chainedIndex": 100.1269,
+      "fixedIndex": 100.1209
+    },
+    {
+      "indexDate": 20241101,
+      "chainedIndex": 99.9918,
+      "fixedIndex": 99.9928
+    },
+    {
+      "indexDate": 20241201,
+      "chainedIndex": 99.9368,
+      "fixedIndex": 99.9288
+    }
+  ]
+}

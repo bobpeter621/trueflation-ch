@@ -1,0 +1,570 @@
+{
+  "_comment": "Automatisch generiert — Linie 1 jährlich, Basis \"Ewige Reihe\".",
+  "sourceUrl": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
+  "sourcePublishDate": 20260726,
+  "importedAt": "2026-08-25T09:31:52.719Z",
+  "importType": "bulk",
+  "basis": "Ewige Reihe",
+  "values": [
+    {
+      "indexDate": 19140101,
+      "indexValue": 100,
+      "changeRateVorjahr": null
+    },
+    {
+      "indexDate": 19150101,
+      "indexValue": 113,
+      "changeRateVorjahr": 13
+    },
+    {
+      "indexDate": 19160101,
+      "indexValue": 131,
+      "changeRateVorjahr": 15.9
+    },
+    {
+      "indexDate": 19170101,
+      "indexValue": 163,
+      "changeRateVorjahr": 24.4
+    },
+    {
+      "indexDate": 19180101,
+      "indexValue": 204,
+      "changeRateVorjahr": 25.2
+    },
+    {
+      "indexDate": 19190101,
+      "indexValue": 222,
+      "changeRateVorjahr": 8.8
+    },
+    {
+      "indexDate": 19200101,
+      "indexValue": 224,
+      "changeRateVorjahr": 0.9
+    },
+    {
+      "indexDate": 19210101,
+      "indexValue": 200.25,
+      "changeRateVorjahr": -10.6
+    },
+    {
+      "indexDate": 19220101,
+      "indexValue": 163.9333,
+      "changeRateVorjahr": -18.1
+    },
+    {
+      "indexDate": 19230101,
+      "indexValue": 163.8167,
+      "changeRateVorjahr": -0.1
+    },
+    {
+      "indexDate": 19240101,
+      "indexValue": 168.7667,
+      "changeRateVorjahr": 3
+    },
+    {
+      "indexDate": 19250101,
+      "indexValue": 168.2167,
+      "changeRateVorjahr": -0.3
+    },
+    {
+      "indexDate": 19260101,
+      "indexValue": 162.15,
+      "changeRateVorjahr": -3.6
+    },
+    {
+      "indexDate": 19270101,
+      "indexValue": 160.2917,
+      "changeRateVorjahr": -1.1
+    },
+    {
+      "indexDate": 19280101,
+      "indexValue": 161.0167,
+      "changeRateVorjahr": 0.5
+    },
+    {
+      "indexDate": 19290101,
+      "indexValue": 161.2,
+      "changeRateVorjahr": 0.1
+    },
+    {
+      "indexDate": 19300101,
+      "indexValue": 158.425,
+      "changeRateVorjahr": -1.7
+    },
+    {
+      "indexDate": 19310101,
+      "indexValue": 150.1583,
+      "changeRateVorjahr": -5.2
+    },
+    {
+      "indexDate": 19320101,
+      "indexValue": 138.4583,
+      "changeRateVorjahr": -7.8
+    },
+    {
+      "indexDate": 19330101,
+      "indexValue": 131.4417,
+      "changeRateVorjahr": -5.1
+    },
+    {
+      "indexDate": 19340101,
+      "indexValue": 129.475,
+      "changeRateVorjahr": -1.5
+    },
+    {
+      "indexDate": 19350101,
+      "indexValue": 128.15,
+      "changeRateVorjahr": -1
+    },
+    {
+      "indexDate": 19360101,
+      "indexValue": 130.4083,
+      "changeRateVorjahr": 1.8
+    },
+    {
+      "indexDate": 19370101,
+      "indexValue": 136.725,
+      "changeRateVorjahr": 4.8
+    },
+    {
+      "indexDate": 19380101,
+      "indexValue": 136.9583,
+      "changeRateVorjahr": 0.2
+    },
+    {
+      "indexDate": 19390101,
+      "indexValue": 138.0083,
+      "changeRateVorjahr": 0.8
+    },
+    {
+      "indexDate": 19400101,
+      "indexValue": 150.775,
+      "changeRateVorjahr": 9.3
+    },
+    {
+      "indexDate": 19410101,
+      "indexValue": 173.9167,
+      "changeRateVorjahr": 15.3
+    },
+    {
+      "indexDate": 19420101,
+      "indexValue": 193.4,
+      "changeRateVorjahr": 11.2
+    },
+    {
+      "indexDate": 19430101,
+      "indexValue": 203.2417,
+      "changeRateVorjahr": 5.1
+    },
+    {
+      "indexDate": 19440101,
+      "indexValue": 207.5083,
+      "changeRateVorjahr": 2.1
+    },
+    {
+      "indexDate": 19450101,
+      "indexValue": 208.925,
+      "changeRateVorjahr": 0.7
+    },
+    {
+      "indexDate": 19460101,
+      "indexValue": 207.775,
+      "changeRateVorjahr": -0.6
+    },
+    {
+      "indexDate": 19470101,
+      "indexValue": 217.1083,
+      "changeRateVorjahr": 4.5
+    },
+    {
+      "indexDate": 19480101,
+      "indexValue": 223.55,
+      "changeRateVorjahr": 3
+    },
+    {
+      "indexDate": 19490101,
+      "indexValue": 221.725,
+      "changeRateVorjahr": -0.8
+    },
+    {
+      "indexDate": 19500101,
+      "indexValue": 218.3173,
+      "changeRateVorjahr": -1.5
+    },
+    {
+      "indexDate": 19510101,
+      "indexValue": 228.7475,
+      "changeRateVorjahr": 4.8
+    },
+    {
+      "indexDate": 19520101,
+      "indexValue": 234.5208,
+      "changeRateVorjahr": 2.5
+    },
+    {
+      "indexDate": 19530101,
+      "indexValue": 232.8746,
+      "changeRateVorjahr": -0.7
+    },
+    {
+      "indexDate": 19540101,
+      "indexValue": 234.5894,
+      "changeRateVorjahr": 0.7
+    },
+    {
+      "indexDate": 19550101,
+      "indexValue": 236.7615,
+      "changeRateVorjahr": 0.9
+    },
+    {
+      "indexDate": 19560101,
+      "indexValue": 240.3398,
+      "changeRateVorjahr": 1.5
+    },
+    {
+      "indexDate": 19570101,
+      "indexValue": 245.0613,
+      "changeRateVorjahr": 2
+    },
+    {
+      "indexDate": 19580101,
+      "indexValue": 249.5656,
+      "changeRateVorjahr": 1.8
+    },
+    {
+      "indexDate": 19590101,
+      "indexValue": 247.9537,
+      "changeRateVorjahr": -0.6
+    },
+    {
+      "indexDate": 19600101,
+      "indexValue": 251.5205,
+      "changeRateVorjahr": 1.4
+    },
+    {
+      "indexDate": 19610101,
+      "indexValue": 256.162,
+      "changeRateVorjahr": 1.8
+    },
+    {
+      "indexDate": 19620101,
+      "indexValue": 267.217,
+      "changeRateVorjahr": 4.3
+    },
+    {
+      "indexDate": 19630101,
+      "indexValue": 276.4085,
+      "changeRateVorjahr": 3.4
+    },
+    {
+      "indexDate": 19640101,
+      "indexValue": 284.9255,
+      "changeRateVorjahr": 3.1
+    },
+    {
+      "indexDate": 19650101,
+      "indexValue": 294.6543,
+      "changeRateVorjahr": 3.4
+    },
+    {
+      "indexDate": 19660101,
+      "indexValue": 308.7295,
+      "changeRateVorjahr": 4.8
+    },
+    {
+      "indexDate": 19670101,
+      "indexValue": 321.2042,
+      "changeRateVorjahr": 4
+    },
+    {
+      "indexDate": 19680101,
+      "indexValue": 328.9527,
+      "changeRateVorjahr": 2.4
+    },
+    {
+      "indexDate": 19690101,
+      "indexValue": 337.1404,
+      "changeRateVorjahr": 2.5
+    },
+    {
+      "indexDate": 19700101,
+      "indexValue": 349.3315,
+      "changeRateVorjahr": 3.6
+    },
+    {
+      "indexDate": 19710101,
+      "indexValue": 372.2931,
+      "changeRateVorjahr": 6.6
+    },
+    {
+      "indexDate": 19720101,
+      "indexValue": 397.0885,
+      "changeRateVorjahr": 6.7
+    },
+    {
+      "indexDate": 19730101,
+      "indexValue": 431.8538,
+      "changeRateVorjahr": 8.8
+    },
+    {
+      "indexDate": 19740101,
+      "indexValue": 474.0319,
+      "changeRateVorjahr": 9.8
+    },
+    {
+      "indexDate": 19750101,
+      "indexValue": 505.7752,
+      "changeRateVorjahr": 6.7
+    },
+    {
+      "indexDate": 19760101,
+      "indexValue": 514.4536,
+      "changeRateVorjahr": 1.7
+    },
+    {
+      "indexDate": 19770101,
+      "indexValue": 521.1116,
+      "changeRateVorjahr": 1.3
+    },
+    {
+      "indexDate": 19780101,
+      "indexValue": 526.5003,
+      "changeRateVorjahr": 1
+    },
+    {
+      "indexDate": 19790101,
+      "indexValue": 545.5947,
+      "changeRateVorjahr": 3.6
+    },
+    {
+      "indexDate": 19800101,
+      "indexValue": 567.5848,
+      "changeRateVorjahr": 4
+    },
+    {
+      "indexDate": 19810101,
+      "indexValue": 604.4019,
+      "changeRateVorjahr": 6.5
+    },
+    {
+      "indexDate": 19820101,
+      "indexValue": 638.5933,
+      "changeRateVorjahr": 5.7
+    },
+    {
+      "indexDate": 19830101,
+      "indexValue": 657.3622,
+      "changeRateVorjahr": 2.9
+    },
+    {
+      "indexDate": 19840101,
+      "indexValue": 676.6323,
+      "changeRateVorjahr": 2.9
+    },
+    {
+      "indexDate": 19850101,
+      "indexValue": 699.8775,
+      "changeRateVorjahr": 3.4
+    },
+    {
+      "indexDate": 19860101,
+      "indexValue": 705.1288,
+      "changeRateVorjahr": 0.8
+    },
+    {
+      "indexDate": 19870101,
+      "indexValue": 715.2847,
+      "changeRateVorjahr": 1.4
+    },
+    {
+      "indexDate": 19880101,
+      "indexValue": 728.6783,
+      "changeRateVorjahr": 1.9
+    },
+    {
+      "indexDate": 19890101,
+      "indexValue": 751.67,
+      "changeRateVorjahr": 3.2
+    },
+    {
+      "indexDate": 19900101,
+      "indexValue": 792.2901,
+      "changeRateVorjahr": 5.4
+    },
+    {
+      "indexDate": 19910101,
+      "indexValue": 838.715,
+      "changeRateVorjahr": 5.9
+    },
+    {
+      "indexDate": 19920101,
+      "indexValue": 872.574,
+      "changeRateVorjahr": 4
+    },
+    {
+      "indexDate": 19930101,
+      "indexValue": 901.3046,
+      "changeRateVorjahr": 3.3
+    },
+    {
+      "indexDate": 19940101,
+      "indexValue": 908.9848,
+      "changeRateVorjahr": 0.9
+    },
+    {
+      "indexDate": 19950101,
+      "indexValue": 925.3448,
+      "changeRateVorjahr": 1.8
+    },
+    {
+      "indexDate": 19960101,
+      "indexValue": 932.8554,
+      "changeRateVorjahr": 0.8
+    },
+    {
+      "indexDate": 19970101,
+      "indexValue": 937.708,
+      "changeRateVorjahr": 0.5
+    },
+    {
+      "indexDate": 19980101,
+      "indexValue": 937.8764,
+      "changeRateVorjahr": 0
+    },
+    {
+      "indexDate": 19990101,
+      "indexValue": 945.4399,
+      "changeRateVorjahr": 0.8
+    },
+    {
+      "indexDate": 20000101,
+      "indexValue": 960.1744,
+      "changeRateVorjahr": 1.6
+    },
+    {
+      "indexDate": 20010101,
+      "indexValue": 969.6708,
+      "changeRateVorjahr": 1
+    },
+    {
+      "indexDate": 20020101,
+      "indexValue": 975.9028,
+      "changeRateVorjahr": 0.6
+    },
+    {
+      "indexDate": 20030101,
+      "indexValue": 982.1325,
+      "changeRateVorjahr": 0.6
+    },
+    {
+      "indexDate": 20040101,
+      "indexValue": 990.0181,
+      "changeRateVorjahr": 0.8
+    },
+    {
+      "indexDate": 20050101,
+      "indexValue": 1001.6208,
+      "changeRateVorjahr": 1.2
+    },
+    {
+      "indexDate": 20060101,
+      "indexValue": 1012.2327,
+      "changeRateVorjahr": 1.1
+    },
+    {
+      "indexDate": 20070101,
+      "indexValue": 1019.6456,
+      "changeRateVorjahr": 0.7
+    },
+    {
+      "indexDate": 20080101,
+      "indexValue": 1044.3829,
+      "changeRateVorjahr": 2.4
+    },
+    {
+      "indexDate": 20090101,
+      "indexValue": 1039.3649,
+      "changeRateVorjahr": -0.5
+    },
+    {
+      "indexDate": 20100101,
+      "indexValue": 1046.5184,
+      "changeRateVorjahr": 0.7
+    },
+    {
+      "indexDate": 20110101,
+      "indexValue": 1048.9396,
+      "changeRateVorjahr": 0.2
+    },
+    {
+      "indexDate": 20120101,
+      "indexValue": 1041.6752,
+      "changeRateVorjahr": -0.7
+    },
+    {
+      "indexDate": 20130101,
+      "indexValue": 1039.4116,
+      "changeRateVorjahr": -0.2
+    },
+    {
+      "indexDate": 20140101,
+      "indexValue": 1039.2741,
+      "changeRateVorjahr": 0
+    },
+    {
+      "indexDate": 20150101,
+      "indexValue": 1027.3857,
+      "changeRateVorjahr": -1.1
+    },
+    {
+      "indexDate": 20160101,
+      "indexValue": 1022.9203,
+      "changeRateVorjahr": -0.4
+    },
+    {
+      "indexDate": 20170101,
+      "indexValue": 1028.3807,
+      "changeRateVorjahr": 0.5
+    },
+    {
+      "indexDate": 20180101,
+      "indexValue": 1038.0095,
+      "changeRateVorjahr": 0.9
+    },
+    {
+      "indexDate": 20190101,
+      "indexValue": 1041.7766,
+      "changeRateVorjahr": 0.4
+    },
+    {
+      "indexDate": 20200101,
+      "indexValue": 1034.2144,
+      "changeRateVorjahr": -0.7
+    },
+    {
+      "indexDate": 20210101,
+      "indexValue": 1040.2318,
+      "changeRateVorjahr": 0.6
+    },
+    {
+      "indexDate": 20220101,
+      "indexValue": 1069.7227,
+      "changeRateVorjahr": 2.8
+    },
+    {
+      "indexDate": 20230101,
+      "indexValue": 1092.5656,
+      "changeRateVorjahr": 2.1
+    },
+    {
+      "indexDate": 20240101,
+      "indexValue": 1104.1723,
+      "changeRateVorjahr": 1.1
+    },
+    {
+      "indexDate": 20250101,
+      "indexValue": 1105.8769,
+      "changeRateVorjahr": 0.2
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "_comment": "trueflation.ch — Abdeckungsprüfung Miet-Korrektur (Betreiber-Direktive 28.08.2026, strikt timeboxed max. 30 Min, tatsächlicher Aufwand ~15 Min). Frage: Existieren ältere Jahrgänge der Bezugsdauer-Tabellen als eigene Assets, analog zum 'Warenkorb und Gewichte - JJJJ'-Muster?",
+  "checkedAt": "2026-08-28",
+  "method": "BFS DAM-API Volltextsuche (title=Bezugsdauer, title=Mietpreis) über alle Lifecycle-Zustände (CURRENT + OLD/NON_CURRENT), gefolgt von direktem Abruf der master-Endpoints der gefundenen OLD-Assets.",
+  "findings": [
+    {
+      "damId": 36398529,
+      "orderNr": "je-d-09.03.03.62",
+      "lifecycle": "CURRENT",
+      "articleModel": "TABL (Tabelle/XLSX)",
+      "period": "2020-2024",
+      "note": "Die einzige aktuell abrufbare Rohdaten-Tabelle für diese Kennzahl."
+    },
+    {
+      "damId": 33947692,
+      "lifecycle": "OLD",
+      "articleModel": "DIAG_DM01 (Diagramm, NICHT Tabelle)",
+      "period": "2023",
+      "masterEndpointResult": "HTTP 404 — 'storage item master for 33947692 is not yet available'"
+    },
+    {
+      "damId": 31185604,
+      "lifecycle": "OLD",
+      "articleModel": "DIAG_DM01 (Diagramm, NICHT Tabelle)",
+      "period": "2022",
+      "masterEndpointResult": "HTTP 404 — gleicher Befund"
+    },
+    {
+      "damId": 24129521,
+      "lifecycle": "OLD",
+      "articleModel": "DIAG_DM01 (Diagramm, NICHT Tabelle)",
+      "period": "2021",
+      "masterEndpointResult": "HTTP 404 — gleicher Befund"
+    }
+  ],
+  "conclusion": "KEIN TREFFER. Die drei gefundenen älteren Jahrgänge sind (a) Diagramm-Dateien, nicht die benötigten Rohdaten-Tabellen mit der Bezugsdauerklassen-Aufschlüsselung, und (b) ihre master-Downloads liefern HTTP 404 (archiviert/nicht mehr live abrufbar). Kein Analogon zum 'Warenkorb und Gewichte - JJJJ'-Muster (dort existiert für jedes Jahr ein eigenständiges, vollständig abrufbares Tabellen-Asset) für diese Mietpreis-Kennzahl gefunden. Die opendata.swiss-Datensatzsuche (Titel- und Codesuche '09.03.03.62') bestätigt: nur EIN Datensatz mit genau EINER aktuellen Ressource pro Sprache — kein Versionsarchiv.",
+  "decision": "Abdeckung bleibt 2020-2024 (5 von 15 Jahren). Kriterium für Abdeckung (>= 10 von 15 Jahren) NICHT erfüllt — unabhängig vom Betrag des Effekts. Befund dokumentieren, kein Overlay bauen."
+}

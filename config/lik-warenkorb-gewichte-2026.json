@@ -1,0 +1,32 @@
+{
+  "_comment": "trueflation.ch — HABE/LIK-Hauptgruppengewichte, jüngste verfügbare Fixierung (Requirements 2.2a, Betreiber-Direktive 28.08.2026). Quelle: BFS-Themenseite 'Warenkorb und Gewichtung' (https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/warenkorb.html), eingebettete Tabelle 'LIK-Warenkorb und Gewichte 2026', live extrahiert 28.08.2026. NICHT aus dem V1-Fund '2026er-Gewichte = 0.06' übernommen — jener Wert war eine geschätzte Platzhalter-Zahl aus einer früheren Session, keine amtliche Quelle. Diese Datei ersetzt ihn vollständig mit der echten, amtlich publizierten Tabelle.",
+  "sourcePage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/warenkorb.html",
+  "pageTextConfirms13Categories": "Die Themenseite formuliert explizit im Fliesstext: 'Der Warenkorb ist entsprechend den 13 wichtigsten Ausgabenkategorien der Haushalte unterteilt und gewichtet.' — 13 ist die aktuelle, vom BFS selbst benannte Kategorienanzahl, nicht 12.",
+  "tableTitle": "LIK-Warenkorb und Gewichte 2026",
+  "extractedAt": "2026-08-28",
+  "unit": "Anteil in % (Summe = 100.000)",
+  "herkunftBelegGegen12erVs13er": {
+    "betreiberFrage": "Die 2020er-PDF-Publikation hat nachweislich 12 Kategorien — woher kommt dann ein 13er-Satz?",
+    "beleg": "BFS-PDF 'Landesindex der Konsumentenpreise, Gewichtung 2020' (dam-api.bfs.admin.ch/hub/api/dam/assets/11667499/master, Neuchâtel Februar 2020), live abgerufen und per pdfplumber extrahiert 28.08.2026 — tatsächlich GENAU 12 Hauptgruppen, Summe exakt 100.000%: Nahrungsmittel u. alkoholfreie Getränke 10.539, Alkoholische Getränke u. Tabak 2.756, Bekleidung u. Schuhe 3.404, Wohnen u. Energie 24.959, Hausrat u. laufende Haushaltsführung 3.790, Gesundheitspflege 15.689, Verkehr 10.969, Nachrichtenübermittlung 2.944, Freizeit u. Kultur 8.373, Erziehung u. Unterricht 0.997, Restaurants u. Hotels 9.464, Sonstige Waren u. Dienstleistungen 6.116.",
+    "ankerAbgleich": "Betreiber-Anker (Wohnen 25.0% / Nahrung 10.5% für 2020) stimmt auf Rundung exakt mit den extrahierten PDF-Werten überein (Wohnen 24.959%, Nahrung 10.539%) — Extraktionsmethode damit gegenprüfbar bestand.",
+    "aufloesung12vs13": "Zwischen 2020 und 2026 hat das BFS die Kategorie 'Sonstige Waren und Dienstleistungen' (2020: 6.116%) aufgespalten — 'Versicherungen und Finanzdienstleistungen' wurde als EIGENSTAENDIGE 13. Hauptgruppe herausgelöst (2026: 2.252% + 3.363% 'Sonstige' = 5.615%, nahe am ursprünglichen 2020er-Sonstige-Wert 6.116%, Restdifferenz durch Umverteilung anderer kleiner Positionen plausibel, nicht weiter zerlegt). Das ist der GRUND für den Wechsel von 12 auf 13 Kategorien — keine Inkonsistenz, sondern eine dokumentierte Strukturrevision der Kategorisierung selbst, unabhängig von der separaten Gewichts-Neuberechnung (die alle fünf Jahre stattfindet).",
+    "konsequenzFuerMethodik": "Die 13er-Struktur ist NICHT identisch mit der 2020er-Struktur plus einer simplen Neugewichtung — sie ist die AKTUELLE (2026), nach der jetzigen Kategorisierung gegliederte Struktur. Ein Rückrechnen auf 2020er-Basisjahrgewichte in der 13er-Gliederung ist damit gar nicht direkt möglich, ohne die 2020er 'Sonstige'-Kategorie selbst weiter aufzuspalten — dafuer liegen keine amtlichen Detailwerte vor. Bekräftigt die Paasche-vs-Laspeyres-Einordnung unten: Rückwaertsanwendung der aktuellen Struktur ist die einzig durchführbare Methode mit den verfügbaren Daten."
+  },
+  "verifiedAgainstMajorGroups": "Live geprüft (28.08.2026): gewichteter Durchschnitt der 13 posId-Teilindizes (majorGroupsMonthly, Monat 2026-07) mit diesen Gewichten ergibt 101.13788 — identisch (auf 4 Nachkommastellen) mit dem publizierten mainIndex 101.1379 desselben Monats. Bestätigt: posId 1-13 entspricht exakt der Reihenfolge dieser Tabelle, UND diese Gewichte sind die aktuell vom BFS verwendeten (nicht nur irgendeine historische Fixierung).",
+  "positions": [
+    { "posId": 1, "label": "Nahrungsmittel und alkoholfreie Getränke", "weightPercent": 10.307 },
+    { "posId": 2, "label": "Alkoholische Getränke und Tabak", "weightPercent": 3.468 },
+    { "posId": 3, "label": "Bekleidung und Schuhe", "weightPercent": 2.420 },
+    { "posId": 4, "label": "Wohnen und Energie", "weightPercent": 25.595 },
+    { "posId": 5, "label": "Hausrat und Haushaltsführung", "weightPercent": 3.302 },
+    { "posId": 6, "label": "Gesundheit", "weightPercent": 17.379 },
+    { "posId": 7, "label": "Verkehr", "weightPercent": 10.715 },
+    { "posId": 8, "label": "Information und Kommunikation", "weightPercent": 3.279 },
+    { "posId": 9, "label": "Freizeit, Sport und Kultur", "weightPercent": 7.501 },
+    { "posId": 10, "label": "Bildung", "weightPercent": 0.851 },
+    { "posId": 11, "label": "Restaurants und Hotels", "weightPercent": 9.568 },
+    { "posId": 12, "label": "Versicherungen und Finanzdienstleistungen", "weightPercent": 2.252 },
+    { "posId": 13, "label": "Sonstige Waren und Dienstleistungen", "weightPercent": 3.363 }
+  ],
+  "weightSumCheck": 100.0
+}

@@ -1,0 +1,446 @@
+{
+  "$schema": "./sources.schema.json",
+  "_comment": "Whitelist der Datenquellen (US 1.6). Änderungen ausschliesslich via Git-Commit + Review — kein Runtime-Admin-Endpoint zum Bearbeiten dieser Datei (US 1.9, SSRF-Schutz US 1.6). Jede Pipeline-Komponente darf NUR URLs abrufen, die hier gelistet sind.",
+  "sources": {
+    "lik": {
+      "label": "BFS Landesindex der Konsumentenpreise (LIK)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-lik-app-state/master",
+      "type": "json-app-state",
+      "frequency": "monthly",
+      "importedSeries": {
+        "_comment": "KORRIGIERTE ENTSCHEIDUNG (Betreiber, 25.08.2026): Ursprüngliche Annahme 'alle 13 Basisreihen decken denselben Zeitraum ab, nur unterschiedlich skaliert' war falsch — jede Basisreihe startet bei ihrem eigenen Basisjahr (z.B. '12.2020=100' beginnt erst Dez 2020). Neue, präzisierte Entscheidung: ZWEI Reihen für ZWEI verschiedene Zwecke, nicht eine für alles und nicht 13 redundante Skalierungen. Der eigentliche Vorfall bei der Entdeckung: Basis '12.2025=100' existierte zum Prüfzeitpunkt bereits — Dez 2020 war zu diesem Zeitpunkt schon NICHT mehr die aktuelle amtliche Basis. Das im Code umgesetzte Rebasierungs-Warnsystem (siehe rebasingEvent) hat das korrekt erkannt, bevor darauf gebaut wurde.",
+        "totalIndex": {
+          "purpose": "Linie 1 (offizielle Inflation, Requirements 2.1) — braucht volle Historie ab Juni 1914 (US 1.12) und muss jede künftige Rebasierung überleben, ohne dass die Pipeline die Verkettung selbst nachbauen muss.",
+          "basisName": "Ewige Reihe",
+          "sourceField": "monthlySeries[] / yearlySeries[] mit basis == 'Ewige Reihe'",
+          "verifiedProperties": {
+            "coverage": "Juni 1914 (19140601) bis Juli 2026 (20260701), 1346 lückenlose Monatswerte — verifiziert 25.08.2026",
+            "maintainedByBfs": "Vom BFS selbst verkettete Gesamtreihe, wird fortgeschrieben (newestMonthlyDate == aktuellster Monat der Quelle), keine eigene Verkettungslogik nötig",
+            "nominalBasis": "Kein festes Basisjahr (basisDate-Platzhalter 99990101 in der Quelle) — Verkettung ist BFS-intern, für uns irrelevant, da Chart ohnehin rebasiert (2.0)"
+          },
+          "fallback": "Falls die Ewige Reihe die drei Kriterien (Abdeckung/Fortschreibung/Basis) bei künftiger Prüfung NICHT mehr erfüllt: Fallback auf '06.1914=100' und Betreiber informieren."
+        },
+        "majorGroups": {
+          "purpose": "Teilindizes für Trueflation-Berechnung (2.2a) — nur ab 2010 nötig, da Trueflation dort startet. Kein eigenes basis-Feld im majorGroupsMonthly/-Yearly-Array (anders als monthlySeries) — die Werte sind bereits fertig aufbereitet und folgen mathematisch nachweisbar der jeweils aktuellsten Basis (aktuell '12.2025=100', Verhältnis zur Ewigen Reihe exakt 0.09080 ± 0.00001 über alle geprüften Punkte).",
+          "sourceField": "majorGroupsMonthly[] / majorGroupsYearly[] (Top-Level-Arrays, kein basis-Filter nötig)",
+          "verifiedProperties": {
+            "coverage": "Mai 2000 (20000501) bis Juli 2026 (20260701), 315 Monatswerte — deckt 2010 lückenlos ab, keine Umstellung auf ältere Basis nötig",
+            "currentlyReflectsBasis": "12.2025=100 (dynamisch mitgeführt von der Quelle selbst, nicht von uns gepflegt)"
+          }
+        }
+      },
+      "rebasingEvent": {
+        "_comment": "PLANBARES EREIGNIS, KEIN STÖRFALL (siehe US 1.8-Ergänzung in requirements.md) — IST BEREITS EINGETRETEN: Basis '12.2025=100' existiert bereits in der Quelle (verifiziert 25.08.2026), die ursprünglich vorgesehene Basis '12.2020=100' war zum Prüfzeitpunkt schon veraltet. Grund, warum totalIndex jetzt auf 'Ewige Reihe' statt auf eine einzelne Basisreihe zeigt: die Ewige Reihe überlebt JEDE künftige Rebasierung, weil das BFS die Verkettung selbst pflegt — kein erneuter Umstellungsbedarf bei der nächsten Rebasierung.",
+        "detectionStrategy": "Weiterhin aktiv im Code (checkForNewerBasis): warnt, falls eine Basis mit höherem basisDate als die zuletzt bekannte neueste erscheint. Betrifft nur die Beobachtung, nicht mehr den Importpfad von totalIndex (Ewige Reihe ist rebasierungs-immun) — relevant bleibt es für majorGroups, falls die Quelle dort je auf ein eingefrorenes statt dynamisches Basis-Schema wechseln sollte."
+      },
+      "publicationWindow": {
+        "_comment": "LIK wird i.d.R. Anfang des Folgemonats publiziert (siehe Medienmitteilungen-Historie).",
+        "dayOfMonthStart": 1,
+        "dayOfMonthEnd": 10
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "Last-Modified",
+      "conditionalGetVerified": {
+        "status": "NICHT unterstützt",
+        "finding": "Live geprüft (25.08.2026): Der Endpunkt liefert einen `Last-Modified`-Header, ignoriert aber `If-Modified-Since` komplett — antwortet immer mit vollem `200`-Body, nie mit `304`, unabhängig vom gesendeten Datum (getestet: sehr altes Datum, exaktes Last-Modified-Datum, Datum danach). `If-None-Match` wird ebenfalls ignoriert (kein ETag in der Antwort). Konsequenz: Bandbreiten-Ersparnis durch conditional GET ist bei dieser Quelle NICHT verfügbar — jede Prüfung ist ein Volldownload (aktuell ~190KB). Der `Last-Modified`-Header bleibt trotzdem nützlich: die Pipeline vergleicht ihn NACH dem Download selbst, um zu entscheiden, ob eine Verarbeitung nötig ist (Client-seitige Ersatzlösung für die fehlende Server-seitige 304-Unterstützung)."
+      },
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5,
+        "_comment": "KORREKTUR (Betreiber, 25.08.2026): maxSuccessfulChecksPerDay zählt NUR erfolgreich abgeschlossene Prüfzyklen (egal ob 200 oder 304). Fehlgeschlagene Verbindungsversuche (Netzwerkfehler, Timeout, 5xx) zählen NICHT gegen dieses Tagesbudget — sonst würde ein einzelner Verbindungsabbruch die Pipeline 24h blockieren (Widerspruch zu US 1.4, das 3 Retries mit Backoff vorsieht). maxRetryBurstPerHour ist reiner Burst-Schutz für den Retry-Pfad, nicht für reguläre Prüfzyklen — bei maxSuccessfulChecksPerDay=1 wäre ein Stunden-Limit auf den Normalpfad ohnehin wirkungslos."
+      },
+      "validation": {
+        "_comment": "GETRENNTE VALIDIERUNGSPROFILE (Betreiber-Korrektur 25.08.2026): Die laufende Sprungprüfung (incremental) ist für den Bulk-Import (US 1.12) ungeeignet — historische Monatswerte (Weltkriegsinflation, Ölkrisen) überschreiten 2%/Monat routinemässig; bei ~1350 Monaten würde das dutzendfach eskalieren und den Schutzmechanismus durch Gewöhnung entwerten (US 1.7).",
+        "bulk": {
+          "purpose": "Einmaliger Bulk-Import (US 1.12) der kompletten Historie ab 1914 — KEINE Sprungrate-Prüfung.",
+          "checks": [
+            "completeness: keine Lücken in der Monatsfolge (jeder Monat zwischen oldestMonthlyDate und newestMonthlyDate der Basisreihe vorhanden)",
+            "monotonicDates: aufsteigende, eindeutige Datumsfolge, keine Duplikate",
+            "referencePointMatch: bekannter Ankerwert muss exakt oder mit vernachlässigbarer Rundungstoleranz stimmen, z.B. Dezember 2025 = 106.9 auf Basis 12.2020=100",
+            "roughMonotonicTrend: Index über den Gesamtzeitraum überwiegend steigend (grobe Plausibilität, kein harter Schwellwert)"
+          ]
+        },
+        "incremental": {
+          "purpose": "Laufender Betrieb — neu eintreffende Werte nach Bulk-Import. Getrennte Range je importierter Reihe (totalIndex vs. majorGroups), da beide unterschiedliche Basen/Skalierungen haben (siehe importedSeries oben).",
+          "totalIndex": {
+            "absoluteRange": {
+              "min": 50,
+              "max": 5600,
+              "derivedFrom": "Ewige Reihe, real beobachtet 25.08.2026: min=100 (Juni 1914, Basisstart), max=1115.4 (Mai 2026). Puffer gemäss Betreiber-Richtwert 0.5×min bis 5×max → 50 bis 5577, aufgerundet auf 5600."
+            },
+            "monthlyChangeRatePercentMax": 2.0
+          },
+          "majorGroups": {
+            "absoluteRange": {
+              "min": 43,
+              "max": 510,
+              "derivedFrom": "majorGroupsMonthly (Hauptgruppen-Teilindizes), real beobachtet 25.08.2026: min=86.9 (Mai 2000), max=101.3 (Jul 2026) — Werte liegen nahe 100, da mehrfach rebasiert. Puffer 0.5×min bis 5×max → 43.4 bis 506.4, gerundet."
+            },
+            "monthlyChangeRatePercentMax": 2.0
+          },
+          "_comment": "FREIGEGEBEN (Betreiber, 25.08.2026): monthlyChangeRatePercentMax=2.0% korrekt für laufenden Betrieb (US 1.7: 'LIK/Trueflation ~1-2%/Monat'), gilt für beide Reihen gleichermassen. absoluteRange abgeleitet aus den tatsächlichen Bulk-Import-Daten (nicht geschätzt), siehe derivedFrom je Reihe. Gilt NICHT für den Bulk-Import (siehe validation.bulk oben) und NICHT für Rebasing-Ereignisse (siehe rebasingEvent oben, US 1.8-Ergänzung)."
+        }
+      },
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Liefert den Anwendungszustand der BFS-Frontend-App lik-app.bfs.admin.ch, keine dokumentierte öffentliche API. Kein API-Vertrag, keine Stabilitätszusage. Datenvertrags-Test (US 2.7) ist Pflicht vor jeder Weiterverarbeitung. Bei Strukturbruch: Fachapp-Heuristik neu anwenden, NICHT auf Drittanbieter-Spiegel ausweichen (siehe Requirements Abschnitt 3)."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    },
+    "kvpi": {
+      "label": "BFS/BAG Krankenversicherungsprämien — Feld unklarer Bedeutung aus LIK-App-Kontext (NICHT verwenden, siehe kvpi-premium-index)",
+      "status": "unverified",
+      "verifiedDate": null,
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/orderNr:ds-q-05.02-kvpi-app-state/master",
+      "type": "json-app-state",
+      "frequency": "yearly",
+      "v2FinalFinding": "V2 GELÖST (Betreiber, 25.08.2026): Der KVPI-Teilindex Grundversicherung ist KEINE eigenständige Messung — BFS führt für die Grundversicherung keine eigene KVPI-Erhebung durch, sondern übernimmt die BAG-Schätzung der Durchschnittsprämien-Entwicklung 1:1. O-Ton BFS-Methodik: 'Eine spezifische KVPI-Erhebung wird für den Grundversicherungsbereich nicht durchgeführt.' Konsequenz: die Suche nach einem isolierten KVPI-Teilindex ist eingestellt — der Weg über BAG-Durchschnittsprämien (siehe Quelle 'kvpi-premium-index' unten) ist NICHT der Fallback, sondern die PRIMÄRQUELLE, eine Verarbeitungsstufe weiter oben. Diese kvpiDataUrl-Quelle bleibt registriert, aber explizit NICHT als Prämienindex nutzen — der Wert 27.38 deutet auf einen internen Gewichtungsfaktor der LIK-App hin, nicht auf einen Index.",
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "Last-Modified",
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "validation": {
+        "incremental": {
+          "absoluteRange": null,
+          "yearlyChangeRatePercentMax": null,
+          "_comment": "KEINE SCHWELLWERTE GESETZT (Betreiber-Korrektur 25.08.2026): Der beobachtete Wert (korrekturFaktor=27.38) ist mit hoher Wahrscheinlichkeit NICHT der KVPI-Teilindex Grundversicherung — dieser steht real auf Basis 1999=100 heute bei über 250. 27.38 sieht eher wie ein Gewichtungs- oder Beitragsfaktor aus, den die LIK-App intern für ihren Indexierungsrechner nutzt. V2 gilt damit als NICHT verifiziert. Keine Schwellwerte auf eine Grösse setzen, deren Bedeutung ungeklärt ist."
+        }
+      },
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "V2 NICHT abgeschlossen (siehe Requirements Abschnitt 12). Endpunkt liefert nur drei Felder (korrekturFaktor, durchschnittlicherEinfluss, vorjahr) — Bedeutung ungeklärt, mit grosser Wahrscheinlichkeit kein KVPI-Index-Wert. Nicht für 2.2b-Formel produktiv nutzen. V2 blockiert P3, NICHT P1 (siehe Zuordnungstabelle Requirements Abschnitt 12)."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/erhebungen/lik/downloads.html"
+    },
+    "kvpi-premium-index": {
+      "label": "BAG-Prämienindex (Ersatz für KVPI-Teilindex Grundversicherung, V2 final gelöst)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://opendata.bagnet.ch/?r=/download&path=L1ByYWVtaWVuL1Byw6RtaWVuX0NILnhsc3g%3D",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "v2FinalFinding": "V2 GELÖST (Betreiber, 25.08.2026): Der KVPI-Teilindex Grundversicherung ist keine eigenständige BFS-Messung — BFS übernimmt für die Grundversicherung 1:1 die BAG-Schätzung der Durchschnittsprämien-Entwicklung ('Eine spezifische KVPI-Erhebung wird für den Grundversicherungsbereich nicht durchgeführt'). Diese Quelle IST damit die Primärquelle für die Prämien-Korrekturkomponente (2.2b), keine Fallback-Ersatzlösung.",
+      "extractionMethod": {
+        "sourceFile": "Prämien_CH.xlsx (opendata.swiss Datensatz 'health-insurance-premiums', BAG) ODER strukturierter über das jährliche KVSTAT-ZIP-Archiv (bag.admin.ch, Statistik der obligatorischen Krankenversicherung), Tabelle 3.01 'Mittlere Prämien je versicherte Person nach Kanton ab 1996', Sheet '301d', Zeile 'CH'.",
+        "note": "Beide Quellen (opendata.swiss-Direktdatei und KVSTAT-ZIP) enthalten dieselbe BAG-Kennzahl. KVSTAT-ZIP bevorzugt für die Pipeline, da es die bereits von BAG berechnete 'CH'-Aggregatzeile enthält (keine eigene Gewichtung über Kantone/Tarife nötig — das würde gegen Requirements-Regel 3 'keine erfundenen Zahlen' verstossen, da BAG die korrekte Versicherten-Gewichtung intern vornimmt, die wir nicht replizieren können ohne Rohdaten zu Versichertenbeständen pro exakter Tarifkombination)."
+      },
+      "methodologicalDecision": {
+        "_comment": "BETREIBER-ENTSCHEIDUNG (25.08.2026): 'mittlere Prämie pro versicherte Person' (ALLE Versicherten inkl. Kinder), NICHT die Erwachsenen-Variante.",
+        "chosenMetric": "Mittlere Prämie je versicherte Person, alle Versicherten (CH 2024 = 4'278 CHF)",
+        "rejectedAlternative": "Mittlere Prämie Erwachsene ab 26 Jahren (CH 2024 = 5'081 CHF) — abgelehnt",
+        "reasoning": "Das HABE-Gewicht ist ein Haushaltsbudget-Anteil, und Haushalte schliessen Kinder ein. Die Erwachsenen-Variante würde die Belastung überzeichnen."
+      },
+      "baseYear": 2010,
+      "coverage": {
+        "start": 1996,
+        "end": 2024,
+        "note": "Live verifiziert 25.08.2026: 29 Jahreswerte, lückenlos 1996-2024, Basisjahr 2010 = 2834.50 CHF (Index 100)."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "XLSX-Download, keine strukturierte API. Neue Jahreswerte erscheinen typischerweise im Herbst (Prämiengenehmigung fürs Folgejahr) — Struktur (Sheetname '301d', Zeile 'CH') bei jedem Import per Datenvertrags-Test prüfen, nicht blind übernehmen."
+      },
+      "validation": {
+        "bulk": {
+          "expectedStart": 1996,
+          "minExpectedPoints": 25,
+          "_comment": "Abdeckungsprüfung analog Betreiber-Vorgabe nach dem M2-Fall ('ein erfolgreicher Import sagt wenig aus') — expectedStart und minExpectedPoints hart geprüft, nicht nur 'Datei liess sich öffnen'."
+        }
+      },
+      "knownLimitations": [
+        "Bruttoprämien — Prämienverbilligungen NICHT abgezogen. BFS schätzt den Effekt auf ca. 0.5 Prozentpunkte pro Jahr Prämienwachstum-Reduktion. Auf Methodik-Seite auszuweisen (US 4.1)."
+      ],
+      "sourceDocPage": "https://opendata.swiss/de/dataset/health-insurance-premiums"
+    },
+    "lik-medienmitteilungen": {
+      "label": "BFS LIK Medienmitteilungen-Feed (Drift-Referenz, US 1.14)",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/landesindex-konsumentenpreise/detailresultate/jcr:content/root/main/section/container/tabs_1838835756/item_3/ws_parametrized_list.model.json",
+      "type": "json",
+      "frequency": "monthly",
+      "purpose": "Unabhängige zweite Quelle für Drift-Erkennung (US 1.14) — Titel jeder Medienmitteilung nennt die publizierte Monatsveränderung, abgeglichen gegen die selbst berechnete Änderungsrate aus dem LIK-App-State-Endpunkt. Absicherung gegen dessen Fragilität (kein API-Vertrag).",
+      "checkStrategy": "best-effort",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Interner CMS-Endpunkt der BFS-Webseite (JSON-Backend für eine Webkomponente), keine dokumentierte API. Bei Nichtverfügbarkeit: Drift-Check wird übersprungen, kein Fehlschlag der Haupt-Pipeline (siehe drift-check.mjs)."
+      },
+      "sourceDocPage": "https://www.bfs.admin.ch/bfs/de/home/statistiken/preise/landesindex-konsumentenpreise/detailresultate.html"
+    },
+    "snb-m2": {
+      "label": "SNB Geldmenge M2",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snbmonagg/data/csv/de?dimSel=D0(B),D1(GM2)",
+      "type": "csv",
+      "frequency": "monthly",
+      "dimensionSelection": {
+        "_comment": "WICHTIGER FUND (25.08.2026): Requirements-Dokument nannte GM1 als M2-Selektor — das war FALSCH. Live geprüft über /api/cube/snbmonagg/dimensions/de: D1 kennt die Werte B (Bargeldumlauf), S0 (Sichteinlagen), ET (Einlagen auf Transaktionskonti), GM1 (Geldmenge M1), S1 (Spareinlagen), GM2 (Geldmenge M2), T (Termineinlagen), GM3 (Geldmenge M3). GM1=M1, GM2=M2. Nie raten, immer am dimensions-Endpoint bestimmen (Betreiber-Vorgabe befolgt).",
+        "d0": "B (Bestand, nicht Veränderung)",
+        "d1": "GM2 (Geldmenge M2)",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snbmonagg/dimensions/de"
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "conditionalGetVerified": {
+        "status": "unterstützt (ETag)",
+        "finding": "Live geprüft (25.08.2026): Antwort enthält einen echten ETag-Header. SNB-Nutzungsbedingungen verlangen ausdrücklich bedingte Anfragen vor jedem Datenabruf — IP-Sperre bei exzessiver Nutzung ist explizit angedroht, keine Stilfrage (US 1.16)."
+      },
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "bulkImportThrottle": {
+        "sequential": true,
+        "minDelayMsBetweenRequests": 1000,
+        "neverParallel": true,
+        "_comment": "Verbindlich laut Requirements Abschnitt US 1.16 — SNB sperrt IPs bei exzessiver Nutzung."
+      },
+      "validation": {
+        "bulk": {
+          "purpose": "Einmaliger Bulk-Import — KEINE Sprungrate-Prüfung, analog zum LIK-Muster.",
+          "checks": [
+            "completeness: keine Lücken in der Monatsfolge",
+            "monotonicDates: aufsteigend, keine Duplikate",
+            "plausibleRange: grobe Grössenordnung (500'000-2'000'000 Mio. CHF), kein harter Referenzpunkt-Abgleich bisher definiert — V6 unvollständig, siehe unten"
+          ]
+        },
+        "incremental": {
+          "absoluteRange": {
+            "status": "pending-derivation",
+            "note": "Nach Bulk-Import aus echten Daten ableiten, analog LIK-Verfahren — noch nicht durchgeführt."
+          },
+          "monthlyChangeRatePercentMax": 5.0,
+          "_comment": "Aus Requirements US 1.7: 'SNB-Geldmenge ~5%/Monat'."
+        }
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API (data.snb.ch), im Gegensatz zum LIK-Endpunkt eine dokumentierte, stabile Schnittstelle."
+      },
+      "sourceDocPage": "https://data.snb.ch/"
+    },
+    "snb-leitzins-current": {
+      "label": "SNB Leitzins ab 13.06.2019",
+      "status": "verified",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snbgwdzid/data/csv/de?dimSel=D0(LZ)",
+      "type": "csv",
+      "frequency": "event-based",
+      "dimensionSelection": {
+        "d0": "LZ (SNB-Leitzins)",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snbgwdzid/dimensions/de",
+        "otherAvailableD0Values": "SARON, ENG (Engpassfinanzierungsfazilität), ZIGBL/ZIG (Sichtguthaben-Zinssätze), ZIABP, FREI"
+      },
+      "discoveryMethod": "SNB-Discovery-Heuristik (siehe requirements.md Abschnitt 3) — gefunden über Betreiber-Hinweis auf Publikationsset 'Zinssätze und Devisenkurse', nicht durch Cube-Namen-Raten. Frühere Rateversuche (snbpolzin, snbchpolzin, etc.) waren alle 404.",
+      "coverage": {
+        "start": "2019-06-13",
+        "note": "Live verifiziert: erster Wert -0.75 am 2019-06-13, davor NULL-Werte (Instrument existierte noch nicht). Verlauf bis heute nachvollzogen: -0.75 (2019-06-13) -> -0.25 (2022-06-17) -> 0.5 (2022-09-23) -> 1.0 (2022-12-16) -> 1.5 (2023-03-24) -> 1.75 (2023-06-23) -> 1.5 (2024-03-22) -> 1.25 (2024-06-21) -> 1.0 (2024-09-27) -> 0.5 (2024-12-13) -> 0.25 (2025-03-21) -> 0 (2025-06-20)."
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "chartRendering": {
+        "_comment": "VERBINDLICH (Betreiber 25.08.2026): NICHT mit snb-leitzins-historical zu einer nahtlosen Reihe verketten — unterschiedliche Instrumente. Als Stufenlinie mit sichtbarer Bruchstellen-Kennzeichnung darstellen (Requirements 2.4).",
+        "displayAs": "step-line",
+        "interpolate": false
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API, dokumentierte Struktur (dimensions-Endpoint bestätigt Werte, nicht geraten)."
+      },
+      "sourceDocPage": "https://data.snb.ch/de/publishingSet/A"
+    },
+    "snb-leitzins-historical": {
+      "label": "SNB Libor-Zielband (Übergangsperiode 2000-2019)",
+      "status": "partial",
+      "verifiedDate": "2026-08-25",
+      "url": "https://data.snb.ch/api/cube/snboffzisa/data/csv/de?dimSel=D0(UG0)",
+      "type": "csv",
+      "frequency": "event-based",
+      "dimensionSelection": {
+        "d0": "UG0 (untere Grenze SNB-Zielband für Dreimonats-Libor in CHF) — NICHT LZ",
+        "structureEndpointUsed": "https://data.snb.ch/api/cube/snboffzisa/dimensions/de",
+        "note": "KORRIGIERT nach Live-Prüfung (25.08.2026): 'D0(LZ)' bei diesem Cube liefert NICHT die historische Diskont-/Lombardsatz-Reihe, sondern denselben aktuellen SNB-Leitzins wie snbgwdzid (getestet: 13 Monatswerte 2025-07 bis 2026-07, durchgehend 0 — passt exakt zum aktuellen Leitzinsstand, nicht zu einer historischen Reihe). Die tatsächlich relevante Dimension ist 'UG0' (untere Grenze Libor-Zielband) bzw. 'OG0' (obere Grenze) — das deckt die Requirements-Periode '2000-2019' ab. Cube enthält auch Zinssätze anderer Zentralbanken (Fed, EZB, Bank of England, Bank of Japan) unter separaten D0-Gruppen — nicht relevant für dieses Projekt."
+      },
+      "discoveryMethod": "SNB-Discovery-Heuristik, gefunden zusammen mit snbgwdzid (siehe oben) — Betreiber-Hinweis, kein Raten.",
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG VERIFIZIERT",
+        "note": "Live verifiziert (25.08.2026) mit Dimension UG0: Reihe beginnt 2000-01 (erster Wert 1.25), endet 2019-05 (letzter Wert vorhanden), ab 2019-06 leer — passt lückenlos zum SNB-Leitzins-Start (13.06.2019, snb-leitzins-current). Damit ist die Libor-Zielband-Periode (2000-2019) VOLLSTÄNDIG abgedeckt. OFFEN BLEIBT: die Diskont-/Lombardsatz-Periode VOR 2000 (Requirements 2.4 nennt 'bis ~2000') — dieser Cube (snboffzisa) enthält laut Dimensionsstruktur KEIN separates Diskont-/Lombardsatz-Item (nur LZ und UG0/OG0-Libor-Zielband, keine dritte Kategorie). Vermutung, nicht bestätigt: entweder existiert die Vor-2000-Reihe in einem dritten, noch nicht gefundenen Cube, oder die Requirements-Annahme 'bis ~2000' bezieht sich auf einen kürzeren Zeitraum als angenommen. NICHT weiter geraten — an Betreiber gemeldet (siehe Chat 25.08.2026)."
+      },
+      "checkStrategy": "conditional-get",
+      "conditionalHeader": "ETag",
+      "checkBudget": {
+        "maxSuccessfulChecksPerDay": 1,
+        "maxRetriesPerFailedCheck": 3,
+        "retryBackoffStrategy": "exponential",
+        "maxRetryBurstPerHour": 5
+      },
+      "chartRendering": {
+        "displayAs": "step-line",
+        "interpolate": false
+      },
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Offizielle SNB-Cube-API. ABER: Deckung für die Vor-2019-Periode noch nicht abschliessend verifiziert (siehe coverage.note) — nicht produktiv nutzen, bevor das geklärt ist."
+      },
+      "sourceDocPage": "https://data.snb.ch/de/publishingSet/A"
+    },
+    "bfs-miete-bezugsdauer-zimmerzahl": {
+      "label": "BFS Strukturerhebung: Durchschnittlicher Mietpreis nach Bezugsdauer der Wohnung und Zimmerzahl (V3/2.2b Miet-Korrektur)",
+      "status": "partial",
+      "verifiedDate": "2026-08-27",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36398529/master",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "discoveryMethod": "Fachapp-Heuristik ausgeschöpft (keine dedizierte App für diese Tabelle) — gefunden über opendata.swiss Datensatz 'durchschnittlicher-mietpreis-nach-bezugsdauer-der-wohnung-und-zimmerzahl1', bestätigt gegen die BFS-Themenseite (Bau- und Wohnungswesen, Prodima 09.03.03).",
+      "sheetStructure": {
+        "note": "Datei enthält EIN Sheet PRO JAHR (Sheetname = Jahreszahl als String, z.B. '2024'), nicht eine durchgehende Zeitreihe in einem Sheet. Zeilen: 'Total', 'Neubau', 'Neubezug einer mehr als zwei Jahre alten Wohnung', '2 bis 5 Jahre', '6 bis 10 Jahre', '11 bis 20 Jahre', '21 Jahre und mehr'. Spalten: Total + Zimmerzahl 1-6+.",
+        "proxyRow": "'Neubezug einer mehr als zwei Jahre alten Wohnung' — gewählter Neumieter-Proxy (methodische Entscheidung, siehe rentCorrectionMethodology unten)."
+      },
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG — WESENTLICHE EINSCHRÄNKUNG",
+        "start": 2020,
+        "end": 2024,
+        "note": "Live verifiziert 27.08.2026: Datei enthält NUR die Sheets 2020-2024 (5 Jahre), NICHT ab 2010 wie in Requirements 2.2b angenommen. Kein Archiv-/Historienzugang über DAM, opendata.swiss oder BFS-Themenseite gefunden (dieselbe damId liefert immer nur den aktuellen 5-Jahres-Stand). Requirements-Annahme 'jährlich, ab 2010' ist für DIESEN Zugriffsweg falsch — an Betreiber gemeldet, nicht stillschweigend auf 2020 verkürzt weitergebaut."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "XLSX-Download ohne API-Vertrag, wie kvpi-premium-index. Sheet-Namen sind Jahreszahlen — bei jedem neuen Jahrgang verschiebt sich vermutlich die Sheet-Liste (ältestes Jahr fällt weg, neuestes kommt hinzu) statt einer wachsenden Reihe. Muss bei jedem manuellen Re-Import geprüft werden."
+      },
+      "sourceDocPage": "https://opendata.swiss/de/dataset/durchschnittlicher-mietpreis-nach-bezugsdauer-der-wohnung-und-zimmerzahl1"
+    },
+    "bfs-miete-anteile-zimmerzahl": {
+      "label": "BFS Strukturerhebung: Mietwohnungen nach Anzahl Zimmer und Bezugsdauer der Wohnung (Anteile für Gewichtung, V3/2.2b Miet-Korrektur)",
+      "status": "partial",
+      "verifiedDate": "2026-08-27",
+      "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36398519/master",
+      "type": "xlsx",
+      "frequency": "yearly",
+      "discoveryMethod": "Selbe Recherche wie bfs-miete-bezugsdauer-zimmerzahl — dieselbe Tabellengruppe (T 09.03.03.6x), unterschiedliches Merkmal (Anteil der Mietwohnungen je Bezugsdauerklasse statt Durchschnittspreis).",
+      "sheetStructure": {
+        "note": "Gleiche Struktur wie bfs-miete-bezugsdauer-zimmerzahl (ein Sheet pro Jahr, Jahreszahl als Sheetname), aber Spalte 'Anteil in %' statt Mietpreis. Zeile 'Total' liefert den bevölkerungsweiten Anteil je Bezugsdauerklasse — das ist die Gewichtungsgrundlage für die 'mit Umzugsquote/Verteilung gewichtete' Variante der Mietkorrektur (Requirements 3, Konzeptfrage b/d).",
+        "verifiedTotalRow2024": "Neubau 1.9%, Neubezug>2J 23.1%, 2-5J 31.3%, 6-10J 17%, 11-20J 14.6%, 21J+ 12.2% (Summe = 100%, Total-Zeile)."
+      },
+      "coverage": {
+        "status": "UNVOLLSTÄNDIG — dieselbe Einschränkung wie bfs-miete-bezugsdauer-zimmerzahl",
+        "start": 2020,
+        "end": 2024,
+        "note": "Nur 2020-2024 verfügbar, kein Archivzugang gefunden (27.08.2026)."
+      },
+      "checkStrategy": "manual-annual",
+      "fragility": {
+        "isDocumentedApi": false,
+        "note": "Wie bfs-miete-bezugsdauer-zimmerzahl."
+      },
+      "sourceDocPage": "https://opendata.swiss/de/dataset/mietwohnungen-nach-anzahl-zimmer-und-bezugsdauer-der-wohnung1"
+    },
+    "twelvedata-btc-chf": {
+      "label": "Twelve Data — Bitcoin/CHF (Overlay-Modul, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=BTC/CHF&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "Direkt getestet (kein Discovery-Prozess nötig) — BTC/CHF ist auf dem Twelve-Data-Free-Tier ohne Einschränkung verfügbar (verifiziert 28.08.2026, echte Werte abgerufen, Quelle Kraken laut API-Metadaten).",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.secrets/twelvedata-api-key (NIEMALS ins Repo committen, ausschliesslich aus diesem lokalen Pfad lesen; für GitHub Actions als verschlüsseltes Secret hinterlegen, analog Telegram-Token)",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000,
+        "note": "Live getroffen (28.08.2026): mehrere schnelle Testabfragen lösten HTTP 429 aus ('You have run out of API credits for the current minute'). Bulk-Import MUSS sequenziell mit Pause zwischen Abrufen laufen, analog SNB-Etikette (US 1.16)."
+      },
+      "checkStrategy": "manual-daily",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte, stabile Twelve-Data-API. Kein Fallback für BTC (CoinGecko-Fallback gestrichen, Befund V8 — nur 365 Tage Historie auf dessen Free-Tier, ungeeignet für mehrjährige Reihe). Fällt Twelve Data aus, entfällt das BTC-Overlay (optionales Feature, keine Kernlinie betroffen)."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
+    },
+    "twelvedata-xau-usd": {
+      "label": "Twelve Data — Gold Spot/USD (Zwischenschritt für Gold/CHF-Overlay, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "XAU/CHF direkt getestet und live abgelehnt (HTTP 404: 'This symbol is available starting with the Grow or Venture plan') — XAU/USD auf dem Free-Tier verifiziert verfügbar. Betreiber-Entscheidung 28.08.2026: Umrechnung XAU/USD × USD/CHF statt Plan-Upgrade.",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.secrets/twelvedata-api-key",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000
+      },
+      "checkStrategy": "manual-daily",
+      "derivedUsage": "Wird NICHT direkt dargestellt — Gold/CHF = XAU/USD * USD/CHF (siehe twelvedata-usd-chf). Beide Quellreihen UND der Umrechnungsweg sind auf der Methodik-Seite auszuweisen (Betreiber-Vorgabe 28.08.2026): 'abgeleitete Grösse, keine amtliche/direkte CHF-Notierung'.",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte Twelve-Data-API. Datenvertrags-Test (US 2.7) gilt auch für diese Reihe, nicht nur für die Wechselkursreihe."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
+    },
+    "twelvedata-usd-chf": {
+      "label": "Twelve Data — USD/CHF Wechselkurs (Zwischenschritt für Gold/CHF-Overlay, Requirements 2.5)",
+      "status": "verified",
+      "verifiedDate": "2026-08-28",
+      "url": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
+      "type": "json",
+      "frequency": "daily",
+      "discoveryMethod": "Direkt getestet, auf dem Free-Tier verfügbar (verifiziert 28.08.2026).",
+      "apiKeyRequired": true,
+      "apiKeySource": "~/.secrets/twelvedata-api-key",
+      "apiKeyParamName": "apikey",
+      "rateLimits": {
+        "perDay": 800,
+        "perMinute": 8,
+        "maxDataPointsPerCall": 5000
+      },
+      "checkStrategy": "manual-daily",
+      "derivedUsage": "Zusammen mit twelvedata-xau-usd multipliziert zu Gold/CHF — siehe dortiger derivedUsage-Kommentar. Datenvertrags-Test (US 2.7, Betreiber-Vorgabe 28.08.2026) MUSS auch für diese Wechselkursreihe laufen, nicht nur für die Gold-Rohreihe.",
+      "fragility": {
+        "isDocumentedApi": true,
+        "note": "Dokumentierte Twelve-Data-API, physische Währung, stabiles Schema."
+      },
+      "sourceDocPage": "https://twelvedata.com/pricing"
+    }
+  },
+  "overlayModuleNotes": {
+    "_comment": "Requirements 2.5, Betreiber-Direktive 28.08.2026: 'Das Overlay-Modul so bauen, dass eine weitere Trueflation-Variante spaeter ohne Umbau eingehaengt werden kann.'",
+    "smiStricken": "SMI aus v1 GESTRICHEN (Betreiber-Entscheidung 28.08.2026) — auf dem Twelve-Data-Free-Tier nicht verfügbar (HTTP 404 bei allen getesteten Symbolformen: SMI, SSMI, SMI:SW, SMI.SW, XSWX:SMI, ISIN CH0009980894). v1-Overlays sind ausschliesslich Gold und BTC. v2-Kandidat, falls andere kostenlose Quelle gefunden wird oder Plan-Upgrade je gerechtfertigt erscheint.",
+    "extensibilityRequirement": "Das Chart-Overlay-Modul (app/components/LikChart.tsx) MUSS eine generische Overlay-Datenstruktur nutzen (Label, Farbe, Datenpunkte, Kategorisierung 'Wertaufbewahrung' vs. zukuenftig 'Trueflation-Variante'), NICHT fest auf 'Gold/BTC/SMI' verdrahtet sein — ein Miet-korrigiertes Trueflation-Overlay (siehe Requirements 2.2d, Miet-Entscheid ausstehend) muss ohne strukturellen Umbau als weiterer Overlay-Eintrag einhaengbar sein."
+  },
+  "rentCorrectionMethodology": {
+    "_comment": "Methodische Entscheidung V3/2.2b (Betreiber-Vorgabe 27.08.2026, KONZEPTFRAGE — Betreiber entscheidet zwischen zwei Varianten, beide berechnet):",
+    "proxyDefinition": "Neumieter-Proxy = Zeile 'Neubezug einer mehr als zwei Jahre alten Wohnung' (kürzeste NICHT-Neubau-Klasse) gegen Zeile 'Total' (Gesamtdurchschnitt aller Bezugsdauerklassen). 'Neubau' bewusst ausgeschlossen — Neubauwohnungen sind eine Sondersituation (Erstvermietung, oft Sondersegment), keine repräsentativen 'neuen' Mieter im Bestand.",
+    "variantFull": "Miet-Korrekturfaktor = volles Wachstum der Neubezug-Proxy-Zeile ggü. Bestandsmiete (LIK-Mietpreisindex), ungewichtet.",
+    "variantWeighted": "Miet-Korrekturfaktor gewichtet mit dem tatsächlichen Bevölkerungsanteil der Neubezug-Klasse (23.1% in 2024, aus bfs-miete-anteile-zimmerzahl) statt mit der in einer früheren Session diskutierten separaten Umzugsquote (BFS 9.3%/Jahr) — der Anteilswert stammt aus DERSELBEN Erhebung wie die Mietpreise selbst (interne Konsistenz), die Umzugsquote ist eine andere, nicht direkt vergleichbare Kennzahl (Personen-Umzüge, nicht Wohnungs-Bezugsdauerverteilung).",
+    "openDecision": "Betreiber entscheidet nach Vorlage beider berechneter Varianten, welche in 2.2b produktiv verwendet wird."
+  },
+  "notes": [
+    "Weitere Quellen (SNB M2, SNB Leitzins, Mietpreisindex, Strukturerhebung, HABE, Twelve Data) werden erst nach jeweiliger Verifikation (V3-V8) hier ergänzt — kein Eintrag ohne verifizierten Endpunkt.",
+    "SSRF-Schutz (US 1.6): Pipeline-Code darf ausschliesslich URLs aus diesem File abrufen. Kein dynamisches Zusammensetzen von Quellen-URLs aus Nutzereingaben oder Konfigurationswerten, die nicht aus dieser Datei stammen.",
+    "Admin-Zugriff (US 1.9): Diese Datei ist NICHT über einen Runtime-Endpoint änderbar. Jede Änderung läuft über Git-Commit + Review-Pflicht — das erfüllt die Anforderung 'authentifiziert' für v1, da kein öffentlich erreichbarer Schreibzugriff existiert.",
+    "Negativtest-Pflicht (P1-DoD): Die Pipeline-Implementierung muss nachweisen, dass ein Abruf gegen eine NICHT in diesem File gelistete URL abgelehnt wird — Negativtest, nicht nur Positivtest gegen erlaubte URLs."
+  ]
+}

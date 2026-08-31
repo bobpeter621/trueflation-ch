@@ -1,0 +1,11 @@
+import { chromium } from "playwright";
+const out = process.argv[2] ?? "/tmp/i18n-chart.png";
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+await page.goto("http://localhost:3000/?betrag=1000&jahr=2015", { waitUntil: "networkidle" });
+await page.waitForSelector(".tf-chart-canvas-wrapper canvas", { timeout: 15000 });
+await page.waitForTimeout(1500);
+await page.locator(".tf-chart-container").screenshot({ path: out });
+await page.locator(".tf-rechner").screenshot({ path: out.replace(".png", "-rechner.png") });
+await browser.close();
+console.log("saved", out);

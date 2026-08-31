@@ -1,0 +1,160 @@
+{
+  "_comment": "Automatisch generiert durch scripts/pipeline/build-kvpi-premium-index.mjs. Basiert auf BAG-Statistik der obligatorischen Krankenversicherung (KVSTAT), Tabelle 3.01, Zeile CH. Metrik: mittlere Prämie je versicherte Person (ALLE Versicherten inkl. Kinder), NICHT nur Erwachsene — Betreiber-Entscheidung 25.08.2026, Begründung: HABE-Gewicht ist Haushaltsbudget-Anteil, Haushalte schliessen Kinder ein. Bruttoprämien, Prämienverbilligungen NICHT abgezogen (BFS-Schätzung: ~0.5 Prozentpunkte/Jahr Effekt) — als bekannte Einschränkung auf Methodik-Seite auszuweisen.",
+  "sourceDescription": "BAG Statistik der obligatorischen Krankenversicherung (KVSTAT), Tabelle 3.01",
+  "metric": "Mittlere Prämie je versicherte Person, alle Versicherten (inkl. Kinder), national aggregiert (CH)",
+  "baseYear": 2010,
+  "unit": "CHF (Prämie), Index (indexValue, Basisjahr = 100)",
+  "importedAt": "2026-08-27T05:21:50.864Z",
+  "importType": "bulk",
+  "knownLimitations": [
+    "Bruttoprämien — Prämienverbilligungen nicht abgezogen (BFS-Schätzung: ca. 0.5 Prozentpunkte/Jahr Effekt).",
+    "KVPI-Teilindex Grundversicherung existiert nicht eigenständig — diese Reihe IST die Primärquelle (BAG-Durchschnittsprämien), nicht ein Fallback."
+  ],
+  "values": [
+    {
+      "year": 1996,
+      "premiumCHF": 1538.94,
+      "indexValue": 0.5429
+    },
+    {
+      "year": 1997,
+      "premiumCHF": 1663.89,
+      "indexValue": 0.587
+    },
+    {
+      "year": 1998,
+      "premiumCHF": 1753.68,
+      "indexValue": 0.6187
+    },
+    {
+      "year": 1999,
+      "premiumCHF": 1792.7,
+      "indexValue": 0.6325
+    },
+    {
+      "year": 2000,
+      "premiumCHF": 1850.16,
+      "indexValue": 0.6527
+    },
+    {
+      "year": 2001,
+      "premiumCHF": 1917.16,
+      "indexValue": 0.6764
+    },
+    {
+      "year": 2002,
+      "premiumCHF": 2090.65,
+      "indexValue": 0.7376
+    },
+    {
+      "year": 2003,
+      "premiumCHF": 2281.46,
+      "indexValue": 0.8049
+    },
+    {
+      "year": 2004,
+      "premiumCHF": 2441.87,
+      "indexValue": 0.8615
+    },
+    {
+      "year": 2005,
+      "premiumCHF": 2487.46,
+      "indexValue": 0.8776
+    },
+    {
+      "year": 2006,
+      "premiumCHF": 2582.72,
+      "indexValue": 0.9112
+    },
+    {
+      "year": 2007,
+      "premiumCHF": 2612.13,
+      "indexValue": 0.9215
+    },
+    {
+      "year": 2008,
+      "premiumCHF": 2585.79,
+      "indexValue": 0.9123
+    },
+    {
+      "year": 2009,
+      "premiumCHF": 2610.61,
+      "indexValue": 0.921
+    },
+    {
+      "year": 2010,
+      "premiumCHF": 2834.5,
+      "indexValue": 1
+    },
+    {
+      "year": 2011,
+      "premiumCHF": 3005.45,
+      "indexValue": 1.0603
+    },
+    {
+      "year": 2012,
+      "premiumCHF": 3075.23,
+      "indexValue": 1.0849
+    },
+    {
+      "year": 2013,
+      "premiumCHF": 3105.21,
+      "indexValue": 1.0955
+    },
+    {
+      "year": 2014,
+      "premiumCHF": 3172.43,
+      "indexValue": 1.1192
+    },
+    {
+      "year": 2015,
+      "premiumCHF": 3288.92,
+      "indexValue": 1.1603
+    },
+    {
+      "year": 2016,
+      "premiumCHF": 3441.95,
+      "indexValue": 1.2143
+    },
+    {
+      "year": 2017,
+      "premiumCHF": 3604.66,
+      "indexValue": 1.2717
+    },
+    {
+      "year": 2018,
+      "premiumCHF": 3735.4,
+      "indexValue": 1.3178
+    },
+    {
+      "year": 2019,
+      "premiumCHF": 3772.04,
+      "indexValue": 1.3308
+    },
+    {
+      "year": 2020,
+      "premiumCHF": 3777.01,
+      "indexValue": 1.3325
+    },
+    {
+      "year": 2021,
+      "premiumCHF": 3787.78,
+      "indexValue": 1.3363
+    },
+    {
+      "year": 2022,
+      "premiumCHF": 3766.21,
+      "indexValue": 1.3287
+    },
+    {
+      "year": 2023,
+      "premiumCHF": 3963.1,
+      "indexValue": 1.3982
+    },
+    {
+      "year": 2024,
+      "premiumCHF": 4278.15,
+      "indexValue": 1.5093
+    }
+  ]
+}

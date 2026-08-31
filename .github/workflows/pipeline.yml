@@ -1,0 +1,197 @@
+name: Datenpipeline (LIK + SNB M2)
+
+# Requirements Abschnitt 11: Scheduler über GitHub Actions, nicht systemd-Timer
+# — unabhängig vom Droplet-Zustand. Betreiber-Vorgabe (25.08.2026): Scheduler
+# scharf stellen, sobald die LIK-Pipeline inkrementell läuft — nicht bis P4
+# warten, sonst hängt der Datenstand an der Verfügbarkeit des Agenten statt
+# am Betrieb entkoppelt zu sein.
+
+on:
+  schedule:
+    # Publikationsfenster gemäss config/sources.json (lik.publicationWindow):
+    # LIK wird i.d.R. Anfang des Folgemonats publiziert (Tag 1-10).
+    # Täglicher Lauf 06:00 UTC im Fenster deckt US 1.1 AC ab ("nicht zwingend
+    # täglich" — hier bewusst täglich im engen Fenster statt monatlich, da
+    # das Tagesbudget (maxSuccessfulChecksPerDay=1) ohnehin nur einen
+    # erfolgreichen Zyklus pro Tag zulässt, US 1.16).
+    - cron: "0 6 1-10 * *"
+  workflow_dispatch: {} # manueller Override (US 1.5)
+
+# Kein paralleler Lauf (US 1.16: "niemals parallel") — falls ein Lauf noch
+# läuft, wird ein neuer nicht gestartet, sondern der vorherige zuende geführt.
+concurrency:
+  group: trueflation-pipeline
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+
+      - name: LIK — inkrementeller Lauf
+        run: node scripts/pipeline/incremental-update-lik.mjs
+
+      - name: SNB M2 — inkrementeller Lauf
+        run: node scripts/pipeline/bulk-import-snb-m2.mjs
+        # Hinweis: SNB hat noch kein eigenes incremental-update-Skript
+        # (siehe TODO unten) — bulk-import ist bei monatlicher Frequenz
+        # idempotent nutzbar, bis das dedizierte Skript existiert.
+        continue-on-error: true
+
+      - name: Trueflation — Neuberechnung (LIK + Prämienkorrektur)
+        # Läuft NACH dem LIK-Update, da die Berechnung von der aktuellen
+        # LIK-Monatsreihe abhängt. Betreiber-Fund 26.08.2026: dieser Schritt
+        # fehlte ursprünglich in der Pipeline — ohne ihn hätte die Website
+        # eine Trueflation-Reihe gezeigt, die nur bei manuellen lokalen Läufen
+        # aktualisiert wird, obwohl der LIK-Scheduler bereits produktiv läuft.
+        run: node scripts/pipeline/build-trueflation-index.mjs
+
+      - name: Trueflation — Regressionstests (harte Prüfziele, muss vor Commit bestehen)
+        # Bricht den Workflow ab (kein continue-on-error), falls ein Test
+        # fehlschlägt — verhindert, dass eine fehlerhafte Neuberechnung
+        # committed und live geschaltet wird (analog zur Plausi-Prüfung, US 1.7).
+        run: node scripts/pipeline/test-trueflation-index.mjs
+
+      - name: Twelve-Data-Overlays (Gold + BTC) — täglicher Refresh
+        # Requirements 2.5, P4 (28.08.2026). SMI aus v1 gestrichen (auf dem
+        # Free-Tier nicht verfügbar, Betreiber-Entscheidung), nur noch Gold
+        # (abgeleitet: XAU/USD x USD/CHF) und BTC/CHF. Optionales Feature —
+        # continue-on-error, damit ein Twelve-Data-Ausfall/Rate-Limit die
+        # Kernpipeline (LIK/Trueflation/M2) NICHT blockiert (US 3.16 Zustand 3).
+        # Secret TWELVEDATA_API_KEY muss in den Repo-Settings hinterlegt sein
+        # (analog TELEGRAM_BOT_TOKEN) — NIEMALS den Key ins Repo committen.
+        # CODE-REVIEW-FIX (28.08.2026, Finding 2 — WICHTIG): Secret
+        # wird jetzt DIREKT als Env-Var an den Node-Prozess gereicht (analog
+        # TELEGRAM_BOT_TOKEN im Eskalationsschritt unten), NICHT mehr über
+        # den Umweg einer lokalen Klartextdatei geschrieben — kleinere
+        # Angriffsfläche, konsistent mit dem etablierten Projektmuster.
+        # bulk-import-twelvedata-overlays.mjs liest bevorzugt
+        # process.env.TWELVEDATA_API_KEY, fällt nur für lokale/manuelle
+        # Läufe auf die Datei zurück (siehe loadApiKey() dort).
+        env:
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+        id: twelvedata_overlays
+        run: node scripts/pipeline/bulk-import-twelvedata-overlays.mjs
+        continue-on-error: true
+
+      - name: Twelve-Data-Ausfall eskalieren (Betreiber-Vorgabe 29.08.2026)
+        # "Optional" heisst nicht "unbemerkt" (Betreiber-Vorgabe): continue-on-error
+        # oben unterdrueckt den Job-Fail-Status, wodurch der spaetere
+        # "Fehler-Eskalation"-Schritt (if: failure()) NIE fuer einen fehlgeschlagenen
+        # Twelve-Data-Abruf greift -- ein dauerhafter Gold/BTC-Ausfall (US 1.4/US 3.16)
+        # waere sonst unbegrenzt lange unsichtbar, obwohl das UI selbst pro Overlay
+        # korrekt einen Ausfall-Hinweis zeigt (siehe LikChart.tsx overlayErrors), sobald
+        # ein Nutzer das Overlay aktiviert -- der Betreiber wuerde davon aber nie separat
+        # per Telegram erfahren. Eigener, expliziter Eskalationsschritt unabhaengig vom
+        # Job-Gesamtstatus, analog zur bestehenden Fehler-Eskalation unten.
+        if: steps.twelvedata_overlays.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              --data-urlencode text="[trueflation.ch] ⚠️ Twelve-Data-Overlay-Import (Gold/BTC) fehlgeschlagen -- Kernpipeline laeuft unbeeinflusst weiter (continue-on-error), aber Overlay-Daten bleiben auf altem Stand. Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht gesetzt -- Twelve-Data-Ausfall NICHT eskaliert. Betreiber-TODO: Secrets hinterlegen."
+          fi
+
+      - name: Trueflation — public/-Kopien synchronisieren
+        # id (30.08.2026, Betreiber-Vorgabe i/k): test-public-sync-completeness.mjs
+        # erkennt diesen Schritt primär ueber diese id, der Namens-Regex bleibt
+        # nur als Fallback fuer alte/manuelle Aufrufe. Eine harmlose Umbenennung
+        # des "name"-Feldes bricht damit nicht mehr die CI (vorher: fail-closed,
+        # aber ueberraschend fuer den naechsten Bearbeiter).
+        id: sync_public_data
+        # Next.js liest Client-seitig aus public/data/, die Pipeline schreibt
+        # aber nach data/ — ohne diesen Schritt divergieren beide Kopien
+        # (bereits einmal manuell aufgefallen, siehe Session-Log 26.08.2026).
+        # F5-Fix (Code-Review 26.08.2026): M2-Sync-Fehlschlag nicht mehr
+        # stillschweigend verschlucken (vorher "2>/dev/null || true" ohne
+        # sichtbaren Hinweis) — ein WARN-Log macht einen veralteten
+        # public/data/snb-m2-Stand im Actions-Log sichtbar, statt dass er
+        # unbemerkt bleibt.
+        run: |
+          # Fix 29.08.2026 (Code-Review-Fund P4): total-index-monthly.json (LIK-Kernreihe,
+          # von LikChart.tsx UND KaufkraftRechner.tsx client-seitig gefetcht) fehlte im
+          # Sync komplett -- die Datei existierte in public/ nur, weil sie einmalig am
+          # 25.08.2026 (P1) manuell committed wurde, seither nie aktualisiert. Kein
+          # sichtbarer Fehler (Datei war ja da), sondern eine STILLE, unbemerkte
+          # Divergenz zwischen data/ (taeglich fortgeschrieben) und public/data/
+          # (eingefroren) -- exakt die Fehlerklasse, die dieser Kommentarblock oben
+          # beschreibt, hier aber die wichtigste Datei des ganzen Projekts betraf.
+          mkdir -p public/data/lik
+          cp data/lik/total-index-monthly.json public/data/lik/
+          mkdir -p public/data/trueflation
+          cp data/trueflation/trueflation-index-monthly.json public/data/trueflation/
+          # Fix 29.08.2026 (Council-Vorabpruefung P4): yearly-Datei fehlte im
+          # Sync komplett — Kaufkraft-Rechner (liest ausschliesslich die
+          # yearly-Datei) schlug dadurch mit HTTP 404 fehl, obwohl die
+          # monthly-Kopie vorhanden war. Exakt dieselbe Fehlerklasse wie beim
+          # Leitzins-Fund oben ("Sync-Schritt vergisst eine von mehreren
+          # Dateien") — deshalb hart (kein continue-on-error), da die
+          # yearly-Datei fuer den Rechner nicht optional ist.
+          cp data/trueflation/trueflation-index-yearly.json public/data/trueflation/
+          mkdir -p public/data/snb-m2
+          if ! cp data/snb-m2/m2-monthly.json public/data/snb-m2/ 2>/dev/null; then
+            echo "::warning::M2-Sync uebersprungen — data/snb-m2/m2-monthly.json fehlt oder nicht lesbar. public/data/snb-m2/ koennte veraltet sein."
+          fi
+          mkdir -p public/data/overlays
+          if ! cp data/overlays/btc-chf-daily.json public/data/overlays/ 2>/dev/null; then
+            echo "::warning::BTC-Overlay-Sync uebersprungen — data/overlays/btc-chf-daily.json fehlt (Twelve-Data-Schritt evtl. fehlgeschlagen). Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          if ! cp data/overlays/gold-chf-daily-derived.json public/data/overlays/ 2>/dev/null; then
+            echo "::warning::Gold-Overlay-Sync uebersprungen — data/overlays/gold-chf-daily-derived.json fehlt (Twelve-Data-Schritt evtl. fehlgeschlagen). Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          # Fix 29.08.2026: Leitzins-Sync fehlte komplett (US 3.5) — beim
+          # P4-Smoke-Test entdeckt (404 auf /data/snb-leitzins/*.json trotz
+          # vorhandener Quelldateien unter data/). Analog zu den Overlays.
+          mkdir -p public/data/snb-leitzins
+          if ! cp data/snb-leitzins/leitzins-current.json public/data/snb-leitzins/ 2>/dev/null; then
+            echo "::warning::Leitzins-Sync (current) uebersprungen — data/snb-leitzins/leitzins-current.json fehlt. Leitzins-Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+          if ! cp data/snb-leitzins/leitzins-historical.json public/data/snb-leitzins/ 2>/dev/null; then
+            echo "::warning::Leitzins-Sync (historical) uebersprungen — data/snb-leitzins/leitzins-historical.json fehlt. Leitzins-Overlay bleibt auf altem Stand oder inaktiv."
+          fi
+
+      - name: Prüfsummen aktualisieren (US 5.5)
+        run: node -e "import('./scripts/pipeline/lib/checksums.mjs').then(m => m.writeChecksums())"
+
+      - name: Änderungen committen (falls vorhanden)
+        run: |
+          git config user.name "trueflation-pipeline-bot"
+          git config user.email "pipeline@trueflation.ch"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "Keine Änderungen — nichts zu committen."
+          else
+            git add data/ public/data/
+            git commit -m "chore(pipeline): automatisierter Datenabruf $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Fehler-Eskalation
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              --data-urlencode text="[trueflation.ch] ⚠️ Pipeline-Lauf fehlgeschlagen (GitHub Actions). Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht als Secrets gesetzt — keine Eskalation möglich. Betreiber-TODO: Secrets in Repo-Settings hinterlegen."
+          fi

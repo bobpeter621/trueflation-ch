@@ -1,0 +1,304 @@
+{
+  "_comment": "ABGELEITET aus der Monatsreihe (trueflation-index-monthly.json) — KEINE eigene Neuberechnung. \"values\" sind Januar-Endpunkte (Momentaufnahme, konsistent mit dem monatlichen Kettenindex). \"calendarYearAverages\" sind JAHRESDURCHSCHNITTE (Mittel der 12 Monatswerte je Kalenderjahr) — DIES ist die für Kopfzahlen (US 3.1) und den Kaufkraft-Rechner zu verwendende Grösse, weil das BFS die amtliche Jahresteuerung ebenfalls als Jahresdurchschnitt gegen Jahresdurchschnitt publiziert — eine Januar-zu-Januar-Zahl wäre gegen Presse-/BFS-Meldungen nicht vergleichbar und zusätzlich durch die Saisonalität des Monats Januar (Winterschlussverkauf etc., siehe Test 3) verzerrt. Einzige Quelle der Wahrheit für BEIDE Felder ist die Monatsreihe, keine separate Neuberechnung.",
+  "scope": "lik_plus_premium_plus_rent_correction",
+  "derivedFrom": "trueflation-index-monthly.json",
+  "startYear": 2010,
+  "methodology": {
+    "formula": "pm_y = (1+p_y)^(1/12) - 1 (monatlich-aequivalente Praemienrate); combinedGrowthFactor(m) = LIK_growth_factor(m)^(1-w(y)) * (1+pm_y)^w(y); Trueflation(m) = Trueflation(m-1) * combinedGrowthFactor(m). GEOMETRISCHE Gewichtung, nicht arithmetisch — einzige mit monatlicher Compoundierung konsistente Form.",
+    "weightFormula": "P_konsum = P_brutto / C_brutto; premiumWeight = P_konsum / (1 + P_konsum)",
+    "fixationRhythmYears": 5,
+    "smoothingPolicy": "Kein Glätten der Januar-Sprünge — bewusst deklariert (siehe transitionNote je Januar-Monat). Glätten würde entweder rückwirkend publizierte Monate ändern oder vorausschauend interpolieren, beides mit den Transparenz-/Anti-Erfindung-Prinzipien des Projekts unvereinbar.",
+    "revisionPolicy": "US 1.8: Jeder Lauf berechnet die gesamte Reihe neu aus der aktuellen Prämiendatendatei - eine BAG-Revision (provisorisch -> definitiv) fliesst automatisch ein, keine Sperre/Einfrierung publizierter Monate. OFFEN: automatisches Protokollieren materieller Revisionen in der Aenderungshistorie (US 4.10) ist noch nicht Teil dieses Build-Skripts.",
+    "cBrutto": {
+      "value": 48.8,
+      "unit": "share_of_gross_income",
+      "isApproximation": true,
+      "source": "BFS HABE-Publikation, Summenzeile \"Konsumausgaben\" (aktuellster verfügbarer Einzeljahreswert, nicht je Fixierungsjahr recherchiert)"
+    },
+    "premiumBudgetShareByFixationYear": {
+      "2010": {
+        "value": 5.4089,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2010), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      },
+      "2015": {
+        "value": 6.1841,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2015), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      },
+      "2020": {
+        "value": 6.4457,
+        "source": "BFS HABE-Publikation (Fixierungsjahr 2020), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens"
+      }
+    },
+    "weightTable": {
+      "2010": {
+        "premiumBudgetSharePercent": 5.4089,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2010), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.11083811475409837,
+        "weight": 0.09977881860727666
+      },
+      "2015": {
+        "premiumBudgetSharePercent": 6.1841,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2015), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.12672336065573772,
+        "weight": 0.11247069607395595
+      },
+      "2020": {
+        "premiumBudgetSharePercent": 6.4457,
+        "premiumBudgetShareSource": "BFS HABE-Publikation (Fixierungsjahr 2020), Position \"Krankenkassen: Prämien für die Grundversicherung\", % des Bruttoeinkommens",
+        "pKonsum": 0.13208401639344264,
+        "weight": 0.11667333385222742
+      }
+    },
+    "note2025": "2025 und spaeter: 2020er-Gewicht wird fortgeschrieben, bis HABE-Publikation ein neues Fixierungsjahr-Gewicht liefert. Reihe selbst endet aber beim letzten Jahr mit vollstaendigen BAG-Praemiendaten (aktuell 2024) - keine Extrapolation der Praemienkomponente.",
+    "rentCorrection": {
+      "formula": "rentMonthlyFactor = (1 + correctionDeltaPpPerYear/100)^(1/12); ab RENT_CORRECTION_START_YEAR wird likGrowthFactor MULTIPLIKATIV mit rentMonthlyFactor korrigiert, BEVOR die Praemien-Gewichtsformel (w) greift (Requirements 2.2b, Formel-Reihenfolge).",
+      "variant": "weightedVsLongestActual (Bevoelkerungsanteil, Betreiber-Entscheid dritte Runde)",
+      "correctionDeltaPpPerYear": 0.0608,
+      "startYear": 2020,
+      "sourceCoverage": "2020-2024",
+      "sourceFile": "data/rent-correction/rent-correction-longtenure-check.json -> weightedVsLongestActual",
+      "appliedAsConstantAnnualFactor": true,
+      "note": "Konstanter jaehrlicher Korrekturfaktor ab 2020, keine monatliche Aufloesung erfunden (Requirements-Regel 3) - die Datengrundlage selbst ist nur als 5-Jahres-Fenster (2020-2024) verfuegbar. Vor 2020 laeuft die LIK-Komponente unveraendert (kein rueckwirkendes Glaetten)."
+    }
+  },
+  "knownGaps": [
+    {
+      "component": "fixer_warenkorb",
+      "status": "geprüft, Ergebnis dokumentiert (28.08.2026)",
+      "reason": "Aktuellste Gewichte (\"LIK-Warenkorb und Gewichte 2026\", 13 Hauptgruppen, siehe config/lik-warenkorb-gewichte-2026.json) rückwirkend 2010-2024 fixiert und gegen dieselbe 13er-posId-Struktur wie die verkettete Reihe verrechnet (siehe build-warenkorb-fixation-test.mjs) — kein 12<->13-Zuordnungsproblem. Gemessener Effekt -0.035 pp/Jahr, Kriterium (|Effekt| >= 0.10 pp/Jahr UND Abdeckung >= 10/15 Jahre) NICHT erfüllt (Betrag zu klein, Abdeckung war voll: 15/15). Als Befund dokumentiert, NICHT als Overlay umgesetzt — nicht in diese Kernberechnung integriert.",
+      "measuredEffectPpPerYear": -0.035,
+      "criterionMet": false,
+      "decision": "als Befund dokumentiert, kein Overlay"
+    },
+    {
+      "component": "mietkorrektur",
+      "status": "INTEGRIERT in die Hauptlinie (Betreiber-Entscheid, dritte Runde, 28.08.2026)",
+      "reason": "Drei Vergleichsgruppen/Gewichtungen berechnet (gegen Gesamtdurchschnitt: -0.156 pp/Jahr, verworfen; gegen längste Bezugsdauer-Klasse 21J+ voll/ungewichtet: +0.253 pp/Jahr, verworfen, unterstellt \"alle wohnen zu Neuvermietungspreisen\"; gewichtet mit Umzugsquote: +0.024 pp/Jahr, verworfen, erfasst nur Jahresumzuege statt kumulierter Exposition). GEWÄHLT: gewichtet mit dem TATSÄCHLICHEN Bevölkerungsanteil der Neubezug-Klasse (+0.0608 pp/Jahr) — dieselbe Logik wie bei der Prämienkorrektur, tatsächliche statt hypothetische Exposition. Abdeckung bleibt 5 von 15 Jahren (2020-2024, Datengrundlage) — GREIFT DAHER NUR AB 2020, davor läuft die LIK-Komponente unverändert, der Bruch ist über rentCorrectionNote gekennzeichnet, nicht rückwirkend geglättet. Betreiber-Begründung für die Integration trotz kleinem Effekt: entscheidend ist nicht die Grösse der Bewegung, sondern dass die Zahl faktisch korrekt ist. Meldepflichtiger Widerspruchsbefund bleibt bestehen und wird auf der Methodik-Seite dokumentiert: Pro-m²-Kreuzprüfung zeigt gegenteilige Richtung (+1.84pp) — mutmasslich weil Neumieter im Schnitt kleinere Wohnungen beziehen (nicht verifiziert).",
+      "measuredEffectPpPerYearVsTotal": -0.156,
+      "measuredEffectPpPerYearVsLongestTenureFull": 0.253,
+      "measuredEffectPpPerYearVsLongestTenureRelocationRateWeighted": 0.0236,
+      "measuredEffectPpPerYearVsLongestTenurePopulationWeighted": 0.0608,
+      "criterionMet": true,
+      "decision": "integriert in Hauptlinie, Variante Bevölkerungsanteil, ab 2020 (Betreiber-Entscheid dritte Runde)"
+    },
+    {
+      "component": "strom",
+      "status": "dauerhaft gestrichen",
+      "reason": "Doppelzählung — Strom bereits vollständig im LIK enthalten."
+    }
+  ],
+  "values": [
+    {
+      "year": 2010,
+      "trueflationIndex": 1042.8,
+      "likIndex": 1042.8,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "anchor"
+    },
+    {
+      "year": 2011,
+      "trueflationIndex": 1053.8205,
+      "likIndex": 1045.7,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2012,
+      "trueflationIndex": 1052.1077,
+      "likIndex": 1037.4,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2013,
+      "trueflationIndex": 1051.8415,
+      "likIndex": 1034.6,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2014,
+      "trueflationIndex": 1053.5125,
+      "likIndex": 1035.2,
+      "premiumWeight": 0.099779,
+      "fixationYear": 2010,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2015,
+      "trueflationIndex": 1051.3995,
+      "likIndex": 1030.2,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2016,
+      "trueflationIndex": 1043.8419,
+      "likIndex": 1017.1,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2017,
+      "trueflationIndex": 1052.4972,
+      "likIndex": 1020.7,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2018,
+      "trueflationIndex": 1064.7704,
+      "likIndex": 1028.2,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2019,
+      "trueflationIndex": 1074.1356,
+      "likIndex": 1034,
+      "premiumWeight": 0.112471,
+      "fixationYear": 2015,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2020,
+      "trueflationIndex": 1077.2265,
+      "likIndex": 1036.1,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2021,
+      "trueflationIndex": 1072.7465,
+      "likIndex": 1030.4,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2022,
+      "trueflationIndex": 1089.2209,
+      "likIndex": 1047.4,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2023,
+      "trueflationIndex": 1121.2334,
+      "likIndex": 1081.8,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    },
+    {
+      "year": 2024,
+      "trueflationIndex": 1141.5155,
+      "likIndex": 1095.6,
+      "premiumWeight": 0.116673,
+      "fixationYear": 2020,
+      "dataStatus": "aktuell"
+    }
+  ],
+  "calendarYearAverages": [
+    {
+      "year": 2010,
+      "trueflationIndexAvg": 1050.1065,
+      "likIndexAvg": 1046.5333,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2011,
+      "trueflationIndexAvg": 1059.5974,
+      "likIndexAvg": 1048.95,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2012,
+      "trueflationIndexAvg": 1057.1104,
+      "likIndexAvg": 1041.6667,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2013,
+      "trueflationIndexAvg": 1056.7099,
+      "likIndexAvg": 1039.4083,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2014,
+      "trueflationIndexAvg": 1058.2886,
+      "likIndexAvg": 1039.2833,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2015,
+      "trueflationIndexAvg": 1050.8045,
+      "likIndexAvg": 1027.3917,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2016,
+      "trueflationIndexAvg": 1051.6025,
+      "likIndexAvg": 1022.9167,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2017,
+      "trueflationIndexAvg": 1062.0623,
+      "likIndexAvg": 1028.3917,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2018,
+      "trueflationIndexAvg": 1075.7567,
+      "likIndexAvg": 1038.0083,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2019,
+      "trueflationIndexAvg": 1081.8519,
+      "likIndexAvg": 1041.7833,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2020,
+      "trueflationIndexAvg": 1075.8442,
+      "likIndexAvg": 1034.225,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2021,
+      "trueflationIndexAvg": 1082.2077,
+      "likIndexAvg": 1040.225,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2022,
+      "trueflationIndexAvg": 1109.6243,
+      "likIndexAvg": 1069.7167,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2023,
+      "trueflationIndexAvg": 1134.4484,
+      "likIndexAvg": 1092.5583,
+      "monthsIncluded": 12
+    },
+    {
+      "year": 2024,
+      "trueflationIndexAvg": 1154.388,
+      "likIndexAvg": 1104.1583,
+      "monthsIncluded": 12
+    }
+  ]
+}

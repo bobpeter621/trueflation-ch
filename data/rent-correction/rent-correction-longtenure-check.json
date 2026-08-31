@@ -1,0 +1,100 @@
+{
+  "_comment": "Automatisch generiert durch build-rent-correction-longtenure-check.mjs. Ergänzt build-rent-correction.mjs um eine ZWEITE Vergleichsgruppe (21 Jahre und mehr statt Gesamtdurchschnitt) auf Betreiber-Anweisung (28.08.2026) — \"Total\" enthält die Neubezüge bereits, was die gemessene Differenz künstlich dämpft.",
+  "series": [
+    {
+      "year": 2020,
+      "totalPrice": 1373,
+      "proxyPrice": 1414,
+      "longestTenurePrice": 1166
+    },
+    {
+      "year": 2021,
+      "totalPrice": 1393,
+      "proxyPrice": 1432,
+      "longestTenurePrice": 1174
+    },
+    {
+      "year": 2022,
+      "totalPrice": 1412,
+      "proxyPrice": 1450,
+      "longestTenurePrice": 1193
+    },
+    {
+      "year": 2023,
+      "totalPrice": 1451,
+      "proxyPrice": 1478,
+      "longestTenurePrice": 1202
+    },
+    {
+      "year": 2024,
+      "totalPrice": 1485,
+      "proxyPrice": 1520,
+      "longestTenurePrice": 1241
+    }
+  ],
+  "shareSeries": [
+    {
+      "year": 2020,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2021,
+      "neubezugSharePercent": 24.8
+    },
+    {
+      "year": 2022,
+      "neubezugSharePercent": 23.8
+    },
+    {
+      "year": 2023,
+      "neubezugSharePercent": 23.3
+    },
+    {
+      "year": 2024,
+      "neubezugSharePercent": 23.1
+    }
+  ],
+  "variantVsTotal": {
+    "comparisonGroup": "Gesamtdurchschnitt (Total, bisherige Methode)",
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceTotalGrowthPercent": 8.16,
+    "proxyTotalGrowthPercent": 7.5,
+    "referenceAnnualPercent": 1.9798,
+    "proxyAnnualPercent": 1.8236,
+    "correctionDeltaTotalPp": -0.66,
+    "correctionDeltaPpPerYear": -0.1561
+  },
+  "variantVsLongest": {
+    "comparisonGroup": "21 Jahre und mehr (längste Bezugsdauer-Klasse)",
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceTotalGrowthPercent": 6.43,
+    "proxyTotalGrowthPercent": 7.5,
+    "referenceAnnualPercent": 1.5707,
+    "proxyAnnualPercent": 1.8236,
+    "correctionDeltaTotalPp": 1.06,
+    "correctionDeltaPpPerYear": 0.253
+  },
+  "weightedVsLongestActual": {
+    "comparisonGroup": "Gewichtet mit tatsächlichem Bevölkerungsanteil (Ø 23.96%, Projekt-Standard, siehe config/sources.json rentCorrectionMethodology)",
+    "weightPercent": 23.96,
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceAnnualPercent": 1.5707,
+    "weightedAnnualPercent": 1.6314,
+    "correctionDeltaTotalPp": 0.25,
+    "correctionDeltaPpPerYear": 0.0608
+  },
+  "weightedVsLongestRelocationRate": {
+    "comparisonGroup": "Gewichtet mit Umzugsquote 9.3% (NUR Vergleichswert des Betreibers, NICHT Projekt-Standard — andere Kennzahl, siehe Methodik-Vorbehalt)",
+    "weightPercent": 9.3,
+    "fromYear": 2020,
+    "toYear": 2024,
+    "referenceAnnualPercent": 1.5707,
+    "weightedAnnualPercent": 1.5943,
+    "correctionDeltaTotalPp": 0.1,
+    "correctionDeltaPpPerYear": 0.0236
+  },
+  "signFlips": true
+}

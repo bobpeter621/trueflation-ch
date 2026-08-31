@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@import "./design-system/tokens.css";
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text-primary);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* --- Minimal-Chart Layout (P1) --- */
+.tf-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.tf-chart-toolbar {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.tf-preset-button {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tf-preset-button:hover {
+  background: var(--color-border);
+}
+
+.tf-preset-button--active {
+  background: var(--color-line-lik);
+  color: var(--color-bg);
+  border-color: var(--color-line-lik);
+}
+
+.tf-chart-canvas-wrapper {
+  position: relative;
+  height: 420px;
+  width: 100%;
+}
+
+.tf-chart-status {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.tf-chart-error,
+.tf-chart-loading {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+/* --- Hell/Dunkel-Umschalter (US 3.18) ---
+   Fix positioniert oben rechts, damit er auf ALLEN Seiten verfügbar ist,
+   ohne dass jede Seite ihren eigenen Header umbauen muss. Farben kommen
+   ausschliesslich aus Theme-Tokens -> der Button selbst wechselt mit. */
+.tf-theme-toggle {
+  position: fixed;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tf-theme-toggle:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* Sichtbarer Fokus-Indikator (WCAG 2.4.7): natives <button> ist per Tastatur
+   erreichbar, :focus-visible zeigt den Ring nur bei Tastatur-Fokus. */
+.tf-theme-toggle:focus-visible {
+  outline: 2px solid var(--color-line-lik);
+  outline-offset: 2px;
+}
