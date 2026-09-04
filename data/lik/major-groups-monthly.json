@@ -18275,6 +18275,65 @@
           "index": 99.7977
         }
       ]
+    },
+    {
+      "indexDate": 20260801,
+      "mainIndex": 101.5133,
+      "positionen": [
+        {
+          "posId": 1,
+          "index": 101.9765
+        },
+        {
+          "posId": 2,
+          "index": 101.6749
+        },
+        {
+          "posId": 3,
+          "index": 96.4244
+        },
+        {
+          "posId": 4,
+          "index": 101.7237
+        },
+        {
+          "posId": 5,
+          "index": 100.5193
+        },
+        {
+          "posId": 6,
+          "index": 100.1147
+        },
+        {
+          "posId": 7,
+          "index": 103.4993
+        },
+        {
+          "posId": 8,
+          "index": 101.0109
+        },
+        {
+          "posId": 9,
+          "index": 103.5995
+        },
+        {
+          "posId": 10,
+          "index": 99.9811
+        },
+        {
+          "posId": 11,
+          "index": 101.521
+        },
+        {
+          "posId": 12,
+          "index": 102.3459
+        },
+        {
+          "posId": 13,
+          "index": 99.5082
+        }
+      ]
     }
-  ]
+  ],
+  "lastIncrementalUpdate": "2026-09-04T09:01:42.422Z"
 }

@@ -4,52 +4,10 @@
   "sourceUrlXauUsd": "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1day",
   "sourceUrlUsdChf": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
   "isDerivedQuantity": true,
-  "importedAt": "2026-08-28T12:42:34.508Z",
+  "importedAt": "2026-09-04T09:02:14.334Z",
   "importType": "bulk",
   "unit": "CHF (abgeleitet)",
   "values": [
-    {
-      "date": "2008-01-11",
-      "xauUsd": 895.75,
-      "usdChf": 1.1017,
-      "goldChf": 986.8478
-    },
-    {
-      "date": "2008-01-14",
-      "xauUsd": 905.20001,
-      "usdChf": 1.093,
-      "goldChf": 989.3836
-    },
-    {
-      "date": "2008-01-15",
-      "xauUsd": 894.84998,
-      "usdChf": 1.093,
-      "goldChf": 978.071
-    },
-    {
-      "date": "2008-01-16",
-      "xauUsd": 877.54999,
-      "usdChf": 1.0998,
-      "goldChf": 965.1295
-    },
-    {
-      "date": "2008-01-17",
-      "xauUsd": 877.75,
-      "usdChf": 1.1004,
-      "goldChf": 965.8761
-    },
-    {
-      "date": "2008-01-18",
-      "xauUsd": 884.54999,
-      "usdChf": 1.0995,
-      "goldChf": 972.5627
-    },
-    {
-      "date": "2008-01-21",
-      "xauUsd": 866.34998,
-      "usdChf": 1.1088,
-      "goldChf": 960.6089
-    },
     {
       "date": "2008-01-22",
       "xauUsd": 890.65002,
@@ -29794,9 +29752,51 @@
     },
     {
       "date": "2026-08-28",
-      "xauUsd": 4590.59593,
-      "usdChf": 0.80463,
-      "goldChf": 3693.7312
+      "xauUsd": 4456.44061,
+      "usdChf": 0.80944,
+      "goldChf": 3607.2213
+    },
+    {
+      "date": "2026-08-29",
+      "xauUsd": 4458.88083,
+      "usdChf": 0.80858,
+      "goldChf": 3605.3619
+    },
+    {
+      "date": "2026-08-30",
+      "xauUsd": 4456.19301,
+      "usdChf": 0.80926,
+      "goldChf": 3606.2188
+    },
+    {
+      "date": "2026-08-31",
+      "xauUsd": 4448.80126,
+      "usdChf": 0.8084,
+      "goldChf": 3596.4109
+    },
+    {
+      "date": "2026-09-01",
+      "xauUsd": 4328.57714,
+      "usdChf": 0.81163,
+      "goldChf": 3513.2031
+    },
+    {
+      "date": "2026-09-02",
+      "xauUsd": 4387.76527,
+      "usdChf": 0.81298,
+      "goldChf": 3567.1654
+    },
+    {
+      "date": "2026-09-03",
+      "xauUsd": 4473.78645,
+      "usdChf": 0.80763,
+      "goldChf": 3613.1642
+    },
+    {
+      "date": "2026-09-04",
+      "xauUsd": 4477.76564,
+      "usdChf": 0.80879,
+      "goldChf": 3621.5721
     }
   ]
 }
