@@ -1,7 +1,7 @@
 {
   "_comment": "Automatisch generiert durch bulk-import-twelvedata-overlays.mjs — nicht manuell editieren.",
   "sourceUrl": "https://api.twelvedata.com/time_series?symbol=BTC/CHF&interval=1day",
-  "importedAt": "2026-09-04T09:02:14.332Z",
+  "importedAt": "2026-09-04T10:35:53.101Z",
   "importType": "bulk",
   "unit": "CHF",
   "values": [
@@ -2971,7 +2971,7 @@
     },
     {
       "date": "2023-02-11",
-      "close": 20238.40039
+      "close": 20061
     },
     {
       "date": "2023-02-12",
@@ -3015,7 +3015,7 @@
     },
     {
       "date": "2023-02-22",
-      "close": 22515.30078
+      "close": 22073.30078
     },
     {
       "date": "2023-02-23",
@@ -3055,7 +3055,7 @@
     },
     {
       "date": "2023-03-04",
-      "close": 21010.69922
+      "close": 20988.19922
     },
     {
       "date": "2023-03-05",
@@ -3219,7 +3219,7 @@
     },
     {
       "date": "2023-04-14",
-      "close": 27273.5
+      "close": 27332.5
     },
     {
       "date": "2023-04-15",
@@ -8175,7 +8175,7 @@
     },
     {
       "date": "2026-09-04",
-      "close": 65570.70312
+      "close": 65587.39844
     }
   ]
 }
