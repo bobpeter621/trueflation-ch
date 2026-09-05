@@ -1,14 +1,14 @@
 {
   "_comment": "Prüfsummen über publizierte Datenstände (US 5.5). SHA-256 über Dateiinhalt, exkl. volatiler Metafelder (importedAt etc.). Bei jedem Pipeline-Lauf neu geschrieben, versioniert im Git-Verlauf.",
-  "generatedAt": "2026-09-04T10:35:53.226Z",
+  "generatedAt": "2026-09-05T09:57:20.046Z",
   "checksums": {
     "data/kvpi-premium-index/premium-index-ch.json": "684b95ba265f821e7bba5e6bc981cf4feb2fa3a5e60e9d7c54812c7e8a87d040",
     "data/lik/major-groups-monthly.json": "e81ff5d624e9d18be015199a003250e047b02a11f2f4a762556482c1d0bde14c",
     "data/lik/major-groups-yearly.json": "083a2e40650dd5d830fdd58aa73f4c81b1adf8b61a47cbd881087422814806b7",
     "data/lik/total-index-monthly.json": "4d636b59f0863e2a815214a2464a6f4b12b83933e488bd3fa3b342bec1f7d0d0",
     "data/lik/total-index-yearly.json": "cf1bfaa567157e159c703f2e19b7ce080f88b5b30ce2544d38fc7f761dc252ce",
-    "data/overlays/btc-chf-daily.json": "b36e000203cd858ccdfc09ca30cc6a527d150b69dbe4fcf93d0a9da2cabbc47e",
-    "data/overlays/gold-chf-daily-derived.json": "660c9dc55f5f98af019692cd2725223a10b47f6e8f307df858a8f02fe7a3abcd",
+    "data/overlays/btc-chf-daily.json": "5e16fd953c3047d474b4efacfe1ae9a6c6f234c481f8a444e6b57afa5a5bb9c7",
+    "data/overlays/gold-chf-daily-derived.json": "aea628d30c0d08ce335f5c4db0d15393f320fcf7f18459a6f8440db9dda3a23e",
     "data/rent-correction/coverage-check-28082026.json": "81969afc3689e2135ade89833906433bc78f99779b0ac1eb515343df048252ca",
     "data/rent-correction/rent-correction-longtenure-check.json": "06031d2ab4938208e3b671796daab6c7a04384a912c958422bcf1a47d824e161",
     "data/rent-correction/rent-correction.json": "db8376586df4e2f5994452579b327ff8a939cc003c494f081aff3e6e6417ebad",

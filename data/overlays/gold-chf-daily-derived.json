@@ -4,16 +4,10 @@
   "sourceUrlXauUsd": "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1day",
   "sourceUrlUsdChf": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
   "isDerivedQuantity": true,
-  "importedAt": "2026-09-04T10:35:53.103Z",
+  "importedAt": "2026-09-05T09:57:19.918Z",
   "importType": "bulk",
   "unit": "CHF (abgeleitet)",
   "values": [
-    {
-      "date": "2008-01-22",
-      "xauUsd": 890.65002,
-      "usdChf": 1.0955,
-      "goldChf": 975.7071
-    },
     {
       "date": "2008-01-23",
       "xauUsd": 889.45001,
@@ -29794,9 +29788,15 @@
     },
     {
       "date": "2026-09-04",
-      "xauUsd": 4475.11743,
-      "usdChf": 0.80944,
-      "goldChf": 3622.3391
+      "xauUsd": 4430.05647,
+      "usdChf": 0.81001,
+      "goldChf": 3588.39
+    },
+    {
+      "date": "2026-09-05",
+      "xauUsd": 4429.02451,
+      "usdChf": 0.80969,
+      "goldChf": 3586.1369
     }
   ]
 }
