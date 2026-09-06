@@ -8,6 +8,10 @@
 
 import type { MetadataRoute } from "next";
 
+// output: "export" (next.config.ts, US 5.4) verlangt explizit statische
+// Generierung fuer diese Metadata-Route -- ohne dieses Flag bricht der Build.
+export const dynamic = "force-static";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: "*", allow: "/" },

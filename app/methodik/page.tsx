@@ -9,6 +9,7 @@
  * strukturell ausgeschlossen, nicht nur durch manuelle Disziplin vermieden.
  */
 import trueflationData from "../../data/trueflation/trueflation-index-monthly.json";
+import MietkorrekturMiniChart from "../components/MietkorrekturMiniChart";
 
 /**
  * Aenderungshistorie (US 4.10) -- verschoben von der eigenstaendigen Seite
@@ -20,6 +21,36 @@ import trueflationData from "../../data/trueflation/trueflation-index-monthly.js
  * Betreiber).
  */
 const CHANGES = [
+  {
+    date: "2026-08-30",
+    title: "Hell/Dunkel-Umschalter, Methodik-Seite ausformuliert (P5)",
+    detail:
+      "Manueller Hell/Dunkel-Umschalter ergänzt (vorher nur Systemeinstellung). Methodik-Seite um die Erklärung der Prämien-Wirkung und ein separates Mini-Chart zur Miet-Korrektur erweitert.",
+  },
+  {
+    date: "2026-08-29",
+    title: "Miet-Korrektur in die Trueflation-Hauptlinie integriert (P4)",
+    detail:
+      "Ab Januar 2020 (Beginn der verfügbaren Datengrundlage) wird die LIK-Komponente zusätzlich um die Differenz zwischen Neubezugs- und Bestandsmieten korrigiert (Variante Bevölkerungsanteil, +0,0608 Prozentpunkte/Jahr). Der offizielle LIK-Wert bleibt davon unberührt. Kernzahl seither: LIK 5,51 % / Trueflation 9,93 % Jahresdurchschnitt 2010–2024 (vorher 9,66 %). Details siehe Methodik.",
+  },
+  {
+    date: "2026-08-28",
+    title: "Referenz-Overlays Gold und Bitcoin hinzugefügt (P4)",
+    detail:
+      "Optional zuschaltbare Vergleichslinien (Twelve Data) im Chart und Kaufkraft-Rechner — Marktdaten, keine Inflationsmessung. Ein ursprünglich geplantes SMI-Overlay entfällt (auf dem genutzten Datenanbieter nicht verfügbar).",
+  },
+  {
+    date: "2026-08-27",
+    title: "Trueflation-Berechnung live geschaltet (P3)",
+    detail:
+      "Die Trueflation-Linie (LIK + Krankenkassenprämien-Korrektur) ist ab jetzt Teil des Hauptcharts, mit eigener Methodik-Seite (Formel, Quellen, bekannte Grenzen). Reihe beginnt 2010 (früheste verfügbare Datengrundlage).",
+  },
+  {
+    date: "2026-08-26",
+    title: "SNB-Leitzins als Overlay hinzugefügt (P2)",
+    detail:
+      "Der SNB-Leitzins läuft als eigene, optional zuschaltbare Linie auf einer separaten Skala (Prozentwert, nicht indexiert) — unabhängig vom Umschalter Niveau/Rate.",
+  },
   {
     date: "2026-08-25",
     title: "SNB M2 als zweite Datenquelle hinzugefügt (P2)",
@@ -265,6 +296,15 @@ export default function MethodikPage() {
             Korrekturrichtung (+1,84&nbsp;pp) — mögliche, nicht verifizierte Ursache: Neumieter beziehen im
             Schnitt kleinere Wohnungen.
           </p>
+          <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            <strong>Einordnung des gemessenen Fensters:</strong> Die volle Variante (+0,253&nbsp;pp/Jahr)
+            gilt für ein BESONDERES Fenster (2020–2024, geprägt vom Angebotsmieten-Schub ab 2022 und den
+            Referenzzinssatz-Erhöhungen 2023) und darf nicht als Dauerzustand gelesen werden — der
+            langfristige Richtwert liegt bei rund 0,5&nbsp;Prozentpunkten/Jahr Wachstumsdifferenz zwischen
+            Neubezug und Bestand.
+          </p>
+
+          <MietkorrekturMiniChart />
 
           <h3 id="praemiendaten-einschraenkungen" className="mt-6 text-base font-medium">Bekannte Einschränkungen der Prämiendaten</h3>
           <ul className="mt-2 list-disc pl-5 text-sm" style={{ color: "var(--color-text-secondary)" }}>

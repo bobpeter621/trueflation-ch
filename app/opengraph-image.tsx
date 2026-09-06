@@ -15,6 +15,12 @@
 import { ImageResponse } from "next/og";
 import trueflationData from "../data/trueflation/trueflation-index-yearly.json";
 
+// output: "export" (next.config.ts, US 5.4) verlangt explizit statische
+// Generierung fuer diese Metadata-Route -- ohne dieses Flag bricht der
+// Build. Das Bild war ohnehin build-zeit-generiert (Kommentar oben:
+// "generiert Next.js ... bei jedem Build"), keine Verhaltensaenderung.
+export const dynamic = "force-static";
+
 export const alt = "trueflation.ch — offizielle Inflation vs. Trueflation";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

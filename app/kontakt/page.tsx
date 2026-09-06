@@ -32,7 +32,12 @@ export default function KontaktPage() {
         </p>
 
         <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-          trueflation.ch wird betrieben von [PSEUDONYM/PROJEKTNAME].
+          trueflation.ch wird betrieben von [PSEUDONYM/PROJEKTNAME]. Angaben gemäss revDSG und
+          Datenschutzerklärung:{" "}
+          <a href="/impressum" className="underline">
+            Impressum &amp; Datenschutz
+          </a>
+          .
         </p>
       </main>
 
