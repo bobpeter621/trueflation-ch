@@ -1,7 +1,7 @@
 name: Datenpipeline (LIK + SNB M2)
 
 # Requirements Abschnitt 11: Scheduler über GitHub Actions, nicht systemd-Timer
-# — unabhängig vom Droplet-Zustand. Betreiber-Vorgabe (25.08.2026): Scheduler
+# — unabhängig vom Zustand des Hosting-Servers. Betreiber-Vorgabe (25.08.2026): Scheduler
 # scharf stellen, sobald die LIK-Pipeline inkrementell läuft — nicht bis P4
 # warten, sonst hängt der Datenstand an der Verfügbarkeit des Agenten statt
 # am Betrieb entkoppelt zu sein.
@@ -26,6 +26,33 @@ concurrency:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    # SECURITY-FIX (Security-Review 06.09.2026, Finding F1): Das Fetch-Timeout in
+    # fetch-whitelisted.mjs deckt nur die HTTP-Header ab (AbortController laeuft
+    # nur bis zum Response-Header). Eine Quelle, die nach den Headern nur noch
+    # Bytes troepfeln laesst (Slow-Drip), haengt den Job sonst bis zum
+    # GitHub-Actions-Default von 6 Stunden -- und cancel-in-progress:false
+    # blockiert in dieser Zeit alle folgenden geplanten Laeufe. 30 Minuten ist
+    # grosszuegig fuer den normalen Lauf (sequenzielle Quellen-Abrufe mit
+    # Rate-Limit-Pausen), aber deutlich unter dem 6h-Default.
+    timeout-minutes: 30
+    # FIX (Root-Cause-Diagnose 05.09.2026, Pipeline-Ausfaelle 01.-03.09.2026):
+    # Drei Pipeline-Laeufe in Folge scheiterten am "Aenderungen committen"-
+    # Schritt mit "remote: Permission ... denied to github-actions[bot]"
+    # (HTTP 403 beim git push). Ursache: der Standard-GITHUB_TOKEN hatte in
+    # diesem Zeitraum nur Contents:read (Repo-weite Default-Workflow-
+    # Permission auf "read" gestellt -- vermutlich durch eine Aenderung der
+    # Repo-/Org-Einstellung, nicht durch diese Workflow-Datei, die nie ein
+    # eigenes permissions-Feld deklariert hatte). Ab dem Lauf vom 04.09.2026
+    # war die Repo-Einstellung wieder auf "write", die Pipeline lief seither
+    # fehlerfrei. OHNE ein explizites permissions-Feld haengt der Job-Erfolg
+    # weiterhin von einer extern aenderbaren, nicht in diesem Repo sichtbaren
+    # Einstellung ab -- das ist der eigentliche strukturelle Fehler, nicht nur
+    # der einzelne Ausfall. Fix: contents:write explizit in der Workflow-Datei
+    # selbst deklarieren, damit der Job unabhaengig von der Repo-Default-
+    # Einstellung funktioniert und ein kuenftiges Zuruecksetzen der Default-
+    # Einstellung die Pipeline nicht erneut lautlos bricht.
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,6 +68,14 @@ jobs:
         run: npm ci
 
       - name: LIK — inkrementeller Lauf
+        # TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID als Env gereicht, damit eine
+        # Plausi-Eskalation (US 1.7) aus dem Lauf heraus via
+        # scripts/notify-telegram.sh auch auf dem Runner zugestellt wird —
+        # die lokalen Secret-Dateien existieren dort nicht (Repo-Secrets
+        # hinterlegen, siehe README "Konfiguration über Umgebungsvariablen").
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node scripts/pipeline/incremental-update-lik.mjs
 
       - name: SNB M2 — inkrementeller Lauf
@@ -97,14 +132,18 @@ jobs:
         # per Telegram erfahren. Eigener, expliziter Eskalationsschritt unabhaengig vom
         # Job-Gesamtstatus, analog zur bestehenden Fehler-Eskalation unten.
         if: steps.twelvedata_overlays.outcome == 'failure'
+        # SECURITY-FIX (Security-Review 06.09.2026, Finding F2.1, LOW): Inline-curl
+        # mit Token in der URL interpoliert legt das Secret in die Prozessliste
+        # (Schwachstellen-Klasse, die scripts/notify-telegram.sh im selben Diff
+        # per curl --config-Datei behebt) -- auf Self-Hosted-Runnern (Fork-Betrieb!)
+        # real relevant. Fix: dasselbe gehaertete Skript verwenden statt Logik
+        # zu duplizieren (Format-Validierung + Config-Datei-Haertung inklusive).
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
-            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-              -d chat_id="${TELEGRAM_CHAT_ID}" \
-              --data-urlencode text="[trueflation.ch] ⚠️ Twelve-Data-Overlay-Import (Gold/BTC) fehlgeschlagen -- Kernpipeline laeuft unbeeinflusst weiter (continue-on-error), aber Overlay-Daten bleiben auf altem Stand. Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            bash scripts/notify-telegram.sh "⚠️ Twelve-Data-Overlay-Import (Gold/BTC) fehlgeschlagen -- Kernpipeline laeuft unbeeinflusst weiter (continue-on-error), aber Overlay-Daten bleiben auf altem Stand. Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           else
             echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht gesetzt -- Twelve-Data-Ausfall NICHT eskaliert. Betreiber-TODO: Secrets hinterlegen."
           fi
@@ -184,14 +223,15 @@ jobs:
 
       - name: Fehler-Eskalation
         if: failure()
+        # SECURITY-FIX (Security-Review 06.09.2026, Finding F2.1, LOW): s.o. —
+        # gehaertetes notify-telegram.sh statt dupliziertem Inline-curl mit
+        # Token in der URL.
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
-            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-              -d chat_id="${TELEGRAM_CHAT_ID}" \
-              --data-urlencode text="[trueflation.ch] ⚠️ Pipeline-Lauf fehlgeschlagen (GitHub Actions). Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            bash scripts/notify-telegram.sh "⚠️ Pipeline-Lauf fehlgeschlagen (GitHub Actions). Siehe: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           else
             echo "TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID nicht als Secrets gesetzt — keine Eskalation möglich. Betreiber-TODO: Secrets in Repo-Settings hinterlegen."
           fi

@@ -1,13 +1,24 @@
 #!/usr/bin/env node
 /**
- * trueflation.ch — Twelve-Data Overlay-Bulk-Import: Gold (CHF, abgeleitet) + BTC/CHF
- * (Requirements 2.5, P4)
+ * trueflation.ch — Overlay-Bulk-Import: Gold (CHF, abgeleitet, Twelve Data)
+ * + BTC/CHF (CHF, abgeleitet, Bitstamp x Twelve Data) (Requirements 2.5, P4)
  *
  * ═══ AUFTRAG UND BETREIBER-ENTSCHEIDUNGEN (28.08.2026) ═══
  * SMI ist auf dem Twelve-Data-Free-Tier NICHT verfügbar (live geprüft,
  * HTTP 404 bei allen getesteten Symbolformen) — GESTRICHEN aus v1, siehe
  * config/sources.json -> overlayModuleNotes.smiStricken. v1-Overlays sind
  * ausschliesslich Gold und BTC.
+ *
+ * ═══ BTC-QUELLENUMSTELLUNG (Betreiber-Entscheidung 05.09.2026) ═══
+ * BTC/CHF kam bisher direkt von Twelve Data (Historie ab 2021-01-31, siehe
+ * altes data/overlays/btc-chf-daily.json). Live-Verifikation (05.09.2026)
+ * ergab: Bitstamp liefert BTC/USD-Tageskerzen bereits ab 2011-08-18 (5497
+ * Tage mehr Historie) -- ABER kein direktes BTC/CHF-Paar (verifiziert gegen
+ * /api/v2/trading-pairs-info/). Betreiber-Entscheidung: Zugewinn an Historie
+ * rechtfertigt die zusaetzliche Ableitung. BTC/CHF wird jetzt genauso wie
+ * Gold/CHF abgeleitet: BTC/USD (Bitstamp) x USD/CHF (Twelve Data) -- gleiches
+ * Ableitungsmuster, gleiche Datenvertrags-/Bulk-Validierungsdisziplin, gleiche
+ * Kennzeichnung als abgeleitete Groesse auf der Methodik-Seite.
  *
  * GOLD IST EINE ABGELEITETE GRÖSSE (Betreiber-Entscheidung 28.08.2026):
  * XAU/CHF ist auf dem Free-Tier nicht direkt verfügbar (HTTP 404,
@@ -29,12 +40,15 @@
  * vorschreibt wie die SNB (Vorsichtsprinzip nach dem live getroffenen 429).
  *
  * ═══ API-KEY ═══
- * Wird AUSSCHLIESSLICH aus ~/.openclaw/secrets/twelvedata-api-key gelesen,
- * NIEMALS aus Config/argv/Umgebungsvariable mit Nutzer-Kontrolle — verhindert,
- * dass ein manipulierter Aufrufparameter den Key überschreiben könnte.
+ * Bevorzugt aus der Umgebungsvariable TWELVEDATA_API_KEY (GitHub-Actions-
+ * Muster, siehe .github/workflows/pipeline.yml). Fallback fuer lokale/
+ * manuelle Laeufe: Datei <TRUEFLATION_SECRETS_DIR>/twelvedata-api-key
+ * (TRUEFLATION_SECRETS_DIR Default: ~/.openclaw/secrets).
+ * NIEMALS aus Config/argv — verhindert, dass ein manipulierter
+ * Aufrufparameter den Key überschreiben könnte.
  *
  * Usage:
- *   node bulk-import-twelvedata-overlays.mjs --fixture-btc <pfad> --fixture-xau <pfad> --fixture-usdchf <pfad> [--dry-run]
+ *   node bulk-import-twelvedata-overlays.mjs --fixture-btc-usd <pfad> --fixture-xau <pfad> --fixture-usdchf <pfad> [--dry-run]
  *   node bulk-import-twelvedata-overlays.mjs                     # echter Live-Import
  */
 
@@ -48,14 +62,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const SOURCES_CONFIG_PATH = path.join(REPO_ROOT, 'config', 'sources.json');
 const DATA_DIR = path.join(REPO_ROOT, 'data', 'overlays');
-const API_KEY_PATH = path.join(homedir(), '.openclaw', 'secrets', 'twelvedata-api-key');
+const SECRETS_DIR = process.env.TRUEFLATION_SECRETS_DIR || path.join(homedir(), '.openclaw', 'secrets');
+const API_KEY_PATH = path.join(SECRETS_DIR, 'twelvedata-api-key');
 
 const args = process.argv.slice(2);
 function argVal(flag) {
   const i = args.indexOf(flag);
   return i >= 0 ? args[i + 1] : null;
 }
-const fixtureBtcPath = argVal('--fixture-btc');
 const fixtureXauPath = argVal('--fixture-xau');
 const fixtureUsdChfPath = argVal('--fixture-usdchf');
 const isDryRun = args.includes('--dry-run');
@@ -181,6 +195,77 @@ async function fetchSeries({ label, sourceCfg, fixturePath, apiKey, outputsize =
   return res.json();
 }
 
+/** BITSTAMP-SPEZIFISCH (Betreiber-Entscheidung 05.09.2026): Bitstamp braucht
+ * kein apikey (oeffentlicher Marktdaten-Endpunkt), begrenzt aber `limit` hart
+ * auf 1000 Datenpunkte pro Call (live verifiziert 05.09.2026, HTTP 400 bei
+ * limit=1001). Fuer die volle Historie ab 2011-08-18 (~5497 Tage) braucht es
+ * mehrere sequenzielle Fenster-Abrufe, aelteste zuerst, mit `start`-Parameter
+ * (Unix-Timestamp). fetchWhitelisted() akzeptiert `start`/`step`/`limit` als
+ * zusaetzliche Query-Parameter -- siehe lib/fetch-whitelisted.mjs
+ * ALLOWED_APPENDED_PARAMS (muss dort noch erweitert werden, siehe unten). */
+const BITSTAMP_MAX_LIMIT = 1000;
+const BITSTAMP_STEP_SECONDS = 86400; // Tageskerzen
+
+async function fetchBitstampBtcUsdFull({ sourceCfg, fixturePath }) {
+  if (fixturePath) {
+    console.log(`[fixture/BTC-USD-Bitstamp] Lade lokale Fixture: ${fixturePath} (kein Live-Abruf)`);
+    return JSON.parse(readFileSync(path.resolve(REPO_ROOT, fixturePath), 'utf-8'));
+  }
+  const allPoints = [];
+  // Verifizierter frühester Datenpunkt (05.09.2026): 2011-08-18, timestamp 1313625600.
+  let cursorStart = 1313625600;
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  let windowCount = 0;
+  while (cursorStart < nowSeconds) {
+    windowCount++;
+    const url = `${sourceCfg.url}?step=${BITSTAMP_STEP_SECONDS}&limit=${BITSTAMP_MAX_LIMIT}&start=${cursorStart}`;
+    console.log(`[live/BTC-USD-Bitstamp] Fenster ${windowCount}: GET ${sourceCfg.url}?step=${BITSTAMP_STEP_SECONDS}&limit=${BITSTAMP_MAX_LIMIT}&start=${cursorStart}`);
+    const res = await fetchWhitelisted(url, {
+      headers: { 'User-Agent': 'trueflation.ch-bulk-import/1.0 (+https://github.com/bobpeter621/trueflation-ch)' },
+    });
+    if (!res.ok) throw new Error(`Live-Abruf fehlgeschlagen (BTC-USD-Bitstamp, Fenster ${windowCount}): HTTP ${res.status} ${res.statusText}`);
+    const json = await res.json();
+    const points = json?.data?.ohlc ?? [];
+    if (points.length === 0) break; // keine weiteren Daten -> fertig
+    allPoints.push(...points);
+    const lastTimestamp = Number(points[points.length - 1].timestamp);
+    if (!Number.isFinite(lastTimestamp) || lastTimestamp <= cursorStart) break; // Schutz gegen Endlosschleife
+    cursorStart = lastTimestamp + BITSTAMP_STEP_SECONDS;
+    // Freundliche Pause zwischen Fenstern (kein dokumentiertes Rate-Limit
+    // gefunden, Vorsichtsprinzip analog SNB/Twelve-Data-Etikette, US 1.16).
+    await sleep(1000);
+  }
+  console.log(`[live/BTC-USD-Bitstamp] ${windowCount} Fenster abgerufen, ${allPoints.length} Rohpunkte gesamt.`);
+  return { data: { pair: 'BTC/USD', ohlc: allPoints } };
+}
+
+/** Datenvertrags-Test fuer Bitstamp-Antwortschema (anderes Format als
+ * Twelve Data -- eigene Pruefung statt assertDataContract() wiederzuverwenden,
+ * das Twelve-Data-spezifische Feldnamen erwartet). */
+function assertBitstampDataContract(json, label) {
+  const issues = [];
+  if (!json?.data || typeof json.data !== 'object') issues.push("Fehlendes/ungültiges 'data'-Objekt");
+  else if (!Array.isArray(json.data.ohlc) || json.data.ohlc.length === 0) issues.push("'data.ohlc' ist kein nicht-leeres Array");
+  else {
+    const sample = json.data.ohlc[0];
+    for (const key of ['timestamp', 'open', 'high', 'low', 'close']) {
+      if (!(key in sample)) issues.push(`data.ohlc[0] fehlt Feld '${key}'`);
+    }
+  }
+  if (issues.length > 0) throw new DataContractError([`${label}: ${issues.join('; ')}`]);
+  console.log(`[datenvertrag/${label}] OK — ${json.data.ohlc.length} Datenpunkte, erwartete Struktur vorhanden.`);
+}
+
+/** Bitstamp liefert Unix-Timestamps (Sekunden) statt ISO-Datumsstrings wie
+ * Twelve Data -- Normalisierung auf dasselbe 'date'/'close'-Format, das
+ * validateBulk() und deriveGoldChf()-analoge Ableitung erwarten. */
+function normalizeBitstampSeries(ohlcPoints) {
+  return ohlcPoints.map((p) => ({
+    date: new Date(Number(p.timestamp) * 1000).toISOString().slice(0, 10),
+    close: parseFloat(p.close),
+  }));
+}
+
 /** Multipliziert XAU/USD × USD/CHF zu Gold/CHF, NUR für Datumsstempel, die in
  * BEIDEN Reihen vorhanden sind (Schnittmenge) — unterschiedliche Handelstage
  * (Feiertage etc.) zwischen den beiden Quellen dürfen keine erfundenen
@@ -199,6 +284,28 @@ function deriveGoldChf(xauUsdSeries, usdChfSeries) {
   }
   if (skippedDates.length > 0) {
     console.log(`[gold-derivation] ${skippedDates.length} Datum/-Daten ohne passenden USD/CHF-Kurs übersprungen (keine Erfindung): ${skippedDates.slice(0, 5).join(', ')}${skippedDates.length > 5 ? ', ...' : ''}`);
+  }
+  return derived;
+}
+
+/** BITSTAMP-UMSTELLUNG (05.09.2026): Multipliziert BTC/USD (Bitstamp) ×
+ * USD/CHF (Twelve Data) zu BTC/CHF -- identisches Ableitungsmuster wie
+ * deriveGoldChf() (Schnittmenge der Datumsstempel, keine Erfindung fehlender
+ * Tage), separate Funktion fuer klare Log-Meldungen/Nachvollziehbarkeit. */
+function deriveBtcChf(btcUsdSeries, usdChfSeries) {
+  const usdChfByDate = new Map(usdChfSeries.map((p) => [p.date, p.close]));
+  const derived = [];
+  const skippedDates = [];
+  for (const btc of btcUsdSeries) {
+    const fxRate = usdChfByDate.get(btc.date);
+    if (fxRate == null) {
+      skippedDates.push(btc.date);
+      continue; // kein Wechselkurs für dieses Datum -> kein erfundener Wert
+    }
+    derived.push({ date: btc.date, btcUsd: btc.close, usdChf: fxRate, close: round4(btc.close * fxRate) });
+  }
+  if (skippedDates.length > 0) {
+    console.log(`[btc-derivation] ${skippedDates.length} Datum/-Daten ohne passenden USD/CHF-Kurs übersprungen (keine Erfindung): ${skippedDates.slice(0, 5).join(', ')}${skippedDates.length > 5 ? ', ...' : ''} (Bitstamp handelt 24/7, USD/CHF nur an Bankarbeitstagen — Wochenenden/Feiertage sind erwartete Lücken, kein Fehler.)`);
   }
   return derived;
 }
@@ -227,25 +334,29 @@ function writeOutput(filename, payload) {
 }
 
 async function main() {
-  console.log('=== trueflation.ch — Twelve-Data Overlay-Bulk-Import (Gold [abgeleitet] + BTC/CHF) ===\n');
+  console.log('=== trueflation.ch — Overlay-Bulk-Import (Gold [abgeleitet] + BTC/CHF [abgeleitet, Bitstamp x Twelve Data]) ===\n');
   console.log('SMI aus v1 gestrichen (Betreiber-Entscheidung 28.08.2026) — nicht Teil dieses Imports.\n');
 
   const cfg = loadSourcesConfig();
-  const btcCfg = cfg.sources['twelvedata-btc-chf'];
+  const bitstampBtcCfg = cfg.sources['bitstamp-btc-usd'];
   const xauCfg = cfg.sources['twelvedata-xau-usd'];
   const usdChfCfg = cfg.sources['twelvedata-usd-chf'];
-  if (!btcCfg || !xauCfg || !usdChfCfg) {
-    throw new Error("Twelve-Data-Quellen fehlen in config/sources.json — zuerst eintragen (Whitelist, US 1.6).");
+  if (!bitstampBtcCfg || !xauCfg || !usdChfCfg) {
+    throw new Error("Quellen fehlen in config/sources.json — zuerst eintragen (Whitelist, US 1.6).");
   }
 
-  const apiKey = fixtureBtcPath && fixtureXauPath && fixtureUsdChfPath ? 'unused-in-fixture-mode' : loadApiKey();
+  const fixtureBtcUsdPath = argVal('--fixture-btc-usd');
+  const apiKey = fixtureBtcUsdPath && fixtureXauPath && fixtureUsdChfPath ? 'unused-in-fixture-mode' : loadApiKey();
 
-  console.log('--- BTC/CHF ---');
-  const btcJson = await fetchSeries({ label: 'BTC/CHF', sourceCfg: btcCfg, fixturePath: fixtureBtcPath, apiKey });
-  assertDataContract(btcJson, 'BTC/CHF');
-  const btcSeries = validateBulk(btcJson.values, 'BTC/CHF', { minVal: 0.01, maxVal: 10000000, allowGaps: false });
-
-  if (!fixtureBtcPath) await sleep(8000); // Rate-Limit-Vorsicht (8 Credits/Min live getroffen)
+  console.log('--- BTC/USD (Bitstamp, Roh-Reihe ab 2011-08-18) ---');
+  const btcUsdJson = await fetchBitstampBtcUsdFull({ sourceCfg: bitstampBtcCfg, fixturePath: fixtureBtcUsdPath });
+  assertBitstampDataContract(btcUsdJson, 'BTC/USD-Bitstamp');
+  const btcUsdSeriesRaw = normalizeBitstampSeries(btcUsdJson.data.ohlc);
+  const btcUsdSeries = validateBulk(
+    btcUsdSeriesRaw.map((p) => ({ datetime: p.date, close: p.close })),
+    'BTC/USD-Bitstamp',
+    { minVal: 0.01, maxVal: 10000000, allowGaps: false }
+  );
 
   console.log('\n--- XAU/USD (Gold-Rohreihe, Zwischenschritt) ---');
   const xauJson = await fetchSeries({ label: 'XAU/USD', sourceCfg: xauCfg, fixturePath: fixtureXauPath, apiKey });
@@ -259,17 +370,29 @@ async function main() {
   assertDataContract(usdChfJson, 'USD/CHF');
   const usdChfSeries = validateBulk(usdChfJson.values, 'USD/CHF', { minVal: 0.5, maxVal: 2.0, allowGaps: true });
 
+  console.log('\n--- BTC/CHF ABLEITEN (Bitstamp BTC/USD × Twelve-Data USD/CHF) ---');
+  const btcChfDerived = deriveBtcChf(btcUsdSeries, usdChfSeries);
+  console.log(`[btc-derivation] ${btcChfDerived.length} Datenpunkte mit vollständigem Quellenpaar abgeleitet.`);
+
   console.log('\n--- Gold/CHF ABLEITEN (XAU/USD × USD/CHF) ---');
   const goldChfDerived = deriveGoldChf(xauSeries, usdChfSeries);
   console.log(`[gold-derivation] ${goldChfDerived.length} Datenpunkte mit vollständigem Quellenpaar abgeleitet.`);
 
   writeOutput('btc-chf-daily.json', {
-    _comment: 'Automatisch generiert durch bulk-import-twelvedata-overlays.mjs — nicht manuell editieren.',
-    sourceUrl: btcCfg.url,
+    _comment:
+      'Automatisch generiert durch bulk-import-twelvedata-overlays.mjs. ABGELEITETE Grösse ' +
+      '(Betreiber-Entscheidung 05.09.2026, BTC-Quellenumstellung): Bitstamp liefert kein direktes ' +
+      'BTC/CHF-Paar (verifiziert 05.09.2026) — btcChf = btcUsd (Bitstamp) * usdChf (Twelve Data), NUR ' +
+      'für Datumsstempel mit vollständigem Quellenpaar (keine Interpolation, Requirements-Regel 3). ' +
+      'Historie ab 2011-08-18 (Bitstamp) statt vorher 2021-01-31 (direkter Twelve-Data-Feed).',
+    methodology: 'btcChf(t) = btcUsd(t) * usdChf(t)',
+    sourceUrlBtcUsd: bitstampBtcCfg.url,
+    sourceUrlUsdChf: usdChfCfg.url,
+    isDerivedQuantity: true,
     importedAt: new Date().toISOString(),
     importType: 'bulk',
-    unit: 'CHF',
-    values: btcSeries,
+    unit: 'CHF (abgeleitet)',
+    values: btcChfDerived,
   });
 
   writeOutput('gold-chf-daily-derived.json', {

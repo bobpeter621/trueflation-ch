@@ -54,11 +54,31 @@ docker run -p 3000:3000 trueflation-app
 
 - Alle Pipeline-Abrufe laufen ausschliesslich gegen URLs aus `config/sources.json`
   (Whitelist, US 1.6/1.9 — kein SSRF-Risiko).
-- Plausi-Freigaben und Fehler-Eskalationen laufen über den bestehenden
-  Jarvis-Telegram-Kanal (`scripts/notify-telegram.sh`), keine separate
+- Plausi-Freigaben und Fehler-Eskalationen laufen über den Betreiber-
+  Telegram-Kanal (`scripts/notify-telegram.sh`), keine separate
   Notification-Infrastruktur (US 5.3).
-- Vor jedem PR: Agent Council (Code Review + Security Review), siehe
-  `~/.openclaw/workspace/AGENTS.md`.
+
+### Konfiguration über Umgebungsvariablen (Self-Hosting/Fork)
+
+Secrets und betreiber-spezifische Pfade sind **nicht hartcodiert**, sondern
+über Umgebungsvariablen konfigurierbar. Alle Defaults sind rückwärtskompatibel
+zur ursprünglichen Produktivumgebung:
+
+| Variable | Zweck | Default |
+|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | Telegram-Bot-Token direkt (Vorrang vor Datei; GitHub-Actions-Muster) | — |
+| `TELEGRAM_CHAT_ID` | Telegram-Chat-ID direkt (Vorrang vor Config-Extraktion) | — |
+| `TWELVEDATA_API_KEY` | Twelve-Data-API-Key direkt (Vorrang vor Datei; GitHub-Actions-Muster) | — |
+| `TRUEFLATION_SECRETS_DIR` | Verzeichnis der Secret-Dateien (`telegram-token`, `twelvedata-api-key`) | `${HOME}/.openclaw/secrets` |
+| `TRUEFLATION_OPERATOR_CONFIG` | Betreiber-Config-Datei, aus der die Chat-ID gelesen wird, falls `TELEGRAM_CHAT_ID` nicht gesetzt | `${HOME}/.openclaw/openclaw.json` |
+
+In GitHub Actions werden `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` und
+`TWELVEDATA_API_KEY` als verschlüsselte Repo-Secrets hinterlegt
+(Settings → Secrets and variables → Actions) und den Pipeline-Schritten
+als Env-Vars gereicht — siehe `.github/workflows/pipeline.yml`.
+Lokal genügt der Default-Pfad: Dateien `<TRUEFLATION_SECRETS_DIR>/telegram-token`
+und `<TRUEFLATION_SECRETS_DIR>/twelvedata-api-key` (je eine Zeile, chmod 600).
+Secrets NIEMALS ins Repo committen.
 
 ## Lizenz
 

@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeToggle from "./components/ThemeToggle";
+
+// US 3.18: gespeicherte Hell/Dunkel-Wahl VOR dem ersten Paint anwenden
+// (Anti-FOUC) — liest ausschliesslich localStorage, kein Tracking, kein
+// Server-Roundtrip. Ohne gespeicherte Wahl bleibt data-theme ungesetzt und
+// die Systemeinstellung (prefers-color-scheme) gilt unveraendert.
+const themeInitScript = `(function(){try{var t=localStorage.getItem("tf-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,10 +53,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="de"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* US 3.18: sichtbarer Hell/Dunkel-Umschalter auf allen Seiten
+            (fixed positioniert, siehe .tf-theme-toggle in globals.css) */}
+        <ThemeToggle />
+        {children}
+      </body>
     </html>
   );
 }

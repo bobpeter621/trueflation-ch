@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 node_modules
 verification/*.patch
+
+# Lokale Sicherheits-Backups vor Edits (AGENTS.md-Vorgabe) — nicht versionieren
+*.bak-*

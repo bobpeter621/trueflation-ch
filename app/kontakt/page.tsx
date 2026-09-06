@@ -7,7 +7,7 @@
  */
 
 export const metadata = {
-  title: "Kontakt — trueflation.ch",
+  title: "Kontakt",
   description: "Fehler melden oder methodische Rückfrage stellen.",
 };
 
@@ -25,7 +25,7 @@ export default function KontaktPage() {
             [KONTAKT-EMAIL]
           </a>
           . Berechtigte Korrekturen erscheinen in der{" "}
-          <a href="/aenderungen" className="underline">
+          <a href="/methodik#aenderungen-heading" className="underline">
             Änderungshistorie
           </a>
           .
@@ -35,6 +35,17 @@ export default function KontaktPage() {
           trueflation.ch wird betrieben von [PSEUDONYM/PROJEKTNAME].
         </p>
       </main>
+
+      {/* US 4.9 AC Platz 2: CC-BY-Kurzhinweis im Footer jeder Seite. */}
+      <footer className="mt-12 text-xs text-center" style={{ color: "var(--color-text-muted)" }}>
+        <p>
+          Eigene Inhalte lizenziert unter{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/deed.de" className="underline">
+            CC BY 4.0
+          </a>
+          .
+        </p>
+      </footer>
     </div>
   );
 }

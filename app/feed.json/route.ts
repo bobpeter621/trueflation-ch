@@ -18,6 +18,14 @@
 
 import { NextResponse } from "next/server";
 import likMonthly from "../../data/lik/total-index-monthly.json";
+
+// Statisch zum Build-Zeitpunkt prerendern (US 5.4/US 4.7): der Feed liest
+// ausschliesslich committed Pipeline-JSONs — keine Request-Zeit-Daten. Ohne
+// dies bräuchte die Auslieferung einen laufenden Server (Route war "ƒ
+// Dynamic" im Build), was der statischen CDN-Architektur widerspricht.
+// "generiertAm" ist damit der Build-Zeitpunkt (= Pipeline-Lauf) — semantisch
+// korrekt: der Feed ändert sich nur mit einem neuen Daten-Commit + Deploy.
+export const dynamic = "force-static";
 import trueflationMonthly from "../../data/trueflation/trueflation-index-monthly.json";
 import trueflationYearly from "../../data/trueflation/trueflation-index-yearly.json";
 

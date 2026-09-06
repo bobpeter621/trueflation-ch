@@ -1,7 +1,7 @@
 # trueflation.ch — Next.js Container (P0-Skeleton)
 # Statischer Export (US 5.4) — dieser Container dient primär der lokalen
 # Entwicklung/Verifikation, nicht dem Produktions-Webserver (Hosting-Entscheidung
-# in Requirements Abschnitt 11: Auslieferung via CDN, Droplet trägt nur Analytics+Mirror).
+# in Requirements Abschnitt 11: Auslieferung via CDN, Hosting-Server trägt nur Analytics+Mirror).
 
 FROM node:22-alpine AS base
 

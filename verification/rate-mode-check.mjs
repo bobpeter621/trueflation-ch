@@ -51,6 +51,21 @@ async function main() {
   await page.goto(URL, { waitUntil: 'networkidle' });
   await page.waitForSelector('.tf-chart-canvas-wrapper canvas', { timeout: 15000 });
 
+  // ANPASSUNG (05.09.2026, US 3.10 Mobile-Menu-Fix): Leitzins/M2/Overlay-
+  // Checkboxen liegen jetzt in einem eingeklappten <details>-Menü (siehe
+  // LikChart.tsx "tf-overlay-menu") statt permanent sichtbar in der
+  // Toolbar zu stehen -- ohne das Menü zu öffnen, sind die Checkboxen
+  // nicht sichtbar/klickbar, der Test würde in einen Timeout laufen (kein
+  // Rendering-Bug, sondern reguläres Disclosure-Verhalten des <details>-
+  // Elements). Menü öffnen, BEVOR Checkboxen angeklickt werden.
+  const menuToggle = page.locator('.tf-overlay-menu summary');
+  if (await menuToggle.count() > 0) {
+    const detailsOpen = await page.locator('.tf-overlay-menu').getAttribute('open');
+    if (detailsOpen === null) {
+      await menuToggle.click();
+    }
+  }
+
   // Overlays + Leitzins aktivieren, damit alle Linien im Chart vorhanden sind.
   await page.getByLabel('SNB-Leitzins ein-/ausblenden').check();
   await page.getByLabel(/Overlay Gold/).check();

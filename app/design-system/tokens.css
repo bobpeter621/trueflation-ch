@@ -16,6 +16,20 @@
  */
 
 :root {
+  /* Dark-Mode-Mobile-Fix (05.09.2026): OHNE color-scheme weiss der Browser
+     nicht, dass die Seite eigene Light/Dark-Tokens hat, und rendert native
+     Formularelemente (input[type=number], select, checkbox — real
+     vorhanden in KaufkraftRechner.tsx und LikChart.tsx) weiterhin mit
+     UA-Light-Mode-Standardfarben, selbst wenn prefers-color-scheme: dark
+     aktiv ist. Das ergab einen hellen "Fremdkörper" (z.B. das Startjahr-
+     <select>-Dropdown) im sonst konsistent dunklen Layout auf Mobile —
+     bestätigt via echtem Playwright-Browser-Test
+     (verification/color-scheme-check.mjs). Default hier "light", da :root
+     die Light-Mode-Werte trägt; der @media(prefers-color-scheme:dark)-
+     Block und die [data-theme]-Overrides unten setzen color-scheme
+     jeweils passend zum aktiven Modus neu. */
+  color-scheme: light;
+
   /* --- Neutrale Basis (Hellmodus) --- */
   --color-bg: #ffffff;
   --color-bg-subtle: #f7f8fa;
@@ -82,13 +96,18 @@
 /* --- Dunkelmodus: Standard-Erwartung bei Fintech-Ästhetik, Default gemäss 6a --- */
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme: dark;
     --color-bg: #0d1117;
     --color-bg-subtle: #151b23;
     --color-bg-elevated: #1a212b;
     --color-border: #2a323d;
     --color-text-primary: #e8eaed;    /* Kontrast auf --color-bg: 15.8:1 */
     --color-text-secondary: #a8b0bb;  /* Kontrast auf --color-bg: 8.2:1 */
-    --color-text-muted: #7d8590;      /* Kontrast auf --color-bg: 4.9:1 */
+    /* Frontend-Review 05.09.2026: #7d8590 hatte auf --color-bg 4.9:1, auf
+       --color-bg-elevated aber nur 4.34:1 (unter WCAG-AA 4.5:1 fuer
+       Normaltext) — real betroffen: Tabellen-Marker (xs) auf der
+       Elevated-Kachelflaeche. #8a94a0: 5.26:1 auf elevated, 6.15:1 auf bg. */
+    --color-text-muted: #8a94a0;      /* Kontrast: 6.15:1 auf bg, 5.26:1 auf bg-elevated */
 
     /* Kernlinien im Dunkelmodus leicht aufgehellt für gleichbleibenden Kontrast */
     --color-line-lik: #7d93b3;
@@ -109,6 +128,7 @@
 
 /* Manuelle Umschaltung (US 3.18) überschreibt System-Präferenz */
 [data-theme="light"] {
+  color-scheme: light;
   --color-bg: #ffffff;
   --color-bg-subtle: #f7f8fa;
   --color-bg-elevated: #ffffff;
@@ -123,17 +143,30 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #0d1117;
   --color-bg-subtle: #151b23;
   --color-bg-elevated: #1a212b;
   --color-border: #2a323d;
   --color-text-primary: #e8eaed;
   --color-text-secondary: #a8b0bb;
-  --color-text-muted: #7d8590;
+  --color-text-muted: #8a94a0;
   --color-line-lik: #7d93b3;
   --color-line-trueflation: #ff6b7f;
   --color-line-money: #4fc491;
   --color-line-rate: #d4ad3f;
+  /* Overlay-/Status-Variablen (06.09.2026 ergänzt, Fund aus dem
+     Theme-Toggle-Frontend-Review): fehlten im manuellen Dark-Block — ohne
+     sie fielen Overlays bei MANUELL gewähltem Dunkelmodus auf die
+     Light-Mode-Hexwerte aus :root zurück (falsche Farben trotz korrektem
+     System-Dunkelmodus). Werte identisch zum @media-Block oben. */
+  --color-overlay-gold: #d9a441;
+  --color-overlay-btc: #ffa93f;
+  --color-overlay-smi: #8b95a3;
+  --color-status-current: #4fc491;
+  --color-status-stale: #d4ad3f;
+  --color-status-unavailable: #6b7280;
+  --color-status-nonexistent: #3a4250;
 }
 
 /* Utility-Klasse: alle Zahlenwerte gemäss Design-Prinzip in Monospace */

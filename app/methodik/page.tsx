@@ -10,8 +10,32 @@
  */
 import trueflationData from "../../data/trueflation/trueflation-index-monthly.json";
 
+/**
+ * Aenderungshistorie (US 4.10) -- verschoben von der eigenstaendigen Seite
+ * /aenderungen hierher (Betreiber-Vorgabe 05.09.2026: eigene Seite fuer nur
+ * zwei Eintraege war unnoetige Navigations-Fragmentierung; Aenderungen
+ * gehoeren inhaltlich sowieso zur Methodik). Statischer Inhalt -- kein
+ * Pipeline-generierter Content, da Aenderungshistorie von Menschen kuratiert
+ * wird (Requirements 7a: Governance methodischer Aenderungen entscheidet der
+ * Betreiber).
+ */
+const CHANGES = [
+  {
+    date: "2026-08-25",
+    title: "SNB M2 als zweite Datenquelle hinzugefügt (P2)",
+    detail:
+      "Geldmengenaggregat M2 (SNB Cube snbmonagg, Dimension GM2) läuft ab jetzt über dieselbe Pipeline-Architektur wie der LIK.",
+  },
+  {
+    date: "2026-08-25",
+    title: "LIK-Quelle verifiziert (P1)",
+    detail:
+      "Der Landesindex der Konsumentenpreise wird aus der BFS-Fachapplikation lik-app.bfs.admin.ch bezogen (Basis: die vom BFS verkettete Gesamtreihe), nicht aus STAT-TAB/PxWeb oder Swiss Stats Explorer — beide enthalten den LIK (noch) nicht.",
+  },
+];
+
 export const metadata = {
-  title: "Methodik — trueflation.ch",
+  title: "Methodik",
   description: "Formel, Quellen und Grenzen der auf trueflation.ch verwendeten Kennzahlen.",
 };
 
@@ -30,8 +54,8 @@ export default function MethodikPage() {
         <header>
           <h1 className="text-2xl font-semibold tracking-tight">Methodik</h1>
           <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            Formel, Quellen und bekannte Grenzen jeder verwendeten Kennzahl. Trueflation-Formel folgt,
-            sobald die Berechnung implementiert ist (P3).
+            Formel, Quellen und bekannte Grenzen jeder verwendeten Kennzahl — einschliesslich
+            der Trueflation-Formel (Linie 2, unten).
           </p>
         </header>
 
@@ -90,6 +114,18 @@ export default function MethodikPage() {
               </dd>
             </div>
             <div>
+              {/* M2-Wahl-Erklaerung (Requirements Abschnitt 10: "ein Satz, warum M2
+                  statt M1/M3") -- war bisher nirgends live auf der Seite, nur in
+                  requirements.md dokumentiert. */}
+              <dt className="font-medium">Warum M2 (nicht M1 oder M3)?</dt>
+              <dd style={{ color: "var(--color-text-secondary)" }}>
+                M2 bildet ab, was die meisten intuitiv als &quot;ihr Geld&quot; verstehen — verfügbares plus
+                gespartes Geld — und ist die international gängigste Referenz in Inflationsdebatten. M1
+                (nur Bargeld und Sichteinlagen) ist dafür zu eng gefasst, M3 zu stark von
+                institutionellem Anlageverhalten geprägt.
+              </dd>
+            </div>
+            <div>
               <dt className="font-medium">Frequenz</dt>
               <dd style={{ color: "var(--color-text-secondary)" }}>Monatlich.</dd>
             </div>
@@ -110,7 +146,7 @@ export default function MethodikPage() {
           <h3 className="mt-6 text-base font-medium">Formel (monatlich)</h3>
           <div
             className="mt-2 rounded-md p-3 text-sm font-mono"
-            style={{ backgroundColor: "var(--color-surface-secondary)" }}
+            style={{ backgroundColor: "var(--color-bg-subtle)" }}
           >
             <p>rentMonthlyFactor = (1 + Miet-Korrektur_pp/Jahr / 100)^(1/12)&nbsp;&nbsp;[nur ab 2020]</p>
             <p>LIK_korrigiert(Monat) = LIK_Wachstumsfaktor(Monat) × rentMonthlyFactor&nbsp;&nbsp;[nur ab 2020, sonst unverändert]</p>
@@ -212,7 +248,7 @@ export default function MethodikPage() {
             </div>
           </dl>
 
-          <h3 className="mt-6 text-base font-medium">Miet-Korrektur — integriert, mit Vorbehalt</h3>
+          <h3 id="miet-korrektur" className="mt-6 text-base font-medium">Miet-Korrektur — integriert, mit Vorbehalt</h3>
           <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
             Anders als der Warenkorb-Befund ist die Miet-Korrektur seit dem 29.08.2026 Teil der
             Hauptlinie (siehe Formel oben). Drei Varianten wurden geprüft: gegen den Gesamtdurchschnitt
@@ -230,7 +266,7 @@ export default function MethodikPage() {
             Schnitt kleinere Wohnungen.
           </p>
 
-          <h3 className="mt-6 text-base font-medium">Bekannte Einschränkungen der Prämiendaten</h3>
+          <h3 id="praemiendaten-einschraenkungen" className="mt-6 text-base font-medium">Bekannte Einschränkungen der Prämiendaten</h3>
           <ul className="mt-2 list-disc pl-5 text-sm" style={{ color: "var(--color-text-secondary)" }}>
             <li>
               Bruttoprämien — Prämienverbilligungen sind nicht abgezogen. Das BFS schätzt, dass deren
@@ -258,17 +294,76 @@ export default function MethodikPage() {
           </p>
         </section>
 
+        <section aria-labelledby="overlays-heading">
+          <h2 id="overlays-heading" className="text-lg font-medium">
+            Referenz-Overlays (Gold, Bitcoin)
+          </h2>
+          <p className="mt-3 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            Optionale Referenzlinien zur Wertaufbewahrung, keine Inflationsmessung — zeigen, wie sich
+            derselbe Betrag in Gold oder Bitcoin entwickelt hätte. Beide Reihen sind{" "}
+            <strong>abgeleitete Grössen</strong>: keine der beiden Roh-Notierungen ist direkt in Schweizer
+            Franken verfügbar, deshalb wird jeweils über einen Wechselkurs umgerechnet.
+          </p>
+          <dl className="mt-3 flex flex-col gap-2 text-sm">
+            <div>
+              <dt className="font-medium">Gold (CHF)</dt>
+              <dd style={{ color: "var(--color-text-secondary)" }}>
+                Gold/CHF = XAU/USD (Twelve Data) × USD/CHF (Twelve Data). XAU/CHF ist auf dem
+                genutzten Twelve-Data-Tarif nicht direkt verfügbar.
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium">Bitcoin (CHF)</dt>
+              <dd style={{ color: "var(--color-text-secondary)" }}>
+                BTC/CHF = BTC/USD (Bitstamp) × USD/CHF (Twelve Data). Bitstamp bietet kein direktes
+                BTC/CHF-Paar an, dafür aber eine deutlich längere Historie (ab 18.08.2011) als der
+                zuvor genutzte direkte Twelve-Data-Feed (ab 31.01.2021) — der Grund für die
+                zusätzliche Quelle.
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium">Behandlung fehlender Handelstage</dt>
+              <dd style={{ color: "var(--color-text-secondary)" }}>
+                Für Tage ohne passenden Wechselkurs-Gegenwert (z.B. Wochenenden/Feiertage bei den
+                Wechselkursreihen, während Bitcoin 24/7 handelt) wird <strong>kein Wert interpoliert
+                oder geschätzt</strong> — der Tag fehlt in der abgeleiteten Reihe.
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section aria-labelledby="aenderungen-heading">
+          <h2 id="aenderungen-heading" className="text-lg font-medium">
+            Was hat sich geändert?
+          </h2>
+          <p className="mt-2 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+            Formel-Änderungen, Methodik-Anpassungen, neue Datenquellen und Korrekturen — keine
+            stillen Anpassungen (US 4.10). Vormals eigene Seite <code>/aenderungen</code>, hierher
+            integriert (Betreiber-Vorgabe 05.09.2026) — Änderungen gehören inhaltlich zur Methodik,
+            eine separate Seite für zwei Einträge war unnötige Navigations-Fragmentierung.
+          </p>
+          <ol className="mt-4 flex flex-col gap-6">
+            {CHANGES.map((c) => (
+              <li key={c.date + c.title} className="border-l-2 pl-4" style={{ borderColor: "var(--color-line-lik)" }}>
+                <time className="text-xs tf-numeric" style={{ color: "var(--color-text-muted)" }}>
+                  {c.date}
+                </time>
+                <h3 className="text-base font-medium mt-1">{c.title}</h3>
+                <p className="text-sm mt-1" style={{ color: "var(--color-text-secondary)" }}>
+                  {c.detail}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         <footer className="mt-6 text-xs" style={{ color: "var(--color-text-muted)" }}>
           <p>
             Fehler gefunden oder methodische Rückfrage?{" "}
             <a href="/kontakt" className="underline">
               Kontakt
             </a>
-            . Änderungen an dieser Methodik erscheinen in der{" "}
-            <a href="/aenderungen" className="underline">
-              Änderungshistorie
-            </a>
-            .
+            . Änderungen an dieser Methodik erscheinen oben unter &quot;Was hat sich geändert?&quot;.
           </p>
         </footer>
       </main>

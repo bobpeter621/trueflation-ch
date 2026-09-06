@@ -275,7 +275,10 @@ export default function KaufkraftRechner() {
 
   function formatRate(value: number | null): string {
     if (value == null) return "—";
-    return `${value >= 0 ? "+" : ""}${value.toFixed(2)} %/Jahr`;
+    // Dezimalkomma (de-CH), konsistent mit der zentralen Formatierung in
+    // app/lib/annual-rates.ts — Tabelle/Kacheln auf derselben Seite zeigen
+    // Komma-Werte, der Rechner darf nicht mit Punkt dagegen stehen.
+    return `${value >= 0 ? "+" : ""}${value.toFixed(2).replace(".", ",")} %/Jahr`;
   }
 
   const yearOptions = useMemo(() => {
@@ -308,12 +311,6 @@ export default function KaufkraftRechner() {
     <section
       aria-labelledby="kaufkraft-rechner-heading"
       className="tf-rechner"
-      style={{
-        border: "1px solid var(--color-border)",
-        borderRadius: "var(--radius-lg)",
-        padding: "var(--space-6)",
-        backgroundColor: "var(--color-bg-elevated)",
-      }}
     >
       <h2 id="kaufkraft-rechner-heading" className="text-lg font-medium">
         Kaufkraft-Rechner

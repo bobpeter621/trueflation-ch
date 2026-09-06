@@ -101,6 +101,26 @@ async function verifyMode(page, mode) {
   await page.emulateMedia({ colorScheme: mode });
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForSelector('.tf-chart-canvas-wrapper canvas', { timeout: 15000 });
+
+  // ANPASSUNG (05.09.2026, M2-Checkbox-Umstellung): M2 ist seit der
+  // Betreiber-Vorgabe "M2 optional statt immer sichtbar" per Default AUS
+  // (analog zum Leitzins-Muster) und liegt jetzt im aufklappbaren
+  // <details>-Menü (US 3.10 Mobile-Menu-Fix, ebenfalls 05.09.2026). Dieser
+  // Test prüft die M2-Linienfarbe -- ohne das Menü zu öffnen und die
+  // Checkbox zu aktivieren, wird M2 nie gerendert (erwartetes Verhalten der
+  // Checkbox, kein Farbrendering-Bug). Menü öffnen + Checkbox aktivieren,
+  // BEVOR die Pixelfarben geprüft werden.
+  const menuToggle = page.locator('.tf-overlay-menu summary');
+  if (await menuToggle.count() > 0) {
+    const detailsOpen = await page.locator('.tf-overlay-menu').getAttribute('open');
+    if (detailsOpen === null) {
+      await menuToggle.click();
+    }
+  }
+  const m2Checkbox = page.locator('input[aria-label="Geldmenge (M2) ein-/ausblenden"]');
+  if (await m2Checkbox.count() > 0 && !(await m2Checkbox.isChecked())) {
+    await m2Checkbox.check();
+  }
   await page.waitForTimeout(900); // Daten-Fetch + vollständiges Chart-Rendering abwarten
 
   mkdirSync(SCREENSHOT_DIR, { recursive: true });

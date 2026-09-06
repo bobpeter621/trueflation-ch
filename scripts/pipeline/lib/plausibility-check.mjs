@@ -177,9 +177,24 @@ export function checkPlausibility({
       sourceUrl,
       question: null,
     });
-    notifyFn(message);
-    markReminderSent(sourceKey, plausiStateDir);
-    console.error(`[plausi/${sourceKey}] 7-Tage-Erinnerung gesendet — Datenstand bleibt 'vorläufig/veraltet' (US 3.16 Zustand 2).`);
+    // SECURITY-FIX (Security-Review 05.09.2026, Finding 3.1, LOW, aber
+    // Integritaet des Kernschutz-Mechanismus US 1.7): markReminderSent()
+    // wurde bisher UNABHAENGIG vom Rueckgabewert von notifyFn() aufgerufen.
+    // Schlaegt der Telegram-Versand fehl (Netzwerkfehler, Token abgelaufen),
+    // ist die laut eigener Nachricht "EINZIGE Erinnerung" verbraucht, OHNE
+    // je beim Betreiber angekommen zu sein -- ein zurueckgehaltener Wert
+    // bliebe danach fuer immer still liegen (Ausgang 3 der Fix-3-Logik
+    // wuerde nie wieder erreicht, siehe plausibility-state.mjs). Fix: nur
+    // bei tatsaechlich erfolgreichem Versand (notifyFn() === true) als
+    // gesendet markieren -- bei Fehlschlag bleibt reminderSentAt null und
+    // der naechste Pipeline-Lauf versucht die Erinnerung erneut.
+    const notifySucceeded = notifyFn(message);
+    if (notifySucceeded) {
+      markReminderSent(sourceKey, plausiStateDir);
+      console.error(`[plausi/${sourceKey}] 7-Tage-Erinnerung gesendet — Datenstand bleibt 'vorläufig/veraltet' (US 3.16 Zustand 2).`);
+    } else {
+      console.error(`[plausi/${sourceKey}] 7-Tage-Erinnerung FEHLGESCHLAGEN (Versand nicht bestätigt) — wird beim nächsten Lauf erneut versucht, NICHT als gesendet markiert.`);
+    }
     return { status: 'reminder-sent', changePercent: NaN, dataFreshnessImpact: 'stale' };
   }
 

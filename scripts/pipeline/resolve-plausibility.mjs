@@ -3,10 +3,10 @@
  * trueflation.ch — Plausi-Freigabe/Verwerfung verarbeiten (US 1.7, Fix 3)
  *
  * RÜCKKANAL-BEFUND (Betreiber-Direktive 28.08.2026): notify-telegram.sh ist
- * reiner Sende-Code, aber der Telegram-Kanal insgesamt (OpenClaw-Integration)
- * ist bidirektional — dieselbe Chat-ID, über die der Betreiber mit dem
- * Agenten spricht. Antwortet der Betreiber dort mit "JA <sourceKey>" oder
- * "NEIN <sourceKey>", kommt das als normale Nachricht beim Agenten an.
+ * reiner Sende-Code, aber der Telegram-Kanal insgesamt (Betreiber-Agent-
+ * Integration) ist bidirektional — dieselbe Chat-ID, über die der Betreiber
+ * mit dem Agenten spricht. Antwortet der Betreiber dort mit "JA <sourceKey>"
+ * oder "NEIN <sourceKey>", kommt das als normale Nachricht beim Agenten an.
  *
  * ASYNCHRONITÄT (Betreiber-Vorgabe): Die Pipeline läuft in GitHub Actions
  * und sendet dort, die Antwort verarbeitet der Agent u.U. Stunden später in

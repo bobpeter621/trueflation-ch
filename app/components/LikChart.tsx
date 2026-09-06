@@ -327,6 +327,11 @@ export default function LikChart() {
   const [leitzinsCurrent, setLeitzinsCurrent] = useState<LeitzinsFile | null>(null);
   const [leitzinsEnabled, setLeitzinsEnabled] = useState(false);
   const [leitzinsError, setLeitzinsError] = useState<string | null>(null);
+  // M2 optional statt immer sichtbar (Betreiber-Vorgabe 05.09.2026): analog
+  // zum Leitzins-Muster als Checkbox, Default AUS -- Geldmenge misst eine
+  // andere Groesse als die beiden Inflationslinien (siehe Info-Hinweis unten,
+  // US 3.7) und soll nicht ungefragt mitlaufen.
+  const [m2Enabled, setM2Enabled] = useState(false);
   // K1-Fix: live aufgelöste Theme-Farben (echte Hex-Werte, KEINE
   // var(--...)-Strings) für ALLE Chart.js-Dataset-/Grid-Farbdefinitionen.
   const colors = useThemeColors();
@@ -652,7 +657,7 @@ export default function LikChart() {
               },
             ]
           : []),
-        ...(m2ExistsInRange
+        ...(m2Enabled && m2ExistsInRange
           ? [
               {
                 label: "Geldmengenausweitung (M2)",
@@ -711,6 +716,7 @@ export default function LikChart() {
       trueflationExistsInRange,
       m2DisplayPoints,
       m2ExistsInRange,
+      m2Enabled,
       trueflationEndsEarlierThanLik,
       filteredOverlays,
       overlaysEnabled,
@@ -932,53 +938,84 @@ export default function LikChart() {
         </button>
       </div>
 
-      {/* Leitzins-Overlay (US 3.5): eigene Toolbar-Zeile, da methodisch
-          anders als die Referenz-Overlays (keine Wertaufbewahrung, sondern
-          geldpolitisches Instrument, eigene Sekundärachse). */}
-      <div className="tf-chart-toolbar" role="group" aria-label="SNB-Leitzins">
-        <label className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-          <input
-            type="checkbox"
-            checked={leitzinsEnabled}
-            onChange={(e) => setLeitzinsEnabled(e.target.checked)}
-            aria-label="SNB-Leitzins ein-/ausblenden"
-          />
-          SNB-Leitzins
-        </label>
-      </div>
-      {leitzinsEnabled && leitzinsError && (
-        <div className="tf-chart-status" role="status">
-          <span>Leitzins-Daten derzeit nicht verfügbar (Ausfall) — Kernlinien bleiben unberührt.</span>
-        </div>
-      )}
-
-      {/* Overlay-Checkboxen (Requirements 2.5): Standardzustand alle AUS
-          (opt-in), eigene Kategorisierung "Wertaufbewahrung/Rendite" statt
-          "Inflationsmessung" — auch in der Bedienelement-Beschriftung
-          sichtbar, nicht nur im Tooltip. */}
-      {/* CODE-REVIEW-FIX (Opus 4.8, 28.08.2026): pro Kategorie EIN eigener
-          Toolbar-Block mit dynamischem Label aus OVERLAY_CATEGORY_LABELS —
-          ein künftiges Overlay mit category:"trueflation-variante" bekommt
-          automatisch die korrekte Gruppe/Beschriftung, ohne dass diese
-          Render-Logik geändert werden muss (das ist der eigentliche Beweis
-          der Erweiterbarkeits-Anforderung). */}
-      {(Object.keys(OVERLAY_CATEGORY_LABELS) as OverlayCategory[])
-        .filter((cat) => OVERLAY_CONFIGS.some((o) => o.category === cat))
-        .map((cat) => (
-          <div key={cat} className="tf-chart-toolbar" role="group" aria-label={`Referenz-Overlays (${OVERLAY_CATEGORY_LABELS[cat]})`}>
-            {OVERLAY_CONFIGS.filter((o) => o.category === cat).map((overlay) => (
-              <label key={overlay.key} className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-                <input
-                  type="checkbox"
-                  checked={!!overlaysEnabled[overlay.key]}
-                  onChange={(e) => setOverlaysEnabled((prev) => ({ ...prev, [overlay.key]: e.target.checked }))}
-                  aria-label={`Overlay ${overlay.label} ein-/ausblenden`}
-                />
-                {overlay.label}
-              </label>
-            ))}
+      {/* US 3.10 (mobiler Besucher, aufklappbares Menü statt permanent
+          sichtbar): Leitzins/M2/Referenz-Overlay-Toggles waren bisher IMMER
+          als feste Toolbar-Zeilen gerendert -- auf kleinen Viewports nimmt
+          das viel vertikalen Platz vor dem eigentlichen Chart weg, ohne dass
+          die meisten Besucher diese Sekundär-Linien überhaupt aktivieren
+          (Default ist ueberall AUS). <details>/<summary> ist die native,
+          barrierefreie Disclosure-Loesung (Tastatur- und Screenreader-
+          Unterstuetzung eingebaut, kein eigenes JS/ARIA-State-Management
+          noetig) -- funktioniert identisch auf Mobile UND Desktop, kein
+          separater Mobile-Code-Pfad noetig. */}
+      <details className="tf-overlay-menu">
+        <summary className="tf-preset-button" style={{ cursor: "pointer" }}>
+          Overlays &amp; weitere Linien
+        </summary>
+        <div className="tf-overlay-menu-content">
+          {/* Leitzins-Overlay (US 3.5): eigene Toolbar-Zeile, da methodisch
+              anders als die Referenz-Overlays (keine Wertaufbewahrung,
+              sondern geldpolitisches Instrument, eigene Sekundärachse). */}
+          <div className="tf-chart-toolbar" role="group" aria-label="SNB-Leitzins">
+            <label className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+              <input
+                type="checkbox"
+                checked={leitzinsEnabled}
+                onChange={(e) => setLeitzinsEnabled(e.target.checked)}
+                aria-label="SNB-Leitzins ein-/ausblenden"
+              />
+              SNB-Leitzins
+            </label>
           </div>
-        ))}
+
+          {/* Geldmenge (M2) optional statt immer sichtbar (Betreiber-Vorgabe
+              05.09.2026) -- analog zum Leitzins-Checkbox-Muster, Default AUS. */}
+          <div className="tf-chart-toolbar" role="group" aria-label="Geldmenge (M2)">
+            <label className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+              <input
+                type="checkbox"
+                checked={m2Enabled}
+                onChange={(e) => setM2Enabled(e.target.checked)}
+                aria-label="Geldmenge (M2) ein-/ausblenden"
+              />
+              Geldmenge (M2)
+            </label>
+          </div>
+          {leitzinsEnabled && leitzinsError && (
+            <div className="tf-chart-status" role="status">
+              <span>Leitzins-Daten derzeit nicht verfügbar (Ausfall) — Kernlinien bleiben unberührt.</span>
+            </div>
+          )}
+
+          {/* Overlay-Checkboxen (Requirements 2.5): Standardzustand alle AUS
+              (opt-in), eigene Kategorisierung "Wertaufbewahrung/Rendite" statt
+              "Inflationsmessung" — auch in der Bedienelement-Beschriftung
+              sichtbar, nicht nur im Tooltip. */}
+          {/* CODE-REVIEW-FIX (Opus 4.8, 28.08.2026): pro Kategorie EIN eigener
+              Toolbar-Block mit dynamischem Label aus OVERLAY_CATEGORY_LABELS —
+              ein künftiges Overlay mit category:"trueflation-variante" bekommt
+              automatisch die korrekte Gruppe/Beschriftung, ohne dass diese
+              Render-Logik geändert werden muss (das ist der eigentliche Beweis
+              der Erweiterbarkeits-Anforderung). */}
+          {(Object.keys(OVERLAY_CATEGORY_LABELS) as OverlayCategory[])
+            .filter((cat) => OVERLAY_CONFIGS.some((o) => o.category === cat))
+            .map((cat) => (
+              <div key={cat} className="tf-chart-toolbar" role="group" aria-label={`Referenz-Overlays (${OVERLAY_CATEGORY_LABELS[cat]})`}>
+                {OVERLAY_CONFIGS.filter((o) => o.category === cat).map((overlay) => (
+                  <label key={overlay.key} className="tf-preset-button" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+                    <input
+                      type="checkbox"
+                      checked={!!overlaysEnabled[overlay.key]}
+                      onChange={(e) => setOverlaysEnabled((prev) => ({ ...prev, [overlay.key]: e.target.checked }))}
+                      aria-label={`Overlay ${overlay.label} ein-/ausblenden`}
+                    />
+                    {overlay.label}
+                  </label>
+                ))}
+              </div>
+            ))}
+        </div>
+      </details>
 
       <div className="tf-chart-canvas-wrapper">
         <Line ref={chartRef} data={chartData} options={options} />
@@ -1045,7 +1082,7 @@ export default function LikChart() {
           <span>Geldmengen-Daten (M2) derzeit nicht verfügbar — LIK- und Trueflation-Linien bleiben unberührt.</span>
         </div>
       )}
-      {m2ExistsInRange && (
+      {m2Enabled && m2ExistsInRange && (
         <div className="tf-chart-status tf-chart-status--info" role="note">
           <span>⚠️ Geldmenge (M2) misst die <strong>Verwässerung der Geldmenge</strong>, nicht die
             Preisentwicklung — keine direkte Vergleichsgrösse zu den beiden Inflationslinien

@@ -12,7 +12,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 export const metadata = {
-  title: "Datenquellen — trueflation.ch",
+  title: "Datenquellen",
   description: "Übersicht aller verwendeten Datenquellen mit Stand, Lizenz und Quellenangabe.",
 };
 
@@ -23,6 +23,24 @@ export const metadata = {
 function readLikData() {
   try {
     const raw = readFileSync(path.join(process.cwd(), "data", "lik", "total-index-monthly.json"), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function readLeitzinsData() {
+  try {
+    const raw = readFileSync(path.join(process.cwd(), "data", "snb-leitzins", "leitzins-current.json"), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function readTrueflationData() {
+  try {
+    const raw = readFileSync(path.join(process.cwd(), "data", "trueflation", "trueflation-index-monthly.json"), "utf-8");
     return JSON.parse(raw);
   } catch {
     return null;
@@ -46,9 +64,13 @@ function formatIndexDate(indexDate: number): string {
 export default function DatenquellenPage() {
   const likData = readLikData();
   const snbData = readSnbM2Data();
+  const leitzinsData = readLeitzinsData();
+  const trueflationData = readTrueflationData();
 
   const likLast = likData?.values?.[likData.values.length - 1];
   const snbLast = snbData?.values?.[snbData.values.length - 1];
+  const leitzinsLast = leitzinsData?.values?.[leitzinsData.values.length - 1];
+  const trueflationLast = trueflationData?.values?.[trueflationData.values.length - 1];
 
   return (
     <div className="flex flex-col min-h-screen items-center px-4 py-12 sm:px-8">
@@ -61,6 +83,10 @@ export default function DatenquellenPage() {
           </p>
         </header>
 
+        {/* Mobile (375px): Tabelle bekommt eigenen horizontalen
+            Scroll-Container statt die Seite um einige Pixel zu sprengen
+            (Frontend-Review 05.09.2026: 5px Seiten-Overflow ohne Wrapper). */}
+        <div style={{ overflowX: "auto" }}>
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b" style={{ borderColor: "var(--color-border)" }}>
@@ -90,7 +116,7 @@ export default function DatenquellenPage() {
               <td className="py-2">Geldmenge M2</td>
               <td className="py-2">Schweizerische Nationalbank</td>
               <td className="py-2 tf-numeric">
-                {snbLast ? `${snbLast.date} — ${snbLast.value.toLocaleString("de-CH")} Mio. CHF` : "—"}
+                {snbLast ? `${snbLast.date.slice(5, 7)}.${snbLast.date.slice(0, 4)} — ${snbLast.value.toLocaleString("de-CH")} Mio. CHF` : "—"}
               </td>
               <td className="py-2">
                 <a href="https://data.snb.ch/" className="underline">
@@ -100,18 +126,33 @@ export default function DatenquellenPage() {
             </tr>
             <tr className="border-b" style={{ borderColor: "var(--color-border)" }}>
               <td className="py-2">SNB-Leitzins</td>
-              <td className="py-2" colSpan={3} style={{ color: "var(--color-text-muted)" }}>
-                Zugriffsweg noch nicht verifiziert (V6, zweiter Teil — offen).
+              <td className="py-2">Schweizerische Nationalbank</td>
+              <td className="py-2 tf-numeric">
+                {leitzinsLast ? `${leitzinsLast.date} — ${leitzinsLast.value} %` : "—"}
+              </td>
+              <td className="py-2">
+                <a href="https://data.snb.ch/" className="underline">
+                  data.snb.ch
+                </a>
               </td>
             </tr>
             <tr>
-              <td className="py-2">Trueflation</td>
-              <td className="py-2" colSpan={3} style={{ color: "var(--color-text-muted)" }}>
-                Berechnung noch nicht implementiert (P3).
+              <td className="py-2">Trueflation (eigene Berechnung)</td>
+              <td className="py-2">trueflation.ch auf Basis BFS/BAG (siehe Methodik)</td>
+              <td className="py-2 tf-numeric">
+                {trueflationLast
+                  ? `${String(trueflationLast.month).slice(4, 6)}.${String(trueflationLast.month).slice(0, 4)} — ${trueflationLast.trueflationIndex.toFixed(1)}`
+                  : "—"}
+              </td>
+              <td className="py-2">
+                <a href="/methodik" className="underline">
+                  Methodik
+                </a>
               </td>
             </tr>
           </tbody>
         </table>
+        </div>
 
         <footer className="text-xs" style={{ color: "var(--color-text-muted)" }}>
           Eigene Inhalte dieser Seite: CC BY (Namensnennung). Amtliche Quelldaten unterliegen eigenen
