@@ -4,7 +4,7 @@
   "sourceUrlBtcUsd": "https://www.bitstamp.net/api/v2/ohlc/btcusd/",
   "sourceUrlUsdChf": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
   "isDerivedQuantity": true,
-  "importedAt": "2026-09-07T11:35:22.753Z",
+  "importedAt": "2026-09-08T10:34:47.333Z",
   "importType": "bulk",
   "unit": "CHF (abgeleitet)",
   "values": [
@@ -24340,9 +24340,15 @@
     },
     {
       "date": "2026-09-07",
-      "btcUsd": 79453.35,
-      "usdChf": 0.80883,
-      "close": 64264.2531
+      "btcUsd": 79090.41,
+      "usdChf": 0.80958,
+      "close": 64030.0141
+    },
+    {
+      "date": "2026-09-08",
+      "btcUsd": 78707.59,
+      "usdChf": 0.8115,
+      "close": 63871.2093
     }
   ]
 }
