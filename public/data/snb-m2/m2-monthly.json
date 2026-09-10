@@ -2,7 +2,7 @@
   "_comment": "Automatisch generiert durch scripts/pipeline/bulk-import-snb-m2.mjs — nicht manuell editieren.",
   "sourceUrl": "https://data.snb.ch/api/cube/snbmonagg/data/csv/de?dimSel=D0(B),D1(GM2)",
   "sourcePublishingDate": "2026-08-21 09:00",
-  "importedAt": "2026-09-09T10:45:55.368Z",
+  "importedAt": "2026-09-10T10:36:33.958Z",
   "importType": "bulk",
   "unit": "Mio. CHF",
   "aggregate": "M2 (D1=GM2)",
