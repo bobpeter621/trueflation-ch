@@ -8087,7 +8087,13 @@
       "indexValue": 1118,
       "changeRateVorjahresmonat": 0.8,
       "changeRateVormonat": 0.4
+    },
+    {
+      "indexDate": 20260901,
+      "indexValue": 1117.5,
+      "changeRateVorjahresmonat": 1,
+      "changeRateVormonat": 0
     }
   ],
-  "lastIncrementalUpdate": "2026-09-06T07:26:44.727Z"
+  "lastIncrementalUpdate": "2026-10-01T12:26:24.106Z"
 }

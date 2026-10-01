@@ -4,136 +4,10 @@
   "sourceUrlXauUsd": "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1day",
   "sourceUrlUsdChf": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
   "isDerivedQuantity": true,
-  "importedAt": "2026-09-10T10:36:51.262Z",
+  "importedAt": "2026-10-01T12:26:42.407Z",
   "importType": "bulk",
   "unit": "CHF (abgeleitet)",
   "values": [
-    {
-      "date": "2008-01-30",
-      "xauUsd": 929,
-      "usdChf": 1.0833,
-      "goldChf": 1006.3857
-    },
-    {
-      "date": "2008-01-31",
-      "xauUsd": 925.62,
-      "usdChf": 1.0806,
-      "goldChf": 1000.225
-    },
-    {
-      "date": "2008-02-01",
-      "xauUsd": 910.38,
-      "usdChf": 1.0894,
-      "goldChf": 991.768
-    },
-    {
-      "date": "2008-02-04",
-      "xauUsd": 904.75,
-      "usdChf": 1.0884,
-      "goldChf": 984.7299
-    },
-    {
-      "date": "2008-02-05",
-      "xauUsd": 887.20001,
-      "usdChf": 1.0998,
-      "goldChf": 975.7426
-    },
-    {
-      "date": "2008-02-06",
-      "xauUsd": 900.75,
-      "usdChf": 1.0981,
-      "goldChf": 989.1136
-    },
-    {
-      "date": "2008-02-07",
-      "xauUsd": 909.15002,
-      "usdChf": 1.1037,
-      "goldChf": 1003.4289
-    },
-    {
-      "date": "2008-02-08",
-      "xauUsd": 918.34998,
-      "usdChf": 1.1022,
-      "goldChf": 1012.2053
-    },
-    {
-      "date": "2008-02-11",
-      "xauUsd": 924.75,
-      "usdChf": 1.1021,
-      "goldChf": 1019.167
-    },
-    {
-      "date": "2008-02-12",
-      "xauUsd": 906.099976,
-      "usdChf": 1.1018,
-      "goldChf": 998.341
-    },
-    {
-      "date": "2008-02-13",
-      "xauUsd": 905.099976,
-      "usdChf": 1.1086,
-      "goldChf": 1003.3938
-    },
-    {
-      "date": "2008-02-14",
-      "xauUsd": 908.20001,
-      "usdChf": 1.0978,
-      "goldChf": 997.022
-    },
-    {
-      "date": "2008-02-15",
-      "xauUsd": 902.70001,
-      "usdChf": 1.093,
-      "goldChf": 986.6511
-    },
-    {
-      "date": "2008-02-18",
-      "xauUsd": 906.40002,
-      "usdChf": 1.1023,
-      "goldChf": 999.1247
-    },
-    {
-      "date": "2008-02-19",
-      "xauUsd": 927.59998,
-      "usdChf": 1.0943,
-      "goldChf": 1015.0727
-    },
-    {
-      "date": "2008-02-20",
-      "xauUsd": 944.90002,
-      "usdChf": 1.0998,
-      "goldChf": 1039.201
-    },
-    {
-      "date": "2008-02-21",
-      "xauUsd": 944.90002,
-      "usdChf": 1.0897,
-      "goldChf": 1029.6576
-    },
-    {
-      "date": "2008-02-22",
-      "xauUsd": 945.5,
-      "usdChf": 1.085,
-      "goldChf": 1025.8675
-    },
-    {
-      "date": "2008-02-25",
-      "xauUsd": 939.79999,
-      "usdChf": 1.0896,
-      "goldChf": 1024.0061
-    },
-    {
-      "date": "2008-02-26",
-      "xauUsd": 948.90002,
-      "usdChf": 1.0753,
-      "goldChf": 1020.3522
-    },
-    {
-      "date": "2008-02-27",
-      "xauUsd": 958.20001,
-      "usdChf": 1.0627,
-      "goldChf": 1018.2792
-    },
     {
       "date": "2008-02-28",
       "xauUsd": 969.34998,
@@ -29794,9 +29668,135 @@
     },
     {
       "date": "2026-09-10",
-      "xauUsd": 4383.77936,
-      "usdChf": 0.81117,
-      "goldChf": 3555.9903
+      "xauUsd": 4316.75877,
+      "usdChf": 0.81297,
+      "goldChf": 3509.3954
+    },
+    {
+      "date": "2026-09-11",
+      "xauUsd": 4348.86917,
+      "usdChf": 0.81645,
+      "goldChf": 3550.6342
+    },
+    {
+      "date": "2026-09-12",
+      "xauUsd": 4348.45697,
+      "usdChf": 0.8165,
+      "goldChf": 3550.5151
+    },
+    {
+      "date": "2026-09-13",
+      "xauUsd": 4348.45503,
+      "usdChf": 0.81648,
+      "goldChf": 3550.4266
+    },
+    {
+      "date": "2026-09-14",
+      "xauUsd": 4298.34998,
+      "usdChf": 0.81739,
+      "goldChf": 3513.4283
+    },
+    {
+      "date": "2026-09-15",
+      "xauUsd": 4293.79613,
+      "usdChf": 0.81885,
+      "goldChf": 3515.975
+    },
+    {
+      "date": "2026-09-16",
+      "xauUsd": 4264.06814,
+      "usdChf": 0.82594,
+      "goldChf": 3521.8644
+    },
+    {
+      "date": "2026-09-17",
+      "xauUsd": 4341.90205,
+      "usdChf": 0.82465,
+      "goldChf": 3580.5495
+    },
+    {
+      "date": "2026-09-18",
+      "xauUsd": 4377.24525,
+      "usdChf": 0.82206,
+      "goldChf": 3598.3582
+    },
+    {
+      "date": "2026-09-19",
+      "xauUsd": 4380.12934,
+      "usdChf": 0.82266,
+      "goldChf": 3603.3572
+    },
+    {
+      "date": "2026-09-20",
+      "xauUsd": 4380.13345,
+      "usdChf": 0.82264,
+      "goldChf": 3603.273
+    },
+    {
+      "date": "2026-09-21",
+      "xauUsd": 4343.80964,
+      "usdChf": 0.82115,
+      "goldChf": 3566.9193
+    },
+    {
+      "date": "2026-09-22",
+      "xauUsd": 4357.67796,
+      "usdChf": 0.82056,
+      "goldChf": 3575.7362
+    },
+    {
+      "date": "2026-09-23",
+      "xauUsd": 4286.97334,
+      "usdChf": 0.82527,
+      "goldChf": 3537.9105
+    },
+    {
+      "date": "2026-09-24",
+      "xauUsd": 4275.2841,
+      "usdChf": 0.82788,
+      "goldChf": 3539.4222
+    },
+    {
+      "date": "2026-09-25",
+      "xauUsd": 4286.73973,
+      "usdChf": 0.82854,
+      "goldChf": 3551.7353
+    },
+    {
+      "date": "2026-09-26",
+      "xauUsd": 4286.21452,
+      "usdChf": 0.82867,
+      "goldChf": 3551.8574
+    },
+    {
+      "date": "2026-09-27",
+      "xauUsd": 4286.21426,
+      "usdChf": 0.82859,
+      "goldChf": 3551.5143
+    },
+    {
+      "date": "2026-09-28",
+      "xauUsd": 4115.07518,
+      "usdChf": 0.83209,
+      "goldChf": 3424.1129
+    },
+    {
+      "date": "2026-09-29",
+      "xauUsd": 4181.99954,
+      "usdChf": 0.83375,
+      "goldChf": 3486.7421
+    },
+    {
+      "date": "2026-09-30",
+      "xauUsd": 4156.46018,
+      "usdChf": 0.83581,
+      "goldChf": 3474.011
+    },
+    {
+      "date": "2026-10-01",
+      "xauUsd": 4175.55898,
+      "usdChf": 0.83569,
+      "goldChf": 3489.4729
     }
   ]
 }

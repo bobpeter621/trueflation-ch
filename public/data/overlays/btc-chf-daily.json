@@ -4,7 +4,7 @@
   "sourceUrlBtcUsd": "https://www.bitstamp.net/api/v2/ohlc/btcusd/",
   "sourceUrlUsdChf": "https://api.twelvedata.com/time_series?symbol=USD/CHF&interval=1day",
   "isDerivedQuantity": true,
-  "importedAt": "2026-09-10T10:36:51.257Z",
+  "importedAt": "2026-10-01T12:26:42.401Z",
   "importType": "bulk",
   "unit": "CHF (abgeleitet)",
   "values": [
@@ -24358,9 +24358,135 @@
     },
     {
       "date": "2026-09-10",
-      "btcUsd": 77915.4,
-      "usdChf": 0.81117,
-      "close": 63202.635
+      "btcUsd": 76528.75,
+      "usdChf": 0.81297,
+      "close": 62215.5779
+    },
+    {
+      "date": "2026-09-11",
+      "btcUsd": 77212.48,
+      "usdChf": 0.81645,
+      "close": 63040.1293
+    },
+    {
+      "date": "2026-09-12",
+      "btcUsd": 77269.22,
+      "usdChf": 0.8165,
+      "close": 63090.3181
+    },
+    {
+      "date": "2026-09-13",
+      "btcUsd": 76808.69,
+      "usdChf": 0.81648,
+      "close": 62712.7592
+    },
+    {
+      "date": "2026-09-14",
+      "btcUsd": 78185.01,
+      "usdChf": 0.81739,
+      "close": 63907.6453
+    },
+    {
+      "date": "2026-09-15",
+      "btcUsd": 75577.29,
+      "usdChf": 0.81885,
+      "close": 61886.4639
+    },
+    {
+      "date": "2026-09-16",
+      "btcUsd": 76138.6,
+      "usdChf": 0.82594,
+      "close": 62885.9153
+    },
+    {
+      "date": "2026-09-17",
+      "btcUsd": 76354.94,
+      "usdChf": 0.82465,
+      "close": 62966.1013
+    },
+    {
+      "date": "2026-09-18",
+      "btcUsd": 80878.77,
+      "usdChf": 0.82206,
+      "close": 66487.2017
+    },
+    {
+      "date": "2026-09-19",
+      "btcUsd": 81235.14,
+      "usdChf": 0.82266,
+      "close": 66828.9003
+    },
+    {
+      "date": "2026-09-20",
+      "btcUsd": 81151.65,
+      "usdChf": 0.82264,
+      "close": 66758.5934
+    },
+    {
+      "date": "2026-09-21",
+      "btcUsd": 86586.52,
+      "usdChf": 0.82115,
+      "close": 71100.5209
+    },
+    {
+      "date": "2026-09-22",
+      "btcUsd": 86201.35,
+      "usdChf": 0.82056,
+      "close": 70733.3798
+    },
+    {
+      "date": "2026-09-23",
+      "btcUsd": 84384.54,
+      "usdChf": 0.82527,
+      "close": 69640.0293
+    },
+    {
+      "date": "2026-09-24",
+      "btcUsd": 84383.03,
+      "usdChf": 0.82788,
+      "close": 69859.0229
+    },
+    {
+      "date": "2026-09-25",
+      "btcUsd": 84089.54,
+      "usdChf": 0.82854,
+      "close": 69671.5475
+    },
+    {
+      "date": "2026-09-26",
+      "btcUsd": 84433.05,
+      "usdChf": 0.82867,
+      "close": 69967.1355
+    },
+    {
+      "date": "2026-09-27",
+      "btcUsd": 84457.2,
+      "usdChf": 0.82859,
+      "close": 69980.3913
+    },
+    {
+      "date": "2026-09-28",
+      "btcUsd": 83461.65,
+      "usdChf": 0.83209,
+      "close": 69447.6043
+    },
+    {
+      "date": "2026-09-29",
+      "btcUsd": 83629.41,
+      "usdChf": 0.83375,
+      "close": 69726.0206
+    },
+    {
+      "date": "2026-09-30",
+      "btcUsd": 83562.58,
+      "usdChf": 0.83581,
+      "close": 69842.44
+    },
+    {
+      "date": "2026-10-01",
+      "btcUsd": 83951.4,
+      "usdChf": 0.83569,
+      "close": 70157.3455
     }
   ]
 }
