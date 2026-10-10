@@ -1,6 +1,6 @@
 {
   "_comment": "Prüfsummen über publizierte Datenstände (US 5.5). SHA-256 über Dateiinhalt, exkl. volatiler Metafelder (importedAt etc.). Bei jedem Pipeline-Lauf neu geschrieben, versioniert im Git-Verlauf.",
-  "generatedAt": "2026-10-09T12:34:23.008Z",
+  "generatedAt": "2026-10-10T11:54:59.168Z",
   "checksums": {
     "data/kvpi-premium-index/premium-index-ch.json": "684b95ba265f821e7bba5e6bc981cf4feb2fa3a5e60e9d7c54812c7e8a87d040",
     "data/lik/major-groups-monthly.json": "91db7b17f2bfc2a44ad1516b51e9ba07debc7b835ef637d7d807b4f2e0b35080",
