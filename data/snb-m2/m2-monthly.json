@@ -1,8 +1,8 @@
 {
   "_comment": "Automatisch generiert durch scripts/pipeline/bulk-import-snb-m2.mjs — nicht manuell editieren.",
   "sourceUrl": "https://data.snb.ch/api/cube/snbmonagg/data/csv/de?dimSel=D0(B),D1(GM2)",
-  "sourcePublishingDate": "2026-09-21 09:00",
-  "importedAt": "2026-10-10T11:54:49.684Z",
+  "sourcePublishingDate": "2026-10-21 09:00",
+  "importedAt": "2026-11-01T12:41:09.111Z",
   "importType": "bulk",
   "unit": "Mio. CHF",
   "aggregate": "M2 (D1=GM2)",
@@ -2963,55 +2963,61 @@
       "date": "2025-12",
       "d0": "B",
       "d1": "GM2",
-      "value": 1101387
+      "value": 1101477
     },
     {
       "date": "2026-01",
       "d0": "B",
       "d1": "GM2",
-      "value": 1104211
+      "value": 1104303
     },
     {
       "date": "2026-02",
       "d0": "B",
       "d1": "GM2",
-      "value": 1106607
+      "value": 1106700
     },
     {
       "date": "2026-03",
       "d0": "B",
       "d1": "GM2",
-      "value": 1114042
+      "value": 1114135
     },
     {
       "date": "2026-04",
       "d0": "B",
       "d1": "GM2",
-      "value": 1116913
+      "value": 1117008
     },
     {
       "date": "2026-05",
       "d0": "B",
       "d1": "GM2",
-      "value": 1118598
+      "value": 1118693
     },
     {
       "date": "2026-06",
       "d0": "B",
       "d1": "GM2",
-      "value": 1116770
+      "value": 1116864
     },
     {
       "date": "2026-07",
       "d0": "B",
       "d1": "GM2",
-      "value": 1117864
+      "value": 1117959
     },
     {
       "date": "2026-08",
       "d0": "B",
       "d1": "GM2",
-      "value": 1123976
+      "value": 1124963
+    },
+    {
+      "date": "2026-09",
+      "d0": "B",
+      "d1": "GM2",
+      "value": 1125328
     }
   ]
 }
